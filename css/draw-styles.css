@@ -1,0 +1,227 @@
+@font-face {
+  font-family: 'Avenir Next Variable';
+  src: url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/2729/AvenirNext_Variable.ttf') format('truetype');
+}
+html,
+body,
+#viewDiv {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  position:relative;
+  overflow:hidden;
+  font-family: "Avenir Next Variable", "sans-serif";
+}
+
+.large-widget {
+  width: 550px;
+  border-radius: 7px;
+  padding: 20px 30px 20px 30px;
+  text-align: center;
+  backdrop-filter: blur(6px);
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, .3) !important;
+  background-color: rgba(255, 255, 255, 0.45);
+}
+
+#infoDiv{
+  height:auto;
+  min-height: 135px;
+  /*background-image: url(watercolor-div-background.png);
+  background-position: center;
+  background-size:cover;
+  background-repeat: no-repeat;
+  background-color: transparent !important; 
+  box-shadow: 1px 1px 3px 2px rgba(0, 0, 0, 0.0);  */
+}
+
+#noFossilsDiv {
+  height:190px;
+}
+
+#sliderDiv {
+  height:50vh;
+  display:initial;
+}
+
+#invertCount, #vertCount{
+  font-variation-settings: 'wght' 450;
+  font-size:1.5rem;
+  line-height: 1.85rem;
+}
+
+.esri-widget{
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.45) !important;
+  backdrop-filter: blur(6px) !important;
+  box-shadow: 0px 0px 3px 2px rgba(0, 0, 0, 0.1) !important;
+}
+
+.custom-widget {
+  height: 5.4vh;
+  width:5.4vh;
+  min-width: 45px;
+  min-height: 45px;
+  font-size: .75rem;
+}
+
+#icon-container {
+  height:auto;
+  width:auto;
+}
+
+h1 {
+  font-family: "Avenir Next Variable" !important;
+  font-variation-settings: 'wght' 675;
+  font-size: 2.25rem;
+  font-weight: normal;
+  line-height: 2.65rem;
+  text-align: center;
+}
+
+.splide__slide {
+  max-width: 550px;
+  width:100%;
+}
+
+.splide__slide img {
+  height:auto;
+  max-height: 300px;
+  width: auto;
+  max-width: 510px;
+}
+
+#caption {
+  height:2rem;
+}
+
+
+/* ==========================================================
+ WIDGET STYLING
+ ========================================================= */
+
+svg {
+  pointer-events: none;
+  -webkit-filter: drop-shadow( 0px 0px .5px rgba(0, 0, 0, .3));
+  filter: drop-shadow( 0px 0px .5px rgba(0, 0, 0, .3));
+  }
+
+  .esri-ui-corner .esri-component {
+    box-shadow: none;
+  }
+  
+
+  #draw-widget{
+    height: 4.5vh;
+    width: 4.5vh;
+    min-width: 35px;
+    min-height: 35px;
+    position: absolute;
+    top:-10%;
+  }
+  
+  #reset-widget {
+    height: 3.25vh;
+    width: 3.25vh;
+    min-width: 25px;
+    min-height: 25px;
+    position: absolute;
+    top: 10%;
+  }
+
+  #select-by-polygon {
+    position: relative;
+  }
+
+  #return-to-extent {
+    position: relative;
+  }
+  #zoomDiv{
+    outline: none;
+    box-shadow: rgba(0, 0, 0, 0);
+    position: relative;
+    height: 13vh;
+    width:5.4vh;
+    min-height: 110px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+  }
+  #zoom-in {
+    border-radius: 50%;
+    position: absolute;
+    top: 6%;
+  }
+
+  #zoom-out {
+    border-radius: 50%;
+    position: absolute;
+    bottom:6%;
+  }
+
+.draw-animation {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 105;
+  animation: draw 1s ease-in forwards;
+  animation-iteration-count: 1;
+}
+
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+
+#widget-label {
+  position: absolute;
+  bottom:0%;
+}
+
+
+.cursor-animation {
+  stroke-dasharray: 75;
+  stroke-dashoffset: 100;
+  animation: draw 5s linear forwards;
+  animation-iteration-count: 1;
+}
+
+.draw-path {
+  fill:none;
+  stroke-linecap: round;
+  stroke-linejoin: bevel;
+  stroke-width: 3.5px;
+  stroke: url(#linear-gradient-2);
+}
+
+.draw-cursor {
+  fill: rgba(255, 255, 255, 0.75);
+  stroke: url(#linear-gradient);
+  stroke-width: 0.33px;
+  opacity: 0.7;
+}
+
+.reset-animation {
+  animation-name: loading-spinner;
+  animation-duration: 1.4s;
+  animation-timing-function: cubic-bezier(.67,.01,.35,1);
+  animation-iteration-count: 1;
+}
+
+@keyframes loading-spinner {
+  0% {transform: rotate(0deg);}
+  100% {transform: rotate(720deg);}
+  }
+
+.reset-path{
+  fill:none;
+  stroke-linejoin: round;
+  stroke-width: 5px;
+  stroke: url(#linear-gradient-2);
+  stroke-linecap: round;
+}
+
+.reset-arrowhead {
+  fill: url(#linear-gradient-2);
+}
