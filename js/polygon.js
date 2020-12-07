@@ -51,7 +51,7 @@ require([
       countiesMaxScale,
       regionsMaxScale,
       neighborhoodsMinScale,
-      regionsClientLayer;
+      clientFeatureLayer;
 
 
   // Get DOM elements 
@@ -92,6 +92,7 @@ require([
     if (polygonHighlight) {
       polygonHighlight.remove();
     }
+    resetClientFeatureLayer();
     clearGraphics();
     clearWidgets();
   }
@@ -105,7 +106,6 @@ require([
     featureName = ""
     clearGraphics();
     sketchViewModel.create("polygon", {mode: "freehand"});
-    
   };
 
   // Click event for the Zoom widgets
@@ -119,18 +119,61 @@ require([
   }
 
   // Click event for Counties layer
+  /*
   view.on("click", function (event) {
     clearGraphics();
     noFossilsDiv.style.display = "none";
-    if (view.scale > countiesMaxScale) {
+    if (countiesLayer.visible) {
       selectFeaturesFromClick(event, countiesLayer)
-    } else if (view.scale > regionsMaxScale) {
+      regionsLayer.visible = true;
+    } else if (regionsLayer.visible) {
       selectFeaturesFromClick(event, regionsLayer)
-    } else if (neighborhoodsMinScale > view.scale) {
+    } else if (neighborhoodsLayer.visible) {
       selectFeaturesFromClick(event, neighborhoodsLayer)
     }
-  });
+  });*/
 
+  view.on("click", function(event) {
+    selectFeaturesFromClick(event, clientFeatureLayer);
+  })
+
+
+  function displayIntersectionFeatures(feature) {
+    var regionType = feature.attributes.region_type;
+    var regionName = feature.attributes.name;
+    /*
+    var query = {
+      geometry: feature.geometry,
+      spatialRelationship: "contains",
+      outFields: ["*"],
+      returnGeometry: true
+    };*/
+
+    var query = {
+      where: "parent_region = '" + regionName + "'",
+      returnGeometry: true
+    }
+
+    clientFeatureLayer.queryFeatures().then(function(results){
+      const removeFeatures = {
+        deleteFeatures: results.features
+      };
+      applyEditsToClientFeatureLayer(removeFeatures);
+    });
+
+
+    if (regionType == "County") {
+      regionsLayer.queryFeatures(query).then(function(results){
+        addEdits(results);
+      });
+    } else {
+      neighborhoodsLayer.queryFeatures(query).then(function(results){
+        addEdits(results);
+      });
+    }
+    
+
+  };
 
   function selectFeaturesFromClick(screenPoint, layer) {
     const point = view.toMap(screenPoint);
@@ -144,28 +187,33 @@ require([
       outFields: ["*"]
     }
 
-    layer.queryFeatures(clickQuery).then(function(results){
-      var clickFeature = results.features[0];
-      console.log(clickFeature)
-      featureName = results.features[0].attributes["name"]
-      selectFeatures(clickFeature);
+      layer.queryFeatures(clickQuery).then(function(results){
+        var clickFeature = results.features[0];
+        if (results.features.length > 0) {
+          featureName = results.features[0].attributes["name"]
+          selectFeatures(clickFeature);
+          displayIntersectionFeatures(clickFeature);
+  
+          const selectedFeatureGraphic = new Graphic({
+            geometry: clickFeature.geometry,
+            symbol: {
+              type: "simple-fill",
+              color: [0, 185, 235, 0.2],
+              outline: {
+                // autocasts as new SimpleLineSymbol()
+                color: [0, 185, 235, 1],
+                width: 4 // points
+              }
+            }
+          });
 
-      const selectedFeatureGraphic = new Graphic({
-        geometry: clickFeature.geometry,
-        symbol: {
-          type: "simple-fill",
-          color: [0, 185, 235, 0.2],
-          outline: {
-            // autocasts as new SimpleLineSymbol()
-            color: [0, 185, 235, 1],
-            width: 4 // points
-          }
+          selectedFeatureGraphicLayer.graphics.removeAll()
+          selectedFeatureGraphicLayer.graphics.add(selectedFeatureGraphic);   
+        } else {
+          resetButtonClickHandler();
         }
-      });
-      selectedFeatureGraphicLayer.graphics.removeAll()
-      selectedFeatureGraphicLayer.graphics.add(selectedFeatureGraphic);   
-    })
-   }
+      })
+    }
 
 
   function createSplideFromAttachments(layer, ids) {
@@ -213,6 +261,7 @@ require([
     Function selects features that intersect with Sketch geometry
     ========================================================== */
   function selectFeatures(polygon) {
+    var polygonName = polygon.attributes.name;
     var geometry = polygon.geometry;
 
     // Clear old text from infoDiv
@@ -244,11 +293,11 @@ require([
       var geometryExpand = (286976 / geometry.extent.width + .91)
       
 
-    
-      if (polygon.layer.maxScale) {
+      if (polygonName == "Los Angeles"){
         view.goTo({
-          center: geometry.centroid.offset(geometryOffset*.65, 0),
-          scale: polygon.layer.maxScale / 2
+          center: [-118.255787,34.074521],
+          zoom: 8,
+          //offset:-(geometry.extent.width/2)
         }).catch(function(error){
           if (error.name != "AbortError") {
             console.error(error);
@@ -261,6 +310,9 @@ require([
           }
         })
       }
+
+
+      
       
 
       // If records are returned from locality query
@@ -295,7 +347,6 @@ require([
   sketchViewModel.on("create", function (event){
     if (event.state === "complete") {
       // This polygon will be used to query features that intersect it;
-      console.log(event.graphic)
       selectFeatures(event.graphic);
     }
   });
@@ -337,14 +388,86 @@ require([
     sliderDiv.style.display = "none";
     infoDiv.style.display = "none";
     noFossilsDiv.style.display = "none";
-  }
+  };
 
   function clearGraphics() {
     sketchGraphicsLayer.removeAll();
     selectedFeatureGraphicLayer.removeAll();
     view.graphics.removeAll()
+  };
+
+
+
+
+  function setupClientFeatureLayer() {    
+    countiesLayer.queryFeatures().then(function(results){
+      addEdits(results)
+    });
   }
 
+  setupClientFeatureLayer();
+
+  function resetClientFeatureLayer() {
+    clientFeatureLayer.queryFeatures().then(function(results){
+      const removeFeatures = {
+        deleteFeatures: results.features
+      };
+      applyEditsToClientFeatureLayer(removeFeatures);
+    });
+    setupClientFeatureLayer();
+  }
+
+
+  function applyEditsToClientFeatureLayer(edits) {
+    clientFeatureLayer
+      .applyEdits(edits)
+      .then(function (results) {
+        // if edits were removed
+        if (results.deleteFeatureResults.length > 0) {
+          console.log(
+            results.deleteFeatureResults.length,
+            "features have been removed"
+          );
+        }
+        // if features were added - call queryFeatures to return
+        //    newly added graphics
+        if (results.addFeatureResults.length > 0) {
+          var objectIds = [];
+          results.addFeatureResults.forEach(function (feature) {
+            objectIds.push(feature.objectId);
+          });
+          // query the newly added features from the layer
+          clientFeatureLayer
+            .queryFeatures({
+              objectIds: objectIds
+            })
+            .then(function (results) {
+              console.log(
+                results.features.length,
+                "features have been added."
+              );
+            });
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+
+  function addEdits(results) {
+    var graphics = [];
+    results.features.forEach(function(feature){
+      var graphic = new Graphic({
+        geometry: feature.geometry,
+        attributes: feature.attributes
+      });
+      graphics.push(graphic)
+    })
+    const edits = {
+      addFeatures: graphics
+    }; 
+    applyEditsToClientFeatureLayer(edits);
+  }
 
   /* ==========================================================
     Function to set up the view, map and add widgets & layers
@@ -356,7 +479,7 @@ require([
       baseLayers: [
       new VectorTileLayer({
         portalItem: {
-          id: "dcd864fb78f744f18951caa7451ba540" // Modified Grey Basemap
+          id: "c65f3f7dc5754366b4e515e73e2f7d8b" // Modified Grey Basemap
           }
         })
       ]
@@ -371,6 +494,9 @@ require([
       map: map,
       center: [-118.248638, 34.062660], // longitude, latitude , 
       zoom: 8,
+      constraints: {
+        snapToZoom: false
+      },
       popup: {
         autoOpenEnabled: false
       },
@@ -382,6 +508,7 @@ require([
         components: []
       }
     });
+    view.constraints.snapToZoom = false;
 
     // Create new GraphicLayers
     sketchGraphicsLayer = new GraphicsLayer();
@@ -492,6 +619,37 @@ require([
     regionsMaxScale = 288895;
     neighborhoodsMinScale = 144448;
 
+    clientFeatureLayer = new FeatureLayer({
+      title: "Areas",
+      fields: [
+        {
+          name: "objectId",
+          alias: "ObjectID",
+          type: "oid"
+        },
+        {
+          name: "name",
+          alias: "Name",
+          type: "string"
+        },
+        {
+          name: "type",
+          alias: "Type",
+          type: "string"
+        },
+        {
+          name: "region_type",
+          alias: "Region Type",
+          type: "string"
+        }
+      ],
+      objectIdField: "ObjectID",
+      geometryType: "polygon",
+      source: [],
+      renderer: polygonFeatureRenderer,
+      labelingInfo: [countiesLabelClass]
+    })
+
     localitiesLayer = new FeatureLayer({
       url:
       "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/LAU_Localities/FeatureServer/0",
@@ -501,30 +659,33 @@ require([
     countiesLayer = new FeatureLayer({
       url:
       "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/SoCal_Counties/FeatureServer/0",
-      maxScale: countiesMaxScale,
+      //maxScale: countiesMaxScale,
       labelingInfo: [countiesLabelClass],
-      renderer: polygonFeatureRenderer
+      renderer: polygonFeatureRenderer,
+      visible: false
     });
 
     regionsLayer = new FeatureLayer({
       url:
-      "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/SoCal_County_Subdivisions/FeatureServer/0",
-      minScale: countiesMaxScale,
-      maxScale: regionsMaxScale,
+      "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/SoCal_Regions/FeatureServer/0",
+      //minScale: countiesMaxScale,
+      //maxScale: regionsMaxScale,
       labelingInfo: [regionsLabelClass],
-      renderer: polygonFeatureRenderer
+      renderer: polygonFeatureRenderer,
+      visible: false
     });
 
     neighborhoodsLayer = new FeatureLayer({
       url:
       "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/SoCal_Neighborhoods___Cities/FeatureServer/0",
-      minScale: neighborhoodsMinScale,
+      //minScale: neighborhoodsMinScale,
       labelingInfo: [regionsLabelClass],
-      renderer: polygonFeatureRenderer
+      renderer: polygonFeatureRenderer,
+      visible: false
     });
 
     // Add all features layers to map
-    map.addMany([neighborhoodsLayer, regionsLayer, countiesLayer, localitiesLayer])
+    map.addMany([neighborhoodsLayer, regionsLayer, countiesLayer, clientFeatureLayer, localitiesLayer])
 
 
     // Add widgets to view
