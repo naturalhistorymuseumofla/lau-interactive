@@ -14,6 +14,88 @@ body,
   font-family: "Avenir Next Variable", "sans-serif";
 }
 
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent; /* make scrollbar transparent */
+}
+
+#popupDiv {
+  border-radius: 7px;
+  box-shadow: 0px 0px 7px rgba(0, 0, 0, .4) !important;
+  background-color: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(6px);
+  height: 75vh;
+  width: 40vw;
+  min-width: 500px;
+  z-index: 99;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  overflow-y:scroll;
+}
+
+#popupDiv--closeButton {
+  position: absolute;
+  background: -webkit-linear-gradient(-45deg, transparent 0%, transparent 46%, white 46%,  white 56%,transparent 56%, transparent 100%), -webkit-linear-gradient(45deg, transparent 0%, transparent 46%, white 46%,  white 56%,transparent 56%, transparent 100%);
+  top: 10%;
+  left: 2%;
+  height: 30px;
+  width: 30px;
+  border-radius: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0px 0px 7px rgba(0, 0, 0, .4) !important;
+}
+
+.left {
+  position: absolute;
+  height: 20px;
+  opacity: 0.3;
+  background-color: #333;
+  width: 2px;
+  transform: rotate(45deg);
+}
+
+.right {
+  position: absolute;
+  height: 20px;
+  opacity: 0.3;
+  background-color: #333;
+  width: 2px;
+  transform: rotate(-45deg);
+}
+
+.popupDiv__header {
+  margin: 0px, 40px, 0px, 40px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  position: -webkit-sticky; /* Safari */
+  position: sticky;
+  top:0;
+  background-color: rgba(255, 255, 255, .65);
+  backdrop-filter: blur(5px);
+  line-height: 2px;
+  text-align: center;
+}
+
+#popupDiv__text {
+  padding: 0 75px 0px 75px;
+
+}
+#popupDiv__text p {
+  line-height: 1.25;
+  font-family: "Avenir Next", "sans-serif";
+  font-weight: regular;
+
+}
+
+#popupDiv__text li {
+  margin-bottom: 10px;
+  font-family: "Avenir Next", "sans-serif";
+}
+
 .large-widget {
   width: 550px;
   border-radius: 7px;
@@ -25,22 +107,20 @@ body,
 }
 
 #infoDiv{
+  display:none;
   height:auto;
-  min-height: 135px;
-  /*background-image: url(watercolor-div-background.png);
-  background-position: center;
-  background-size:cover;
-  background-repeat: no-repeat;
-  background-color: transparent !important; 
-  box-shadow: 1px 1px 3px 2px rgba(0, 0, 0, 0.0);  */
+  min-height: 300px;
+  max-height: 40.25vh;
 }
 
 #noFossilsDiv {
+  display:none;
   height:190px;
 }
 
 #sliderDiv {
-  height:50vh;
+  display:none;
+  height:45vh;
   display:initial;
 }
 
@@ -77,6 +157,7 @@ h1 {
   font-weight: normal;
   line-height: 2.65rem;
   text-align: center;
+  margin-top:0.6rem;
 }
 
 .splide__slide {
@@ -100,7 +181,43 @@ h1 {
  WIDGET STYLING
  ========================================================= */
 
-svg {
+
+ .highcharts-container {
+  max-width:100% !important;
+  height:100% !important;
+  position: relative;
+  min-height: 200px;
+}
+
+.highcharts-root {
+  max-height: 24vh;
+  width: 550px;
+  min-height: 200px;
+}
+
+.highcharts-background {
+  max-height: 24vh;
+  min-height: 200px;
+  width: 550px !important;
+}
+
+.highcharts-drillup-button rect {
+  width: 100px;
+  height: 50px;
+  box-shadow: 0px 0px 3px 3px rgba(0, 0, 0, 0.3) !important;
+  display: flex;
+  align-items: center;
+  text-align: center;
+}
+
+.highcharts-drillup-button text {
+  font-size: 22px;
+  transform: translateY(100);
+
+}
+
+
+svg .widget-button {
   pointer-events: none;
   -webkit-filter: drop-shadow( 0px 0px .5px rgba(0, 0, 0, .3));
   filter: drop-shadow( 0px 0px .5px rgba(0, 0, 0, .3));
@@ -130,6 +247,7 @@ svg {
   }
 
   #select-by-polygon {
+
     position: relative;
   }
 
