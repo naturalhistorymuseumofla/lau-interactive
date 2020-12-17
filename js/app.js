@@ -1,5 +1,6 @@
 import { resetSplide, formatHTMLForSplide, newSplide, splide } from "../js/splideFunctions.js";
 
+
 require([
   "esri/Map", 
   "esri/views/MapView",
@@ -11,7 +12,9 @@ require([
   "esri/Basemap", 
   "esri/layers/VectorTileLayer",
   "esri/widgets/Zoom/ZoomViewModel",
-  "esri/layers/support/LabelClass"
+  "esri/layers/support/LabelClass",
+  "esri/geometry/geometryEngine",
+  "esri/layers/TileLayer"
   ], function (Map,
                MapView, 
                FeatureLayer,
@@ -22,7 +25,9 @@ require([
                Basemap,
                VectorTileLayer,
                ZoomViewModel,
-               LabelClass
+               LabelClass,
+               geometryEngine,
+               TileLayer
                ){
 
   // Initialize variable
@@ -498,13 +503,23 @@ require([
       renderer: localitiesRenderer
     });
 
-    countiesLayer = new FeatureLayer({
-      url:
-      "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/SoCal_Counties/FeatureServer/0",
-      maxScale: countiesMaxScale,
-      labelingInfo: [countiesLabelClass],
-      renderer: polygonFeatureRenderer
-    });
+      var hillshade = new TileLayer({
+        url:
+        "https://services.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer",
+        opacity: 0.15       
+      });
+      
+      var oceanBase = new TileLayer ({
+        url:
+        "https://services.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer",
+        opacity:0.15
+      });
+
+      localitiesLayer = new FeatureLayer({
+        url:
+        "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/LAU_Localities/FeatureServer/0",
+        renderer: localitiesRenderer
+      });
 
     regionsLayer = new FeatureLayer({
       url:

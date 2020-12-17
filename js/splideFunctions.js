@@ -40,7 +40,7 @@ function formatHTMLForSplide(attachment) {
 
   var newSlide = splideList.appendChild(li)
   var div = document.createElement("div")
-  div.style.height = "330px"
+  div.style.height = "300px"
   div.style.display = "flex"
   div.style.alignItems = "center"
   div.style.justifyContent = "center"
