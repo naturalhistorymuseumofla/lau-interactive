@@ -11,8 +11,7 @@ require([
   "esri/Basemap", 
   "esri/layers/VectorTileLayer",
   "esri/widgets/Zoom/ZoomViewModel",
-  "esri/layers/support/LabelClass",
-  "esri/geometry/geometryEngine"
+  "esri/layers/support/LabelClass"
   ], function (Map,
                MapView, 
                FeatureLayer,
@@ -23,8 +22,7 @@ require([
                Basemap,
                VectorTileLayer,
                ZoomViewModel,
-               LabelClass,
-               geometryEngine
+               LabelClass
                ){
     var view,
         map,
@@ -59,6 +57,8 @@ require([
      Initialize map
     ========================================================== */
 
+    infoDiv.style.display = "none";
+    noFossilsDiv.style.display = "none";
 
     setUpMap();
 
@@ -75,6 +75,7 @@ require([
       setNavigationBounds();
       }
     )
+
 
     function setNavigationBounds() {
       var initialExtent = view.extent;
@@ -135,7 +136,7 @@ require([
       if (polygonHighlight) {
         polygonHighlight.remove();
       }
-      hideDiv(noFossilsDiv)
+      noFossilsDiv.style.display = "none";
       featureName = ""
       clearGraphics();
       sketchViewModel.create("polygon", {mode: "freehand"});
@@ -166,19 +167,12 @@ require([
      Functions to reset/initialize app
     ========================================================== */
     
-    function hideDiv(div) {
-      div.style.display ="none";
-    }
-
-    function displayDiv(div) {
-      div.style.display="block"
-    }
-    
     function clearWidgets() {
-      hideDiv(sliderDiv);
-      hideDiv(infoDiv);
-      hideDiv(noFossilsDiv);
-    }
+      sliderDiv.style.display = "none";
+      infoDiv.style.display = "none";
+      noFossilsDiv.style.display = "none";
+    };
+
 
     function clearGraphics() {
       sketchGraphicsLayer.removeAll();
@@ -247,169 +241,6 @@ require([
         });
       }
 
-          
-    /* ==========================================================
-     Function to create pie chart
-    ========================================================== */
-
-    function createPieChart (taxa) {
-      // Prepare taxa
-      const taxaList = taxa.map(taxon => JSON.parse(taxon));
-      var combinedTaxaObject = {};
-
-      for (var i=0; i< taxaList.length; i++) {
-        Object.keys(taxaList[i]).map(taxon =>{
-          var locTaxa = taxaList[i];
-          if (combinedTaxaObject[taxon]) {
-            combinedTaxaObject[taxon] += locTaxa[taxon];
-          } else {
-            combinedTaxaObject[taxon] = locTaxa[taxon];
-          }
-        })
-      }
-
-      var numberOfFossils = Object.values(combinedTaxaObject).reduce((a,b) => a+b, 0)
-      const snails = combinedTaxaObject["Snails"];
-      const bivalves = combinedTaxaObject["Clams, oysters, ect."];
-      
-      
-      var otherTaxaNumber = numberOfFossils - (snails + bivalves);
-
-      var molluskRatio = (snails + bivalves) / numberOfFossils;
-      var otherTaxaList = Object.keys(combinedTaxaObject).filter(taxon => taxon != "Snails" && taxon != "Clams, oysters, ect.");
-
-
-      if (molluskRatio > .75) {
-        var drilldownData = otherTaxaList.map(taxon => [taxon, combinedTaxaObject[taxon]]);
-        var chartData = [
-          {
-            name: "Snails",
-            y: snails
-          },
-          {
-            name: "Clams, oysters",
-            y: bivalves
-          },
-          {
-            name: "Other",
-            y: otherTaxaNumber,
-            drilldown: "other"
-          }
-        ]
-        
-      } else {
-        var chartData = Object.keys(combinedTaxaObject).map(taxon => [taxon, combinedTaxaObject[taxon]]);
-      }
-      
-
-      Highcharts.chart('chart-container', {
-        chart: {
-          plotBackgroundColor: null,
-          plotBorderWidth: 0,
-          plotShadow: false,
-          backgroundColor: 'rgba(0,0,0,0)',
-          marginTop: -100,
-          spacingTop: -100,
-          renderTo: 'chart-container',
-          style: {
-            fontFamily: 'Avenir Next Variable'
-          }
-        },
-        title: {
-          text: ''
-        },
-        tooltip: {
-          enabled: false
-        },
-        plotOptions: {
-          pie: {
-            dataLabels: {
-              enabled: false
-            },
-            borderWidth: 0,
-            showInLegend: true,
-            startAngle: -90,
-            endAngle: 90,
-            center: ['50%', '75%'],
-            size: "105%"
-          }
-        },
-        series: [{
-          type: 'pie',
-          name: 'Taxa',
-          innerSize: '50%',
-          data: chartData
-        }],
-        exporting: {
-          enabled: false
-        },
-        credits: {
-          enabled: false
-        },
-        legend: {
-          floating: true,
-          align: 'center',
-          y:-0,
-          itemDistance: 50,
-          symbolPadding: 10,
-          itemMarginBottom: 5,
-          itemStyle: {
-            fontSize: '20px'
-          }
-        },
-        lang: {
-          drillUpText: "◁ Back"
-        },
-        colors: [
-          '#0033ed', // Blue
-          '#00b9eb', // Highlight blue
-          '#14ccb4', // Localities turqoise
-          '#fa3cc7', // Pink
-          '#f2244e', // Red
-          '#ff9d14', // Orange
-          '#f224da', // Purple
-          '#0004e0', // Dark blue,
-          '#fa3cc7', // Pink
-          '#3cfa3f', // Green
-       ],
-        drilldown: {
-          drillUpButton: {
-            relativeTo: 'spacingBox',
-            position: {
-                y: 100,
-                x: 100
-            },
-            style: {
-              fontFamily: 'Avenir Next Variable',
-              "fontSize": '25px'
-            },
-            theme: {
-                fill: 'rgba(0, 185, 235, .5)',
-                'stroke-width': 1,
-                stroke: "light-gray",
-                r: 2.5,
-                states: {
-                    hover: {
-                        fill: 'rgba(0, 185, 235, 1)'
-                    },
-                    select: {
-                        fill: 'rgba(0, 185, 235, 1)'
-                    }
-                }
-            }
-
-        },
-          series: [{
-            type: 'pie',
-            innerSize: "50%",
-            name: "Other",
-            id: "other",
-            data: drilldownData
-          }]
-        }
-      });
-    }
-
     
     /* ==========================================================
      Functions to query & select localities layer
@@ -417,7 +248,6 @@ require([
 
     // Select feature from feature layer after click event
     function selectFeaturesFromClick(screenPoint) {
-      clearGraphics();
       var includeLayers = [countiesLayer, neighborhoodsLayer, regionsLayer, clientFeatureLayer]
       view.hitTest(screenPoint, {include: includeLayers}).then(function(response) {
         if (response.results.length > 0) {
@@ -449,55 +279,58 @@ require([
     
     // Selects locality features from geometry
     function selectFeatures(polygon) {
-
-      var geometry = geometryEngine.simplify(polygon.geometry, 1000);
+      var geometry = polygon.geometry;
 
       // Clear old text from infoDiv
       infoDiv.childNodes.forEach(node => node.innerHTML = "");
       resetSplide();
       clearWidgets();
 
+      // Define Queries
+      /*
+      var query = {
+        geometry: geometry,
+        spatialRelationship: "intersects",
+        outFields: ["*"], 
+        returnGeometry: true
+      };*/
+
       query.geometry = geometry;
       query.spatialRelationship = "intersects";
       query.outFields = ["*"];
       query.returnGeometry = true;
 
+
       localitiesLayer.queryFeatures(query).then(function(results) {
+      
         var queriedLocalities = results.features;
+        console.log(queriedLocalities)
         
+
         // Get counts of Invert/Vert localities based on Category field of 'attributes' property of selected locality records
         var objectIds = queriedLocalities.map(loc => loc["attributes"]["OBJECTID"])
         var invertCount = queriedLocalities.filter(loc => loc["attributes"]["category"] == "Invertebrate").length;
         var vertCount = queriedLocalities.filter(loc => loc["attributes"]["category"] == "Vertebrate").length;
-        var taxa = (queriedLocalities.map(loc => loc["attributes"]["taxa"])).filter(taxa => !(taxa==''));
-        createPieChart(taxa);
-
+        var taxa = (queriedLocalities.map(loc => loc["attributes"]["Taxa"])).filter(taxa => !(taxa==null));
+        console.log(taxa)
+        //console.log(Object.entries((JSON.parse(taxa[0]))))
         // Function to get attachments and display splide
         createSplideFromAttachments(localitiesLayer, objectIds)
 
         var geometryOffset = -(geometry.extent.width/2)
+        var geometryExpand = (286976 / geometry.extent.width + .91)
+        
 
         if (featureName == "Los Angeles"){
           view.goTo({
-            center: [-118.408228,34.307767],
-            zoom: 8
-          })
-          .catch(function(error){
+            center: [-118.255787,34.074521],
+            zoom: 8,
+            //offset:-(geometry.extent.width/2)
+          }).catch(function(error){
             if (error.name != "AbortError") {
               console.error(error);
             }
           })
-        } else if (featureName == "Ventura") {
-          view.goTo({
-            center: [-119.254898, 34.515522],
-            zoom: 8
-          })
-
-        .catch(function(error){
-          if (error.name != "AbortError") {
-            console.error(error);
-          }
-        })
         } else {
           view.goTo(geometry.extent.expand(2).offset(geometryOffset,0)).catch(function(error){
             if (error.name != "AbortError") {
@@ -508,7 +341,7 @@ require([
 
         // If records are returned from locality query
         if (queriedLocalities.length > 0) {
-          displayDiv(infoDiv);
+          infoDiv.style.display = "initial";
           // Send info to div
           var fossilsFound = queriedLocalities.length.toString();
           if (featureName) {
@@ -521,7 +354,7 @@ require([
           vertCountDiv.innerHTML += "<b>" + vertCount + "</b>" + " vertebrates"
         } else {
           clearWidgets();
-          displayDiv(noFossilsDiv);
+          noFossilsDiv.style.display = "initial";
         };
 
         // Remove exisiting highlighted features
@@ -594,7 +427,7 @@ require([
       }
 
       if (attachmentList.length > 0) {
-        displayDiv(sliderDiv);
+        sliderDiv.style.display = "block";
         newSplide();
 
         // Create graphic at initial Splide slide
@@ -609,7 +442,7 @@ require([
           createPointGraphicAtObjectId(slideObjectId);
         });
         } else {
-          hideDiv(sliderDiv);
+          sliderDiv.style.display ="none";
         }
       });
     }
@@ -670,6 +503,12 @@ require([
         container: "viewDiv",
         map: map,
         center: [-118.248638, 34.062660], // longitude, latitude ,
+        /*extent: {
+          xmax: -118.099533,
+          xmin: -118.140857,
+          ymin: 33.455249,
+          ymax:33.556082
+        },*/
         zoom: 8,
         constraints: {
           snapToZoom: true,
@@ -687,7 +526,6 @@ require([
           components: []
         }
       });
-
       // Create new GraphicLayers
       sketchGraphicsLayer = new GraphicsLayer();
       map.add(sketchGraphicsLayer);
@@ -830,7 +668,7 @@ require([
 
       localitiesLayer = new FeatureLayer({
         url:
-        "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/LAU_Localities/FeatureServer",
+        "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/LAU_Localities/FeatureServer/0",
         renderer: localitiesRenderer
       });
 
@@ -838,7 +676,7 @@ require([
 
       countiesLayer = new FeatureLayer({
         url:
-        "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/SoCal_Counties_(v2)/FeatureServer",
+        "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/SoCal_Counties/FeatureServer/0",
         maxScale: countiesMaxScale,
         labelingInfo: [countiesLabelClass],
         renderer: polygonFeatureRenderer,
@@ -847,7 +685,7 @@ require([
 
       regionsLayer = new FeatureLayer({
         url:
-        "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/SoCal_County_Subdivisions/FeatureServer",
+        "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/SoCal_Regions/FeatureServer/0",
         minScale: countiesMaxScale,
         maxScale: regionsMaxScale,
         labelingInfo: [regionsLabelClass],
@@ -857,7 +695,7 @@ require([
 
       neighborhoodsLayer = new FeatureLayer({
         url:
-        "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/SoCal_Neighborhoods/FeatureServer",
+        "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/SoCal_Neighborhoods___Cities/FeatureServer/0",
         minScale: neighborhoodsMinScale,
         labelingInfo: [regionsLabelClass],
         renderer: polygonFeatureRenderer,
@@ -867,7 +705,6 @@ require([
       // Add all features layers to map
       map.addMany([neighborhoodsLayer, regionsLayer, countiesLayer, clientFeatureLayer, localitiesLayer])
 
-      
 
       // Add widgets to view
       //view.ui.components = [];
@@ -878,7 +715,6 @@ require([
       view.ui.add(noFossilsDiv, "top-left");
       view.ui.add(zoomDiv, "bottom-right");
 
-   
       // Set localityLayerView to layerView when localities are selected (for highlight)
       view.whenLayerView(localitiesLayer).then(function (layerView) {
         localityLayerView = layerView;
