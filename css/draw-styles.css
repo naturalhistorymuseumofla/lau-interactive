@@ -96,8 +96,16 @@ body,
   font-family: "Avenir Next", "sans-serif";
 }
 
+.widget-container {
+  display:flex;
+  flex-direction: column;
+  height:96.5vh;
+  row-gap: 15px;
+}
+
 .large-widget {
-  width: 550px;
+  width:29vw;
+  min-width: 350px;
   border-radius: 7px;
   padding: 20px 30px 20px 30px;
   text-align: center;
@@ -106,28 +114,70 @@ body,
   background-color: rgba(255, 255, 255, 0.45);
 }
 
+.transition {
+  transition: margin-left 0.75s;
+}
+
 #infoDiv{
-  display:none;
   height:auto;
-  min-height: 300px;
-  max-height: 40.25vh;
+
+  /*min-height: 300px;*/
+  margin-left: -1000px;
+}
+
+#noFossilsInfo {
+  display: none;
+}
+
+#taxaInfo {
+  display: none;
 }
 
 #noFossilsDiv {
   display:none;
   height:190px;
+  
 }
 
 #sliderDiv {
   display:none;
-  height:45vh;
   display:initial;
+  min-height: 43vh;
 }
 
-#invertCount, #vertCount{
-  font-variation-settings: 'wght' 450;
-  font-size:1.5rem;
-  line-height: 1.85rem;
+.count-text {
+  text-align: justify;
+}
+
+
+#outer-count-container {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -moz-flex;
+  display: -webkit-flex;
+  display: flex;
+  flex-direction: row;
+  width:100%;
+  align-items: center;
+}
+
+.inner-count-container {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -moz-flex;
+  display: -webkit-flex;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-basis: 50%;
+  max-height: 22.5vh;
+}
+
+
+.count-svg {
+  height:auto;
 }
 
 .esri-widget{
@@ -150,31 +200,83 @@ body,
   width:auto;
 }
 
-h1 {
-  font-family: "Avenir Next Variable" !important;
-  font-variation-settings: 'wght' 675;
-  font-size: 2.25rem;
-  font-weight: normal;
-  line-height: 2.65rem;
-  text-align: center;
-  margin-top:0.6rem;
-}
 
 .splide__slide {
-  max-width: 550px;
+  max-width: 30vw;
+  min-width: 350px;
   width:100%;
 }
 
-.splide__slide img {
-  height:auto;
-  max-height: 300px;
-  width: auto;
-  max-width: 510px;
-}
 
 #caption {
   height:2rem;
 }
+
+.splide__slide img {
+  max-width:100%;
+	max-height: 100%;
+}
+
+.splide__slide--imageContainer {
+  height: 35vh;
+  display:flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title {
+  margin-top: 10px;
+  margin-bottom:10px;
+}
+
+h1 {
+  font-family: "Avenir Next Variable" !important;
+  font-variation-settings: 'wght' 675;
+  font-size: calc(24px + (36 - 24) * ((70vw - 300px) / (1600 - 300)));
+  font-weight: normal;
+  line-height: 2.25rem;
+  text-align: center;
+  margin-top:0px;
+  margin-bottom: 0;
+  display: inline;
+}
+
+.taxa-count {
+  font-family: "Avenir Next Variable" !important;
+  font-variation-settings: 'wght' 300 !important;
+  font-size: calc(18px + (24 - 18) * ((70vw - 300px) / (1600 - 300)));
+  line-height: 1.85rem;
+
+}
+
+@media (max-height:750px) {
+  h1 {
+    font-size:1.65rem;
+    line-height: 2.25rem;
+    margin-top: 0.35rem;
+  }
+  #infoDiv {
+    height: 35vh;
+  }
+  #sliderDiv {
+    height: 50vh;
+  }
+
+
+  .splide__slide--imageContainer {
+    height: 30vh;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+
+
+
+}
+
+
+
 
 
 /* ==========================================================
@@ -247,7 +349,6 @@ svg .widget-button {
   }
 
   #select-by-polygon {
-
     position: relative;
   }
 
