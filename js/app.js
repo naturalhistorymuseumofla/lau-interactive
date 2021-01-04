@@ -733,7 +733,6 @@ require([
       map.addMany([neighborhoodsLayer, regionsLayer, countiesLayer, clientFeatureLayer, localitiesLayer]);
 
       // Add widgets to view
-      //view.ui.components = [];
       view.ui.add("select-by-polygon", "top-right");
       view.ui.add("return-to-extent", "top-right");
       view.ui.add(zoomDiv, "bottom-right");
