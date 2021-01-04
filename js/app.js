@@ -1,4 +1,3 @@
-
 import { resetSplide, formatHTMLForSplide, newSplide, splide } from "../js/splideFunctions.js";
 
 require([
@@ -13,7 +12,8 @@ require([
   "esri/layers/VectorTileLayer",
   "esri/widgets/Zoom/ZoomViewModel",
   "esri/layers/support/LabelClass",
-  "esri/geometry/geometryEngine"
+  "esri/geometry/geometryEngine",
+  "esri/views/layers/support/FeatureEffect"
   ], function (Map,
                MapView, 
                FeatureLayer,
@@ -25,7 +25,8 @@ require([
                VectorTileLayer,
                ZoomViewModel,
                LabelClass,
-               geometryEngine
+               geometryEngine,
+               FeatureEffect
                ){
     var view,
         map,
@@ -61,7 +62,6 @@ require([
     /* ==========================================================
      Initialize map
     ========================================================== */
-
 
     setUpMap();
 
@@ -112,7 +112,6 @@ require([
         }
       });
     }
-
 
     /* ==========================================================
      Event handler functions
@@ -221,7 +220,6 @@ require([
       applyEditsToClientFeatureLayer(edits);
     }
   
-  
     function applyEditsToClientFeatureLayer(edits) {
       clientFeatureLayer
         .applyEdits(edits)
@@ -257,8 +255,6 @@ require([
         });
       }
 
-        
-
     
     /* ==========================================================
      Functions to query & select localities layer
@@ -287,7 +283,6 @@ require([
               }
             }
           });
-
           selectedFeatureGraphicLayer.graphics.removeAll();
           selectedFeatureGraphicLayer.graphics.add(selectedFeatureGraphic);   
         } else {
@@ -298,14 +293,7 @@ require([
     
     // Selects locality features from geometry
     function selectFeatures(polygon) {
-
       var geometry = geometryEngine.simplify(polygon.geometry, 1000);
-
-      // Clear old text from infoDiv
-
-      resetSplide();
-
-
       query.geometry = geometry;
       query.spatialRelationship = "intersects";
       query.outFields = ["*"];
@@ -326,9 +314,8 @@ require([
         var geometryOffset = -(geometry.extent.width/2)
 
         if (featureName === "Los Angeles"){
-          view.goTo({
-             
-            center: [-118.737708, 33.925803],
+          view.goTo({  
+            center: [-118.735491, 34.222515],
             zoom: 8
           })
           .catch(function(error){
@@ -361,13 +348,22 @@ require([
           displayDiv(taxaInfo);
           displayDiv(infoDiv);
           // Send info to div
-          var fossilsFound = queriedLocalities.length.toString();
+          var fossilsFound = queriedLocalities.length;
           if (featureName) {
-            document.getElementById("featureCount").innerHTML = fossilsFound;
-            document.getElementById("featureText").innerHTML = " fossils found in </br>" + featureName + "!";
+            document.getElementById("featureCount").innerHTML = fossilsFound.toString();
+            if (fossilsFound === 1){ 
+              document.getElementById("featureText").innerHTML = " fossil site in </br>" + featureName + "!";
+            } else {
+              document.getElementById("featureText").innerHTML = " fossil sites in </br>" + featureName + "!";
+            }
           } else {
-            document.getElementById("featureCount").innerHTML = fossilsFound;
-            document.getElementById("featureText").innerHTML = " fossils found in </br> in the area!";
+            document.getElementById("featureCount").innerHTML = fossilsFound.toString();
+            if (fossilsFound === 1){
+              document.getElementById("featureText").innerHTML = " fossil site in </br> in the area!";
+            } else {
+              document.getElementById("featureText").innerHTML = " fossil sites in </br> in the area!";
+            }
+            
           }
 
           invertCountDiv.innerHTML = invertCount + " invertebrates"
@@ -375,6 +371,8 @@ require([
           
         } else {
           taxaInfo.style.display = "none";
+          displayDiv(infoDiv);
+          hideDiv(sliderDiv);
           displayDiv(noFossilsInfo);
         }
 
@@ -423,27 +421,25 @@ require([
 
     // Create Splide image carousel from object IDs 
     function createSplideFromAttachments(layer, ids) {
-      resetSplide();
-      var attachmentList;
-      // Query to retrieve attachments  
+      
+      var attachmentList; 
       var attachmentQuery = new AttachmentQuery({
         objectIds: ids
       });
       layer.queryAttachments(attachmentQuery).then(function(attachments){
         attachmentList = Object.values(attachments).map(attachment => attachment[0]);
 
-      // Retrieve list of urls of attached images from selected localities
-      attachmentList.forEach(attachment => {
-        formatHTMLForSplide(attachment);
-      });
-
-      // Create new Splide image slider and set container div to visible
-      var slidePagination = document.getElementById("slidePagination");
-      if (slidePagination) {
-        slidePagination.remove();
-      }
-
       if (attachmentList.length > 0) {
+        resetSplide();
+        // Retrieve list of urls of attached images from selected localities
+        attachmentList.forEach(attachment => {
+          formatHTMLForSplide(attachment);
+        });
+        // Create new Splide image slider and set container div to visible
+        var slidePagination = document.getElementById("slidePagination");
+        if (slidePagination) {
+          slidePagination.remove();
+        }
         displayDiv(sliderDiv);
         newSplide();
 
@@ -616,7 +612,7 @@ require([
         labelExpressionInfo: { expression: "$feature.NAME" },
         symbol: {
           type: "text",  // autocasts as new TextSymbol()
-          color: "black",
+          color: "rgb(40, 40, 40)",
           haloSize: 0.5,
           haloColor: "white",
           font: {  // autocast as new Font()
@@ -631,7 +627,7 @@ require([
         labelExpressionInfo: { expression: "$feature.NAME" },
         symbol: {
           type: "text",  // autocasts as new TextSymbol()
-          color: "black",
+          color: "rgb(40, 40, 40)",
           haloSize: 0.5,
           haloColor: "white",
           deconflictionStrategy: "static",
@@ -643,18 +639,18 @@ require([
         }
       });
 
-      const clientLabelClass = new LabelClass({
-        labelExpressionInfo: { expression: "$feature.NAME" },
+      const areasLabelClass = new LabelClass({
+        labelExpressionInfo: { expression: "Replace(Trim($feature.name), ' ', TextFormatting.NewLine)"  },
         symbol: {
           type: "text",  // autocasts as new TextSymbol()
-          color: "black",
+          color: "rgb(40, 40, 40)",
           haloSize: 0.5,
           haloColor: "white",
           deconflictionStrategy: "static",
           font: {  // autocast as new Font()
             family: "Avenir Next LT Pro Regular",
             weight: "bold",
-            size: 9
+            size: 9.5
           }
         }
       });
@@ -665,10 +661,13 @@ require([
 
       clientFeatureLayer = new FeatureLayer({
         title: "Areas",
+        spatialReference: {
+          wkid: 4326
+        },
         fields: [
           {
             name: "objectId",
-            alias: "ObjectID",
+            alias: "ObjectId",
             type: "oid"
           },
           {
@@ -687,11 +686,11 @@ require([
             type: "string"
           }
         ],
-        objectIdField: "ObjectID",
+        objectIdField: "objectId",
         geometryType: "polygon",
         source: [],
         renderer: polygonFeatureRenderer,
-        labelingInfo: [clientLabelClass]
+        labelingInfo: [areasLabelClass]
       });
 
       localitiesLayer = new FeatureLayer({
@@ -731,28 +730,18 @@ require([
       });
 
       // Add all features layers to map
-      map.addMany([neighborhoodsLayer, regionsLayer, countiesLayer, clientFeatureLayer, localitiesLayer])
-
-      
+      map.addMany([neighborhoodsLayer, regionsLayer, countiesLayer, clientFeatureLayer, localitiesLayer]);
 
       // Add widgets to view
       //view.ui.components = [];
       view.ui.add("select-by-polygon", "top-right");
       view.ui.add("return-to-extent", "top-right");
       view.ui.add(zoomDiv, "bottom-right");
-      view.ui.add("widgetContainer", "top-left")
-      /*
-      view.ui.add(infoDiv, "top-left");
-      view.ui.add(sliderDiv, "top-left");
-      view.ui.add(noFossilsDiv, "top-left");
-      */
-
-
+      view.ui.add("widgetContainer", "top-left");
    
       // Set localityLayerView to layerView when localities are selected (for highlight)
       view.whenLayerView(localitiesLayer).then(function (layerView) {
         localityLayerView = layerView;
       });
-
     }
 });
