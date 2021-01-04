@@ -40,10 +40,8 @@ function formatHTMLForSplide(attachment) {
 
   var newSlide = splideList.appendChild(li)
   var div = document.createElement("div")
-  div.style.height = "330px"
-  div.style.display = "flex"
-  div.style.alignItems = "center"
-  div.style.justifyContent = "center"
+  div.className = "splide__slide--imageContainer"
+
 
   newSlide.appendChild(div).appendChild(img)
   newSlide.appendChild(boldTaxon)

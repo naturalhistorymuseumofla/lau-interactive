@@ -12,7 +12,8 @@ require([
   "esri/layers/VectorTileLayer",
   "esri/widgets/Zoom/ZoomViewModel",
   "esri/layers/support/LabelClass",
-  "esri/geometry/geometryEngine"
+  "esri/geometry/geometryEngine",
+  "esri/views/layers/support/FeatureEffect"
   ], function (Map,
                MapView, 
                FeatureLayer,
@@ -24,7 +25,8 @@ require([
                VectorTileLayer,
                ZoomViewModel,
                LabelClass,
-               geometryEngine
+               geometryEngine,
+               FeatureEffect
                ){
     var view,
         map,
@@ -54,11 +56,12 @@ require([
     var featureCountDiv = document.getElementById("featureCount");
     var invertCountDiv = document.getElementById("invertCount");
     var vertCountDiv = document.getElementById("vertCount");
+    var noFossilsInfo = document.getElementById("noFossilsInfo");
+    var taxaInfo = document.getElementById("taxaInfo");
 
     /* ==========================================================
      Initialize map
     ========================================================== */
-
 
     setUpMap();
 
@@ -109,7 +112,6 @@ require([
         }
       });
     }
-
 
     /* ==========================================================
      Event handler functions
@@ -167,11 +169,12 @@ require([
     ========================================================== */
     
     function hideDiv(div) {
-      div.style.display ="none";
+      div.style.marginLeft="-1000px"
     }
 
     function displayDiv(div) {
-      div.style.display="block"
+      div.style.display="block";
+      div.style.marginLeft="0px"
     }
     
     function clearWidgets() {
@@ -180,11 +183,17 @@ require([
       hideDiv(noFossilsDiv);
     }
 
+    function resetInfoDiv() {
+      featureCountDiv.innerHTML = "";
+      invertCountDiv.innerHTML = "";
+      vertCountDiv.innerHTML = "";
+    }
+
     function clearGraphics() {
       sketchGraphicsLayer.removeAll();
       selectedFeatureGraphicLayer.removeAll();
       view.graphics.removeAll()
-    };
+    }
 
     // Functions to create/update clientFeatureLayer
     function resetClientFeatureLayer() {
@@ -210,7 +219,6 @@ require([
       }; 
       applyEditsToClientFeatureLayer(edits);
     }
-  
   
     function applyEditsToClientFeatureLayer(edits) {
       clientFeatureLayer
@@ -247,169 +255,6 @@ require([
         });
       }
 
-          
-    /* ==========================================================
-     Function to create pie chart
-    ========================================================== */
-
-    function createPieChart (taxa) {
-      // Prepare taxa
-      const taxaList = taxa.map(taxon => JSON.parse(taxon));
-      var combinedTaxaObject = {};
-
-      for (var i=0; i< taxaList.length; i++) {
-        Object.keys(taxaList[i]).map(taxon =>{
-          var locTaxa = taxaList[i];
-          if (combinedTaxaObject[taxon]) {
-            combinedTaxaObject[taxon] += locTaxa[taxon];
-          } else {
-            combinedTaxaObject[taxon] = locTaxa[taxon];
-          }
-        })
-      }
-
-      var numberOfFossils = Object.values(combinedTaxaObject).reduce((a,b) => a+b, 0)
-      const snails = combinedTaxaObject["Snails"];
-      const bivalves = combinedTaxaObject["Clams, oysters, ect."];
-      
-      
-      var otherTaxaNumber = numberOfFossils - (snails + bivalves);
-
-      var molluskRatio = (snails + bivalves) / numberOfFossils;
-      var otherTaxaList = Object.keys(combinedTaxaObject).filter(taxon => taxon != "Snails" && taxon != "Clams, oysters, ect.");
-
-
-      if (molluskRatio > .75) {
-        var drilldownData = otherTaxaList.map(taxon => [taxon, combinedTaxaObject[taxon]]);
-        var chartData = [
-          {
-            name: "Snails",
-            y: snails
-          },
-          {
-            name: "Clams, oysters",
-            y: bivalves
-          },
-          {
-            name: "Other",
-            y: otherTaxaNumber,
-            drilldown: "other"
-          }
-        ]
-        
-      } else {
-        var chartData = Object.keys(combinedTaxaObject).map(taxon => [taxon, combinedTaxaObject[taxon]]);
-      }
-      
-
-      Highcharts.chart('chart-container', {
-        chart: {
-          plotBackgroundColor: null,
-          plotBorderWidth: 0,
-          plotShadow: false,
-          backgroundColor: 'rgba(0,0,0,0)',
-          marginTop: -100,
-          spacingTop: -100,
-          renderTo: 'chart-container',
-          style: {
-            fontFamily: 'Avenir Next Variable'
-          }
-        },
-        title: {
-          text: ''
-        },
-        tooltip: {
-          enabled: false
-        },
-        plotOptions: {
-          pie: {
-            dataLabels: {
-              enabled: false
-            },
-            borderWidth: 0,
-            showInLegend: true,
-            startAngle: -90,
-            endAngle: 90,
-            center: ['50%', '75%'],
-            size: "105%"
-          }
-        },
-        series: [{
-          type: 'pie',
-          name: 'Taxa',
-          innerSize: '50%',
-          data: chartData
-        }],
-        exporting: {
-          enabled: false
-        },
-        credits: {
-          enabled: false
-        },
-        legend: {
-          floating: true,
-          align: 'center',
-          y:-0,
-          itemDistance: 50,
-          symbolPadding: 10,
-          itemMarginBottom: 5,
-          itemStyle: {
-            fontSize: '20px'
-          }
-        },
-        lang: {
-          drillUpText: "◁ Back"
-        },
-        colors: [
-          '#0033ed', // Blue
-          '#00b9eb', // Highlight blue
-          '#14ccb4', // Localities turqoise
-          '#fa3cc7', // Pink
-          '#f2244e', // Red
-          '#ff9d14', // Orange
-          '#f224da', // Purple
-          '#0004e0', // Dark blue,
-          '#fa3cc7', // Pink
-          '#3cfa3f', // Green
-       ],
-        drilldown: {
-          drillUpButton: {
-            relativeTo: 'spacingBox',
-            position: {
-                y: 100,
-                x: 100
-            },
-            style: {
-              fontFamily: 'Avenir Next Variable',
-              "fontSize": '25px'
-            },
-            theme: {
-                fill: 'rgba(0, 185, 235, .5)',
-                'stroke-width': 1,
-                stroke: "light-gray",
-                r: 2.5,
-                states: {
-                    hover: {
-                        fill: 'rgba(0, 185, 235, 1)'
-                    },
-                    select: {
-                        fill: 'rgba(0, 185, 235, 1)'
-                    }
-                }
-            }
-
-        },
-          series: [{
-            type: 'pie',
-            innerSize: "50%",
-            name: "Other",
-            id: "other",
-            data: drilldownData
-          }]
-        }
-      });
-    }
-
     
     /* ==========================================================
      Functions to query & select localities layer
@@ -438,7 +283,6 @@ require([
               }
             }
           });
-
           selectedFeatureGraphicLayer.graphics.removeAll();
           selectedFeatureGraphicLayer.graphics.add(selectedFeatureGraphic);   
         } else {
@@ -449,14 +293,7 @@ require([
     
     // Selects locality features from geometry
     function selectFeatures(polygon) {
-
       var geometry = geometryEngine.simplify(polygon.geometry, 1000);
-
-      // Clear old text from infoDiv
-      infoDiv.childNodes.forEach(node => node.innerHTML = "");
-      resetSplide();
-      clearWidgets();
-
       query.geometry = geometry;
       query.spatialRelationship = "intersects";
       query.outFields = ["*"];
@@ -470,16 +307,15 @@ require([
         var invertCount = queriedLocalities.filter(loc => loc["attributes"]["category"] == "Invertebrate").length;
         var vertCount = queriedLocalities.filter(loc => loc["attributes"]["category"] == "Vertebrate").length;
         var taxa = (queriedLocalities.map(loc => loc["attributes"]["taxa"])).filter(taxa => !(taxa==''));
-        createPieChart(taxa);
 
         // Function to get attachments and display splide
         createSplideFromAttachments(localitiesLayer, objectIds)
 
         var geometryOffset = -(geometry.extent.width/2)
 
-        if (featureName == "Los Angeles"){
-          view.goTo({
-            center: [-118.408228,34.307767],
+        if (featureName === "Los Angeles"){
+          view.goTo({  
+            center: [-118.735491, 34.222515],
             zoom: 8
           })
           .catch(function(error){
@@ -508,21 +344,37 @@ require([
 
         // If records are returned from locality query
         if (queriedLocalities.length > 0) {
+          noFossilsInfo.style.display = "none";
+          displayDiv(taxaInfo);
           displayDiv(infoDiv);
           // Send info to div
-          var fossilsFound = queriedLocalities.length.toString();
+          var fossilsFound = queriedLocalities.length;
           if (featureName) {
-            featureCountDiv.innerHTML = "<b>" + fossilsFound + "</b>" + " fossils found in </br>" + featureName + "!"
+            document.getElementById("featureCount").innerHTML = fossilsFound.toString();
+            if (fossilsFound === 1){ 
+              document.getElementById("featureText").innerHTML = " fossil site in </br>" + featureName + "!";
+            } else {
+              document.getElementById("featureText").innerHTML = " fossil sites in </br>" + featureName + "!";
+            }
           } else {
-            featureCountDiv.innerHTML = "<b>" + fossilsFound + "</b>" + " fossils found in </br> the area!"
+            document.getElementById("featureCount").innerHTML = fossilsFound.toString();
+            if (fossilsFound === 1){
+              document.getElementById("featureText").innerHTML = " fossil site in </br> in the area!";
+            } else {
+              document.getElementById("featureText").innerHTML = " fossil sites in </br> in the area!";
+            }
+            
           }
 
-          invertCountDiv.innerHTML += "<b>" + invertCount + "</b>" + " invertebrates"
-          vertCountDiv.innerHTML += "<b>" + vertCount + "</b>" + " vertebrates"
+          invertCountDiv.innerHTML = invertCount + " invertebrates"
+          vertCountDiv.innerHTML = vertCount + " vertebrates"
+          
         } else {
-          clearWidgets();
-          displayDiv(noFossilsDiv);
-        };
+          taxaInfo.style.display = "none";
+          displayDiv(infoDiv);
+          hideDiv(sliderDiv);
+          displayDiv(noFossilsInfo);
+        }
 
         // Remove exisiting highlighted features
         if (highlight) {
@@ -564,36 +416,30 @@ require([
     }
 
     /* ==========================================================
-     Functions for displaying pie chart
-    ========================================================== */
-
-    /* ==========================================================
      Functions that create image carousel 
     ========================================================== */
 
     // Create Splide image carousel from object IDs 
     function createSplideFromAttachments(layer, ids) {
-      resetSplide();
-      var attachmentList;
-      // Query to retrieve attachments  
+      
+      var attachmentList; 
       var attachmentQuery = new AttachmentQuery({
         objectIds: ids
       });
       layer.queryAttachments(attachmentQuery).then(function(attachments){
         attachmentList = Object.values(attachments).map(attachment => attachment[0]);
 
-      // Retrieve list of urls of attached images from selected localities
-      attachmentList.forEach(attachment => {
-        formatHTMLForSplide(attachment);
-      });
-
-      // Create new Splide image slider and set container div to visible
-      var slidePagination = document.getElementById("slidePagination");
-      if (slidePagination) {
-        slidePagination.remove();
-      }
-
       if (attachmentList.length > 0) {
+        resetSplide();
+        // Retrieve list of urls of attached images from selected localities
+        attachmentList.forEach(attachment => {
+          formatHTMLForSplide(attachment);
+        });
+        // Create new Splide image slider and set container div to visible
+        var slidePagination = document.getElementById("slidePagination");
+        if (slidePagination) {
+          slidePagination.remove();
+        }
         displayDiv(sliderDiv);
         newSplide();
 
@@ -766,7 +612,7 @@ require([
         labelExpressionInfo: { expression: "$feature.NAME" },
         symbol: {
           type: "text",  // autocasts as new TextSymbol()
-          color: "black",
+          color: "rgb(40, 40, 40)",
           haloSize: 0.5,
           haloColor: "white",
           font: {  // autocast as new Font()
@@ -781,7 +627,7 @@ require([
         labelExpressionInfo: { expression: "$feature.NAME" },
         symbol: {
           type: "text",  // autocasts as new TextSymbol()
-          color: "black",
+          color: "rgb(40, 40, 40)",
           haloSize: 0.5,
           haloColor: "white",
           deconflictionStrategy: "static",
@@ -793,16 +639,35 @@ require([
         }
       });
 
+      const areasLabelClass = new LabelClass({
+        labelExpressionInfo: { expression: "Replace(Trim($feature.name), ' ', TextFormatting.NewLine)"  },
+        symbol: {
+          type: "text",  // autocasts as new TextSymbol()
+          color: "rgb(40, 40, 40)",
+          haloSize: 0.5,
+          haloColor: "white",
+          deconflictionStrategy: "static",
+          font: {  // autocast as new Font()
+            family: "Avenir Next LT Pro Regular",
+            weight: "bold",
+            size: 9.5
+          }
+        }
+      });
+
       var countiesMaxScale = 1155581;
       var regionsMaxScale = 288895;
       var neighborhoodsMinScale = 144448;
 
       clientFeatureLayer = new FeatureLayer({
         title: "Areas",
+        spatialReference: {
+          wkid: 4326
+        },
         fields: [
           {
             name: "objectId",
-            alias: "ObjectID",
+            alias: "ObjectId",
             type: "oid"
           },
           {
@@ -821,11 +686,11 @@ require([
             type: "string"
           }
         ],
-        objectIdField: "ObjectID",
+        objectIdField: "objectId",
         geometryType: "polygon",
         source: [],
         renderer: polygonFeatureRenderer,
-        labelingInfo: [countiesLabelClass]
+        labelingInfo: [areasLabelClass]
       });
 
       localitiesLayer = new FeatureLayer({
@@ -865,24 +730,18 @@ require([
       });
 
       // Add all features layers to map
-      map.addMany([neighborhoodsLayer, regionsLayer, countiesLayer, clientFeatureLayer, localitiesLayer])
-
-      
+      map.addMany([neighborhoodsLayer, regionsLayer, countiesLayer, clientFeatureLayer, localitiesLayer]);
 
       // Add widgets to view
       //view.ui.components = [];
       view.ui.add("select-by-polygon", "top-right");
       view.ui.add("return-to-extent", "top-right");
-      view.ui.add(infoDiv, "top-left");
-      view.ui.add(sliderDiv, "top-left");
-      view.ui.add(noFossilsDiv, "top-left");
       view.ui.add(zoomDiv, "bottom-right");
-
+      view.ui.add("widgetContainer", "top-left");
    
       // Set localityLayerView to layerView when localities are selected (for highlight)
       view.whenLayerView(localitiesLayer).then(function (layerView) {
         localityLayerView = layerView;
       });
-
     }
 });

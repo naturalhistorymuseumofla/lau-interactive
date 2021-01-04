@@ -19,11 +19,23 @@ body,
   background: transparent; /* make scrollbar transparent */
 }
 
+.esri-view .esri-view-surface--inset-outline:focus::after {
+  outline: none !important;
+}
+
+.circle {
+  -webkit-backdrop-filter: blur(6px);
+          backdrop-filter: blur(6px);
+  opacity:.9;
+  fill:liner-gradient(#42afe5, #3fdcff);
+}
+
 #popupDiv {
   border-radius: 7px;
   box-shadow: 0px 0px 7px rgba(0, 0, 0, .4) !important;
   background-color: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+          backdrop-filter: blur(6px);
   height: 75vh;
   width: 40vw;
   min-width: 500px;
@@ -75,7 +87,8 @@ body,
   position: sticky;
   top:0;
   background-color: rgba(255, 255, 255, .65);
-  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+          backdrop-filter: blur(5px);
   line-height: 2px;
   text-align: center;
 }
@@ -96,45 +109,93 @@ body,
   font-family: "Avenir Next", "sans-serif";
 }
 
+.widget-container {
+  display:flex;
+  flex-direction: column;
+  height:96.5vh;
+  row-gap: 15px;
+  pointer-events: none !important;
+}
+
 .large-widget {
-  width: 550px;
+  width:23vw;
+  min-width: 350px;
   border-radius: 7px;
   padding: 20px 30px 20px 30px;
   text-align: center;
-  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+          backdrop-filter: blur(6px);
   box-shadow: 0px 0px 5px rgba(0, 0, 0, .3) !important;
   background-color: rgba(255, 255, 255, 0.45);
 }
 
+.transition {
+  transition: margin-left 0.75s;
+  transition-timing-function: ease-in-out;
+}
+
 #infoDiv{
-  display:none;
   height:auto;
-  min-height: 300px;
-  max-height: 40.25vh;
+  pointer-events: auto;
+  margin-left: -1000px;
+}
+
+#noFossilsInfo {
+  display: none;
+  
+}
+#noFossilsInfo p {
+  text-align: center;
+}
+
+#taxaInfo {
+  display: none;
 }
 
 #noFossilsDiv {
   display:none;
   height:190px;
+  
 }
 
 #sliderDiv {
   display:none;
-  height:45vh;
   display:initial;
+  pointer-events: auto;
 }
 
-#invertCount, #vertCount{
-  font-variation-settings: 'wght' 450;
-  font-size:1.5rem;
-  line-height: 1.85rem;
+#outer-count-container {
+  display: -moz-flex;
+  display: flex;
+  flex-direction: row;
+  width:100%;
+  align-items: center;
+}
+
+.inner-count-container {
+  display: -moz-flex;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-basis: 50%;
+  max-height: 22.5vh;
+}
+
+.count-svg {
+  height:auto;
 }
 
 .esri-widget{
   border-radius: 4px;
   background-color: rgba(255, 255, 255, 0.45) !important;
-  backdrop-filter: blur(6px) !important;
+  -webkit-backdrop-filter: blur(6px) !important;
+          backdrop-filter: blur(6px) !important;
   box-shadow: 0px 0px 3px 2px rgba(0, 0, 0, 0.1) !important;
+  transition: box-shadow .3s;
+}
+
+.esri-widget:hover {
+  box-shadow: 0px 0px 3px 2px rgba(0, 0, 0, .175) !important;
 }
 
 .custom-widget {
@@ -150,31 +211,87 @@ body,
   width:auto;
 }
 
-h1 {
-  font-family: "Avenir Next Variable" !important;
-  font-variation-settings: 'wght' 675;
-  font-size: 2.25rem;
-  font-weight: normal;
-  line-height: 2.65rem;
-  text-align: center;
-  margin-top:0.6rem;
-}
-
 .splide__slide {
-  max-width: 550px;
+  max-width: 30vw;
+  min-width: 350px;
   width:100%;
-}
-
-.splide__slide img {
-  height:auto;
-  max-height: 300px;
-  width: auto;
-  max-width: 510px;
 }
 
 #caption {
   height:2rem;
 }
+
+.splide__slide img {
+  max-width:95%;
+	max-height: 94%;
+}
+
+.splide__slide--imageContainer {
+  height: 35vh;
+  display:flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+h1 {
+  font-family: "Avenir Next Variable" !important;
+  font-variation-settings: 'wght' 675;
+  font-size: calc(24px + (31 - 24) * ((70vmin - 300px) / (1600 - 300)));
+  font-weight: normal;
+  margin-top:0px;
+  margin-bottom: 0;
+  line-height:1.85rem;
+  display: inline;
+  color: rgb(50, 50, 50)
+}
+
+p {
+  font-variation-settings: 'wght' 400;
+  font-size: calc(13px + (16 - 13) * ((100vmin - 300px) / (1600 - 300)));
+
+}
+
+.taxa-count {
+  font-family: "Avenir Next Variable" !important;
+  font-variation-settings: 'wght' 300 !important;
+  font-size: calc(16px + (22 - 16) * ((69vw - 400px) / (1600 - 400)));
+  line-height: 1.85rem;
+}
+
+@media (max-height:750px) {
+  h1 {
+    font-size: calc(20px + (39 - 20) * ((100vh - 500px) / (1600 - 500)));
+    line-height: 1.75rem;
+    margin-top: 0.35rem;
+  }
+
+  .taxa-count {
+    font-family: "Avenir Next Variable" !important;
+    font-variation-settings: 'wght' 300 !important;
+    font-size: calc(16px + (22 - 16) * ((69vh - 400px) / (1600 - 400)));
+    line-height: 1.85rem;
+  }
+
+  #infoDiv {
+    height: auto;
+  }
+
+
+  .splide__slide--imageContainer {
+    height: 30vh;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+
+
+
+}
+
+
+
 
 
 /* ==========================================================
@@ -247,7 +364,6 @@ svg .widget-button {
   }
 
   #select-by-polygon {
-
     position: relative;
   }
 
@@ -278,11 +394,20 @@ svg .widget-button {
     bottom:6%;
   }
 
+
 .draw-animation {
   stroke-dasharray: 100;
   stroke-dashoffset: 105;
-  animation: draw 1s ease-in forwards;
-  animation-iteration-count: 1;
+  -webkit-animation: draw 1s ease-in forwards;
+          animation: draw 1s ease-in forwards;
+  -webkit-animation-iteration-count: 1;
+          animation-iteration-count: 1;
+}
+
+@-webkit-keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
 }
 
 @keyframes draw {
@@ -301,9 +426,12 @@ svg .widget-button {
 .cursor-animation {
   stroke-dasharray: 75;
   stroke-dashoffset: 100;
-  animation: draw 5s linear forwards;
-  animation-iteration-count: 1;
+  -webkit-animation: draw 5s linear forwards;
+          animation: draw 5s linear forwards;
+  -webkit-animation-iteration-count: 1;
+          animation-iteration-count: 1;
 }
+
 
 .draw-path {
   fill:none;
@@ -321,11 +449,20 @@ svg .widget-button {
 }
 
 .reset-animation {
-  animation-name: loading-spinner;
-  animation-duration: 1.4s;
-  animation-timing-function: cubic-bezier(.67,.01,.35,1);
-  animation-iteration-count: 1;
+  -webkit-animation-name: loading-spinner;
+          animation-name: loading-spinner;
+  -webkit-animation-duration: 1.4s;
+          animation-duration: 1.4s;
+  -webkit-animation-timing-function: cubic-bezier(.67,.01,.35,1);
+          animation-timing-function: cubic-bezier(.67,.01,.35,1);
+  -webkit-animation-iteration-count: 1;
+          animation-iteration-count: 1;
 }
+
+@-webkit-keyframes loading-spinner {
+  0% {transform: rotate(0deg);}
+  100% {transform: rotate(720deg);}
+  }
 
 @keyframes loading-spinner {
   0% {transform: rotate(0deg);}
