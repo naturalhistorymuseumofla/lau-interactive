@@ -1,4 +1,4 @@
-import { resetSplide, formatHTMLForSplide, newSplide, splide } from "../js/splideFunctions.js";
+import { resetSplide, formatHTMLForSplide, newSplide, splide } from "../js/splideFunctions.min.js";
 
 require([
   "esri/Map", 
@@ -25,8 +25,7 @@ require([
                VectorTileLayer,
                ZoomViewModel,
                LabelClass,
-               geometryEngine,
-               FeatureEffect
+               geometryEngine
                ){
     var view,
         map,
@@ -49,7 +48,6 @@ require([
     // Get DOM elements 
     var infoDiv = document.getElementById("infoDiv");
     var sliderDiv = document.getElementById("sliderDiv");
-    var noFossilsDiv = document.getElementById("noFossilsDiv");
     var zoomDiv = document.getElementById("zoomDiv");
     var zoomInDiv = document.getElementById("zoom-in");
     var zoomOutDiv = document.getElementById("zoom-out");
@@ -64,6 +62,8 @@ require([
     ========================================================== */
 
     setUpMap();
+
+
 
     var resetMapSetInterval = setInterval(resetButtonClickHandler, 90000);
     document.onclick = clearInterval(resetMapSetInterval)
@@ -109,6 +109,7 @@ require([
             newCenter.y = initialExtent.ymax;
           }
           view.goTo(newCenter);
+          
         }
       });
     }
@@ -137,8 +138,7 @@ require([
       if (polygonHighlight) {
         polygonHighlight.remove();
       }
-      hideDiv(noFossilsDiv)
-      featureName = ""
+      featureName = "";
       clearGraphics();
       sketchViewModel.create("polygon", {mode: "freehand"});
     }
@@ -180,7 +180,6 @@ require([
     function clearWidgets() {
       hideDiv(sliderDiv);
       hideDiv(infoDiv);
-      hideDiv(noFossilsDiv);
     }
 
     function resetInfoDiv() {
@@ -309,7 +308,8 @@ require([
         var taxa = (queriedLocalities.map(loc => loc["attributes"]["taxa"])).filter(taxa => !(taxa==''));
 
         // Function to get attachments and display splide
-        createSplideFromAttachments(localitiesLayer, objectIds)
+
+        
 
         var geometryOffset = -(geometry.extent.width/2)
 
@@ -344,9 +344,20 @@ require([
 
         // If records are returned from locality query
         if (queriedLocalities.length > 0) {
-          noFossilsInfo.style.display = "none";
-          displayDiv(taxaInfo);
-          displayDiv(infoDiv);
+          createSplideFromAttachments(localitiesLayer, objectIds);
+          if (noFossilsInfo.style.display === "block") {
+            hideDiv(infoDiv);
+            setTimeout(() => {
+              noFossilsInfo.style.display = "none";
+              displayDiv(taxaInfo);
+              displayDiv(infoDiv);
+              
+              
+            }, 500);
+          } else {
+            displayDiv(taxaInfo);
+            displayDiv(infoDiv);
+          }
           // Send info to div
           var fossilsFound = queriedLocalities.length;
           if (featureName) {
@@ -370,10 +381,15 @@ require([
           vertCountDiv.innerHTML = vertCount + " vertebrates"
           
         } else {
-          taxaInfo.style.display = "none";
-          displayDiv(infoDiv);
+          if (taxaInfo.style.display === "block") {
+            hideDiv(infoDiv);
+            setTimeout(() => {
+              taxaInfo.style.display = "none";
+              displayDiv(infoDiv);
+              displayDiv(noFossilsInfo);
+            }, 500);
+          }
           hideDiv(sliderDiv);
-          displayDiv(noFossilsInfo);
         }
 
         // Remove exisiting highlighted features
@@ -429,34 +445,34 @@ require([
       layer.queryAttachments(attachmentQuery).then(function(attachments){
         attachmentList = Object.values(attachments).map(attachment => attachment[0]);
 
-      if (attachmentList.length > 0) {
-        resetSplide();
-        // Retrieve list of urls of attached images from selected localities
-        attachmentList.forEach(attachment => {
-          formatHTMLForSplide(attachment);
-        });
-        // Create new Splide image slider and set container div to visible
-        var slidePagination = document.getElementById("slidePagination");
-        if (slidePagination) {
-          slidePagination.remove();
-        }
-        displayDiv(sliderDiv);
-        newSplide();
-
-        // Create graphic at initial Splide slide
-        createPointGraphicAtObjectId(attachmentList[0].parentObjectId);
-        
-        // Splide event listener
-        splide.on('active', function(slide) {
-          if (splideHighlight) {
-            splideHighlight.remove();
+        if (attachmentList.length > 0) {
+          resetSplide();
+          // Retrieve list of urls of attached images from selected localities
+          attachmentList.forEach(attachment => {
+            formatHTMLForSplide(attachment);
+          });
+          // Create new Splide image slider and set container div to visible
+          var slidePagination = document.getElementById("slidePagination");
+          if (slidePagination) {
+            slidePagination.remove();
           }
-          const slideObjectId = slide.slide.classList[1];
-          createPointGraphicAtObjectId(slideObjectId);
-        });
-        } else {
-          hideDiv(sliderDiv);
-        }
+          displayDiv(sliderDiv);
+          newSplide();
+
+          // Create graphic at initial Splide slide
+          createPointGraphicAtObjectId(attachmentList[0].parentObjectId);
+          
+          // Splide event listener
+          splide.on('active', function(slide) {
+            if (splideHighlight) {
+              splideHighlight.remove();
+            }
+            const slideObjectId = slide.slide.classList[1];
+            createPointGraphicAtObjectId(slideObjectId);
+          });
+          } else {
+            hideDiv(sliderDiv);
+          }
       });
     }
      
@@ -695,7 +711,7 @@ require([
 
       localitiesLayer = new FeatureLayer({
         url:
-        "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/LAU_Localities/FeatureServer",
+        "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/LAU_Localities_View/FeatureServer",
         renderer: localitiesRenderer
       });
 
@@ -703,7 +719,7 @@ require([
 
       countiesLayer = new FeatureLayer({
         url:
-        "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/SoCal_Counties_(v2)/FeatureServer",
+        "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/SoCal_Counties_View/FeatureServer",
         maxScale: countiesMaxScale,
         labelingInfo: [countiesLabelClass],
         renderer: polygonFeatureRenderer,
@@ -712,7 +728,7 @@ require([
 
       regionsLayer = new FeatureLayer({
         url:
-        "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/SoCal_County_Subdivisions/FeatureServer",
+        "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/SoCal_Regions_(v2)_View/FeatureServer",
         minScale: countiesMaxScale,
         maxScale: regionsMaxScale,
         labelingInfo: [regionsLabelClass],
@@ -722,7 +738,7 @@ require([
 
       neighborhoodsLayer = new FeatureLayer({
         url:
-        "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/SoCal_Neighborhoods/FeatureServer",
+        "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/SoCal_Neighborhoods_View/FeatureServer",
         minScale: neighborhoodsMinScale,
         labelingInfo: [regionsLabelClass],
         renderer: polygonFeatureRenderer,
@@ -733,6 +749,7 @@ require([
       map.addMany([neighborhoodsLayer, regionsLayer, countiesLayer, clientFeatureLayer, localitiesLayer]);
 
       // Add widgets to view
+      //view.ui.components = [];
       view.ui.add("select-by-polygon", "top-right");
       view.ui.add("return-to-extent", "top-right");
       view.ui.add(zoomDiv, "bottom-right");
