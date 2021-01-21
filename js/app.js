@@ -1,4 +1,3 @@
-import { resetSplide, formatHTMLForSplide, newSplide, splide } from "../js/splideFunctions.min.js";
 
 require([
   "esri/Map", 
@@ -13,7 +12,8 @@ require([
   "esri/widgets/Zoom/ZoomViewModel",
   "esri/layers/support/LabelClass",
   "esri/geometry/geometryEngine",
-  "esri/views/layers/support/FeatureEffect"
+  "esri/views/layers/support/FeatureEffect",
+  "esri/layers/ImageryLayer"
   ], function (Map,
                MapView, 
                FeatureLayer,
@@ -43,6 +43,7 @@ require([
         polygonHighlight,
         splideHighlight,
         featureName,
+        splide,
         query;
     
     // Get DOM elements 
@@ -57,12 +58,12 @@ require([
     var noFossilsInfo = document.getElementById("noFossilsInfo");
     var taxaInfo = document.getElementById("taxaInfo");
 
+
     /* ==========================================================
      Initialize map
     ========================================================== */
 
     setUpMap();
-
 
 
     var resetMapSetInterval = setInterval(resetButtonClickHandler, 90000);
@@ -164,6 +165,92 @@ require([
       }
     });
 
+    
+    /* ==========================================================
+     Splide functions
+    ========================================================== */
+    function loadJSON(callback) {   
+      var xobj = new XMLHttpRequest();
+          xobj.overrideMimeType("application/json");
+      xobj.open('GET', 'captions.json', true); 
+      xobj.onreadystatechange = function () {
+            if (xobj.readyState == 4 && xobj.status == "200") {
+              callback(xobj.responseText);
+            }
+      }
+      xobj.send(null);  
+    }
+
+
+    function removeFileExtension(fileName) {
+      return fileName.substr(0, fileName.lastIndexOf("."))
+    }
+
+    // Reformats html to remove photos/captions from splide
+    function resetSplide() {
+      sliderDiv.innerHTML="";
+      let splideTrack = document.createElement("div");
+      let splideList = document.createElement("ul");
+      let header = document.createElement("h1");
+      header.innerHTML="Swipe to see local fossils"
+      sliderDiv.appendChild(header);
+      sliderDiv.appendChild(splideTrack);
+      splideTrack.appendChild(splideList);
+      splideTrack.classList.add("splide__track");
+      splideList.classList.add("splide__list");
+    };
+
+    // returns a div with properly formatted captions from input photo filename
+    function formatCaptions(attachment) {
+      var attachmentName = removeFileExtension(attachment.name);
+      var taxonCaption = document.createElement("b");
+      var ageCaption = document.createElement("p");
+      var descriptionCaption = document.createElement("p")
+      var catNumber = attachmentName.replace("_", " ").replace("-", ".");
+      var catNumberCaption = document.createTextNode(` (${catNumber})`);
+      var captionsDiv = document.createElement("div");
+
+      loadJSON(json => {
+        var captionsJSON = JSON.parse(json);
+        var attachmentRecord = captionsJSON[attachmentName];
+        taxonCaption.innerHTML = attachmentRecord["Taxon"];
+        ageCaption.innerHTML = attachmentRecord["Age"];
+        descriptionCaption.innerHTML = attachmentRecord["Description"]
+      });
+
+      captionsDiv.append(taxonCaption, catNumberCaption, ageCaption, descriptionCaption);
+      return captionsDiv;
+    }
+
+    // Adds attachment photo to splide carousel after formatting splide 
+    function addPhotoToSplide(attachment) {
+      var img = document.createElement("img");
+      var li = document.createElement("li");
+      var splideList = document.getElementsByClassName("splide__list")[0];
+
+      var captions = formatCaptions(attachment)
+
+      // Format HTML for Splide carousel
+      li.classList.add("splide__slide")
+      li.classList.add(attachment.parentObjectId)
+      img.src = attachment.url
+
+      var newSlide = splideList.appendChild(li);
+      var div = document.createElement("div");
+      div.className = "splide__slide--imageContainer";
+
+      newSlide.appendChild(div).appendChild(img);
+      newSlide.appendChild(captions);
+    }
+
+
+    function newSplide() {
+      splide = new Splide('.splide',{
+        lazyLoad: true
+      }).mount();
+    } 
+
+
     /* ==========================================================
      Functions to reset/initialize app
     ========================================================== */
@@ -172,15 +259,18 @@ require([
       div.style.marginLeft="-1000px"
     }
 
+
     function displayDiv(div) {
       div.style.display="block";
       div.style.marginLeft="0px"
     }
     
+
     function clearWidgets() {
       hideDiv(sliderDiv);
       hideDiv(infoDiv);
     }
+
 
     function resetInfoDiv() {
       featureCountDiv.innerHTML = "";
@@ -204,6 +294,7 @@ require([
       });
     }
 
+
     function addEdits(results) {
       var graphics = [];
       results.features.forEach(function(feature){
@@ -219,6 +310,7 @@ require([
       applyEditsToClientFeatureLayer(edits);
     }
   
+
     function applyEditsToClientFeatureLayer(edits) {
       clientFeatureLayer
         .applyEdits(edits)
@@ -443,21 +535,26 @@ require([
         objectIds: ids
       });
       layer.queryAttachments(attachmentQuery).then(function(attachments){
+
         attachmentList = Object.values(attachments).map(attachment => attachment[0]);
 
         if (attachmentList.length > 0) {
-          resetSplide();
+          if (splide){
+            resetSplide();
+          }
+
           // Retrieve list of urls of attached images from selected localities
           attachmentList.forEach(attachment => {
-            formatHTMLForSplide(attachment);
+            addPhotoToSplide(attachment);
           });
           // Create new Splide image slider and set container div to visible
           var slidePagination = document.getElementById("slidePagination");
           if (slidePagination) {
             slidePagination.remove();
           }
-          displayDiv(sliderDiv);
           newSplide();
+          displayDiv(sliderDiv);
+
 
           // Create graphic at initial Splide slide
           createPointGraphicAtObjectId(attachmentList[0].parentObjectId);
@@ -514,12 +611,13 @@ require([
 
     function setUpMap () {
       // Create new Basemap
+
       var basemap = new Basemap({
         baseLayers: [
-        new VectorTileLayer({
-          portalItem: {
-            id: "c65f3f7dc5754366b4e515e73e2f7d8b" // Modified Grey Basemap
-            }
+          new VectorTileLayer({
+            portalItem: {
+              id: "c65f3f7dc5754366b4e515e73e2f7d8b" // Custom LAU Basemap
+             },
           })
         ]
       });
@@ -527,6 +625,7 @@ require([
       map = new Map({
         basemap: basemap,
       });
+
 
       view = new MapView({
         container: "viewDiv",
@@ -549,6 +648,9 @@ require([
           components: []
         }
       });
+
+
+
 
       // Create new GraphicLayers
       sketchGraphicsLayer = new GraphicsLayer();
@@ -709,6 +811,8 @@ require([
         labelingInfo: [areasLabelClass]
       });
 
+
+
       localitiesLayer = new FeatureLayer({
         url:
         "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/LAU_Localities_View/FeatureServer",
@@ -746,7 +850,14 @@ require([
       });
 
       // Add all features layers to map
-      map.addMany([neighborhoodsLayer, regionsLayer, countiesLayer, clientFeatureLayer, localitiesLayer]);
+      map.addMany([
+        neighborhoodsLayer,
+                   regionsLayer, 
+                   countiesLayer,
+                   clientFeatureLayer,
+                   localitiesLayer,
+                   
+                  ]);
 
       // Add widgets to view
       //view.ui.components = [];
