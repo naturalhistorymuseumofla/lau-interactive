@@ -357,13 +357,32 @@ require([
       var includeLayers = [countiesLayer, neighborhoodsLayer, regionsLayer, clientFeatureLayer]
       view.hitTest(screenPoint, {include: includeLayers}).then(function(response) {
         if (response.results.length > 0) {
-          var clickFeature = response.results[0].graphic;
-          featureName = clickFeature.attributes["name"]
-          selectFeatures(clickFeature);
-          displayIntersectionFeatures(clickFeature);
+          console.log(response.results)
+          var clickFeatureGeometry;
+          if (response.results[0].graphic.layer.title === "Counties") {
+            var hitQuery = {
+              objectIds: response.results[0].graphic.attributes["OBJECTID_1"],
+              returnGeometry: true,
+              outFields: ["*"]
+            }
+            countiesLayer.queryFeatures(hitQuery).then(function(results){
+              console.log(results.features[0])
+              var clickFeature = results.features[0]
+              featureName = clickFeature.attributes["name"]
+              clickFeatureGeometry = results.features[0].geometry
+              selectFeatures(clickFeature);
+              displayIntersectionFeatures(clickFeature);
+            })
+          } else {
+            var clickFeature = response.results[0].graphic;
+            featureName = clickFeature.attributes["name"]
+            clickFeatureGeometry = results.features[0].geometry
+            selectFeatures(clickFeature);
+            displayIntersectionFeatures(clickFeature);
+          }
   
           const selectedFeatureGraphic = new Graphic({
-            geometry: clickFeature.geometry,
+            geometry: clickFeatureGeometry.geometry,
             symbol: {
               type: "simple-fill",
               color: [0, 185, 235, 0.2],
@@ -384,24 +403,20 @@ require([
     
     // Selects locality features from geometry
     function selectFeatures(polygon) {
-      var geometry = geometryEngine.simplify(polygon.geometry, 1000);
+      var geometry = geometryEngine.simplify(polygon.geometry);
       query.geometry = geometry;
       query.spatialRelationship = "intersects";
       query.outFields = ["*"];
-      query.returnGeometry = true;
 
       localitiesLayer.queryFeatures(query).then(function(results) {
         var queriedLocalities = results.features;
+        console.log(results)
         
         // Get counts of Invert/Vert localities based on Category field of 'attributes' property of selected locality records
         var objectIds = queriedLocalities.map(loc => loc["attributes"]["OBJECTID"])
         var invertCount = queriedLocalities.filter(loc => loc["attributes"]["category"] == "Invertebrate").length;
         var vertCount = queriedLocalities.filter(loc => loc["attributes"]["category"] == "Vertebrate").length;
         var taxa = (queriedLocalities.map(loc => loc["attributes"]["taxa"])).filter(taxa => !(taxa==''));
-
-        // Function to get attachments and display splide
-
-        
 
         var geometryOffset = -(geometry.extent.width/2)
 
@@ -579,7 +594,7 @@ require([
         objectIds: [objectId],
         outFields: ["*"]
       };
-      localitiesLayer.queryFeatures(highlightQuery).then(function(attachment){
+      localityLayerView.queryFeatures(highlightQuery).then(function(attachment){
         var visibleAttachmentGeometry = {
           type: "point",  // autocasts as new Point()
           longitude: attachment.features[0].attributes.longitude,
@@ -869,6 +884,6 @@ require([
       // Set localityLayerView to layerView when localities are selected (for highlight)
       view.whenLayerView(localitiesLayer).then(function (layerView) {
         localityLayerView = layerView;
-      });
+      })
     }
 });
