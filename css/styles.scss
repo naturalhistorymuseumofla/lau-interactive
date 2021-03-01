@@ -1,15 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
-// Helper classes
-.hidden {
-
-}
 
 $blur:blur(10px);
 $card-border-radius: 10px;
 $card-flex-gap: 3rem;
 $card-margin: 1.25rem;
-$card-width: 48rem;
+$card-width: 50rem;
 $card-margin-bottom: 1.5rem;
 $box-shadow: 0px 0px 3px 2px rgba(0, 0, 0, 0.1);
 $linear-gradient: linear-gradient(0deg, #42afe5, #3fdcff );
@@ -218,7 +214,7 @@ $font-color: rgb(60, 60, 60);
 h1{
   font-weight: 800;
   color: $font-color;
-  font-size: 2.4rem;
+  font-size: 2.5rem;
   margin:0rem 0rem .5rem 0rem;
 }
 
@@ -227,19 +223,19 @@ h2 {
   font-variation-settings: 'wght' 400;
   color: $font-color;
   margin:0px;
-  font-size: 1.85rem;
+  font-size: 1.9rem;
 }
 
 h3 {
   color: $font-color;
   margin-top: 0rem;
-  font-size: 1.5rem;
+  font-size: 1.7rem;
   margin-bottom:2rem;
 }
 
 h4 {
   color: $font-color;
-  font-size: 1.4rem;
+  font-size: 1.6rem;
   margin: 0px;
   font-weight: 400;
 
@@ -247,7 +243,7 @@ h4 {
 
 p {
   color: $font-color;
-  font-size: 1.375rem;
+  font-size: 1.425rem;
   margin: 0;
 
 }
@@ -283,14 +279,14 @@ $taxa-col-width: 15rem;
 }
 
 .taxa__cell {
-  width: 16.5rem;
+  width: 17.5rem;
   padding-left:0.25rem;
   display:flex;
   align-items: center;
 }
 
 .taxa__icon {
-  $radius: 1.1rem;
+  $radius: 1.75rem;
   border-radius: 50%;
   height: $radius;
   width: $radius;

@@ -75,6 +75,9 @@ require([
   var locationCaption = document.getElementById('locationButtonCaption');
   var cardDiv = document.getElementsByClassName('card')[0];
   var photoLegend = document.getElementsByClassName('photo-indicator')[0];
+  var taxaGrid = document.getElementsByClassName('taxa__grid')[0];
+  var timescaleDiv = document.getElementById('timeDiv');
+  var timescaleBar = document.getElementById('indicator');
 
       
 
@@ -192,6 +195,32 @@ require([
   });
 
   /* ==========================================================
+     Timescale functions
+    ========================================================== */
+
+    // Returns an array of ages sorted ascending from AgeRange
+    function returnTimeRange(ageRange, age) {
+      var rangeArray = ageRange.split(" - ").map(age => parseFloat(age));
+      if (age === "years old") {
+        rangeArray.map(age => age * .001);
+      }
+      sortedAgeArray = rangeArray.sort((a,b) => a-b);
+    }
+
+    function moveTimescale(ageArray) {
+      [minAge, maxAge] = ageArray;
+      const timescaleWidth = timescaleDiv.clientWidth;
+      const rightPosition = `${(minAge/timescaleWidth) * 100}%`
+      timescaleBar.style.right = rightPosition;
+      var indicatorLineDiv = document.getElementsByClassName("indicator-line")[0]
+      
+      const totalAge = minAge + maxAge;
+      const timeratio = (maxAge - minAge)/totalAge * timescaleWidth;
+      indicatorLineDiv.style.width = timeRatio + "px";
+
+    }
+
+  /* ==========================================================
      Splide functions
     ========================================================== */
   function loadJSON(callback) {
@@ -238,8 +267,11 @@ require([
       var captionsJSON = JSON.parse(json);
       var attachmentRecord = captionsJSON[attachmentName];
       taxonCaption.innerHTML = attachmentRecord["Taxon"];
-      ageCaption.innerHTML = attachmentRecord["Age"];
+      ageCaption.innerHTML = `${attachmentRecord["AgeRange"]} ${attachmentRecord["Age"]}`;
       descriptionCaption.innerHTML = attachmentRecord["Description"];
+      const ageRange = returnTimeRange(attachmentRecord["AgeRange"], attachmentRecord["Age"]);
+      moveTimescale(ageRange);
+
     });
 
     specimenCaption.append(
@@ -459,22 +491,65 @@ require([
     }
   }
 
+  // Formats list of taxa
+  function formatTaxa(taxa) {
+    const taxaList = taxa.map(taxon => JSON.parse(taxon));
+
+    var combinedTaxaObject = {};
+
+    for (var i=0; i< taxaList.length; i++) {
+      Object.keys(taxaList[i]).map(taxon =>{
+        var locTaxa = taxaList[i];
+        if (combinedTaxaObject[taxon]) {
+          combinedTaxaObject[taxon] += locTaxa[taxon];
+        } else {
+          combinedTaxaObject[taxon] = locTaxa[taxon];
+        }
+      })
+    }
+    return combinedTaxaObject
+    }  
+
+  
+  // Formats taxa cell in taxa grid
+  function formatTaxaCell(taxonName, taxonNumber) {
+    if (taxonName === "Clams, oysters, ect.") {
+      taxonName = "Clams, oysters";
+    } else if (taxonName === "Ammonoids, nautiloids") {
+      taxonName = "Nautiloids";
+    }
+    var cell = document.createElement("div");
+    var taxaIcon = document.createElement("div");
+    var taxonDiv = document.createElement("p");
+    cell.classList.add('taxa__cell');
+    taxaIcon.classList.add('taxa__icon');
+    taxonDiv.innerHTML = `${taxonNumber.toString()} ${taxonName}`;
+    cell.append(taxaIcon, taxonDiv);
+    taxaGrid.append(cell);
+  }
+
   // Displays info cards after intersecting localities have been queried
   function populateInfoCards(returnedLocalities, polygonName) {
+    taxaGrid.innerHTML="";
     // Get counts of Invert/Vert localities based on Category field of 'attributes' property of selected locality records
     const objectIds = returnedLocalities.map(
       (loc) => loc["attributes"]["OBJECTID"]
     );
-    const invertCount = returnedLocalities.filter(
-      (loc) => loc["attributes"]["category"] == "Invertebrate"
-    ).length;
-    const vertCount = returnedLocalities.filter(
-      (loc) => loc["attributes"]["category"] == "Vertebrate"
-    ).length;
+
     const fossilsFound = returnedLocalities.length;
 
     // Display/hide divs based on fossils returned from query
     if (fossilsFound > 0) {
+
+      const taxa = (returnedLocalities.map(
+        loc => loc["attributes"]["taxa"])).filter(taxa => !(taxa=='')
+        ); 
+
+      const formattedTaxa = formatTaxa(taxa);
+      for (const taxon in formattedTaxa) {
+        formatTaxaCell(taxon, formattedTaxa[taxon]);
+      }
+
       createSplideFromAttachments(localitiesLayer, objectIds);
       // Hide/Display other divs
 
