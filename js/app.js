@@ -1,3 +1,15 @@
+
+
+// Applies styling to splide arrows
+let splideArrows = document.getElementsByClassName('splide__arrow');
+for (let arrow of splideArrows) {
+  arrow.classList.add('hvr-grow-shadow--arrow');
+}
+
+
+
+  
+
 require([
   "esri/Map",
   "esri/views/MapView",
@@ -45,13 +57,26 @@ require([
   var infoDiv = document.getElementById("infoDiv");
   var sliderDiv = document.getElementById("sliderDiv");
   var zoomDiv = document.getElementById("zoomDiv");
-  var zoomInDiv = document.getElementById("zoom-in");
-  var zoomOutDiv = document.getElementById("zoom-out");
-  var featureCountDiv = document.getElementById("featureCount");
+  var zoomInDiv = document.getElementById("zoomIn");
+  var zoomOutDiv = document.getElementById("zoomOut");
+  var featureCountDiv = document.getElementById("excavationNumber");
   var invertCountDiv = document.getElementById("invertCount");
   var vertCountDiv = document.getElementById("vertCount");
   var noFossilsInfo = document.getElementById("noFossilsInfo");
   var taxaInfo = document.getElementById("taxaInfo");
+  var drawSvg = document.getElementById("drawPath");
+  var resetSvg = document.getElementById("resetSvg");
+
+  var locationButton = document.getElementById('locationButton');
+  var locationDiv = document.getElementById('location');
+  var collectionButton = document.getElementById('collectionButton');
+  var collectionDiv = document.getElementById('collection');
+  var collectionCaption = document.getElementById('collectionButtonCaption');
+  var locationCaption = document.getElementById('locationButtonCaption');
+  var cardDiv = document.getElementsByClassName('card')[0];
+  var photoLegend = document.getElementsByClassName('photo-indicator')[0];
+
+      
 
   /* ==========================================================
      Initialize map
@@ -69,12 +94,8 @@ require([
   document.onclick = clearInterval(resetMapSetInterval);
 
   // Add event listeners to custom widgets
-  document
-    .getElementById("select-by-polygon")
-    .addEventListener("click", drawButtonClickHandler);
-  document
-    .getElementById("return-to-extent")
-    .addEventListener("click", resetButtonClickHandler);
+  drawSvg.addEventListener("click", drawButtonClickHandler);
+  resetSvg.addEventListener("click", resetButtonClickHandler);
   zoomInDiv.addEventListener("click", zoomInClickHandler);
   zoomOutDiv.addEventListener("click", zoomOutClickHandler);
 
@@ -118,6 +139,12 @@ require([
   /* ==========================================================
      Event handler functions
     ========================================================== */
+
+  // Instructions pop-up animation
+  document.onclick = function() {
+    document.getElementsByClassName('instructions')[0].style.top = "150%";
+    document.getElementsByClassName('ui-top-left')[0].style.left="0"
+  }
 
   // Event handler for reset widget
   function resetButtonClickHandler() {
@@ -205,6 +232,7 @@ require([
     var catNumber = attachmentName.replace("_", " ").replace("-", ".");
     var catNumberCaption = document.createTextNode(` (${catNumber})`);
     var captionsDiv = document.createElement("div");
+    captionsDiv.classList.add("splide__captions");
 
     loadJSON((json) => {
       var captionsJSON = JSON.parse(json);
@@ -262,7 +290,7 @@ require([
   }
 
   function displayDiv(div) {
-    div.style.display = "block";
+    div.style.display = "flex";
     div.style.marginLeft = "0px";
   }
 
@@ -282,6 +310,48 @@ require([
     selectedFeatureGraphicLayer.removeAll();
     view.graphics.removeAll();
   }
+
+  // Toggles visibility
+  function setVisible(selector, boolean) {
+    document.querySelector(selector).style.visibility = boolean ? 'visible' : 'hidden';
+  }
+
+  // Toggles hidden property
+  function setFlex(element, boolean) {
+    element.style.display = boolean ? 'flex' : 'none';
+  }
+
+  // Toggles hidden property
+  function setDisplay(element, boolean) {
+    element.style.display = boolean ? 'block' : 'none';
+  }
+
+
+
+  /* ==========================================================
+     UI functions
+    ========================================================== */
+  
+  locationButton.addEventListener('click', function(){
+    setFlex(collectionDiv, false);
+    setFlex(locationDiv, true);
+    setFlex(photoLegend, false);
+    locationButton.classList.add('button--active');
+    collectionButton.classList.remove('button--active');
+    collectionCaption.classList.remove("button__caption--active");
+    locationCaption.classList.add("button__caption--active");
+  })
+
+  collectionButton.addEventListener('click', function(){
+    
+    setFlex(locationDiv, false);
+    setFlex(collectionDiv, true);
+    setFlex(photoLegend, true);
+    locationButton.classList.remove('button--active');
+    collectionButton.classList.add('button--active');
+    collectionCaption.classList.add("button__caption--active");
+    locationCaption.classList.remove("button__caption--active");
+  })
 
   /* ==========================================================
      ClientFeatureLayer functions
@@ -406,24 +476,11 @@ require([
     // Display/hide divs based on fossils returned from query
     if (fossilsFound > 0) {
       createSplideFromAttachments(localitiesLayer, objectIds);
-      if (noFossilsInfo.style.display === "block") {
-        hideDiv(infoDiv);
-        setTimeout(() => {
-          noFossilsInfo.style.display = "none";
-          displayDiv(taxaInfo);
-          displayDiv(infoDiv);
-        }, 500);
-      } else {
-        displayDiv(taxaInfo);
-        displayDiv(infoDiv);
-      }
+      // Hide/Display other divs
 
       // Send info to div
-      document.getElementById(
-        "featureCount"
-      ).innerHTML = fossilsFound.toString();
-      document.getElementById("featureText").innerHTML =
-        " fossil site in </br>" + polygonName + "!";
+      featureCountDiv.innerHTML = fossilsFound.toString() + " excavation sites";
+      document.getElementById("featureName").innerHTML = polygonName;
       invertCountDiv.innerHTML = invertCount + " invertebrates";
       vertCountDiv.innerHTML = vertCount + " vertebrates";
     } else {
@@ -566,10 +623,24 @@ require([
         (attachment) => attachment[0]
       );
       if (attachmentList.length > 0) {
+
+        var selectedAttachmentList = [];
+        if (attachmentList.length > 7) {
+          let i = 0;
+          while(i < 7) {
+            const randomNumber = Math.floor(Math.random() * attachmentList.length);
+            const randomAttachment = attachmentList.splice(randomNumber, 1)[0];
+            selectedAttachmentList.push(randomAttachment);
+            i++;
+          } 
+        } else {
+          selectedAttachmentList = attachmentList;
+        } 
+
         resetSplide();
 
         // Retrieve list of urls of attached images from selected localities
-        attachmentList.forEach((attachment) => {
+        selectedAttachmentList.forEach((attachment) => {
           addPhotoToSplide(attachment);
         });
 
@@ -628,273 +699,301 @@ require([
     Function to set up the view, map and add widgets & layers
     ========================================================== */
 
-  function setUpMap() {
-    // Create new Basemap
-    var basemap = new Basemap({
-      baseLayers: [
-        new VectorTileLayer({
-          portalItem: {
-            id: "c65f3f7dc5754366b4e515e73e2f7d8b", // Custom LAU Basemap
+    function setUpMap() {
+      // Create new Basemap
+      var basemap = new Basemap({
+        baseLayers: [
+          new VectorTileLayer({
+            portalItem: {
+              id: "c65f3f7dc5754366b4e515e73e2f7d8b", // Custom LAU Basemap
+            },
+          }),
+        ],
+      });
+  
+      map = new Map({
+        basemap: basemap,
+      });
+  
+      view = new MapView({
+        container: "viewDiv",
+        map: map,
+        center: [-118.248638, 34.06266], // longitude, latitude ,
+        zoom: 8,
+        constraints: {
+          snapToZoom: true,
+          rotationEnabled: false,
+          minZoom: 7,
+        },
+        popup: {
+          autoOpenEnabled: false,
+        },
+        highlightOptions: {
+          color: [0, 185, 235, 0.75],
+          fillOpacity: 0.4,
+        },
+        ui: {
+          components: [],
+        },
+      });
+  
+      // Create new GraphicLayers
+      sketchGraphicsLayer = new GraphicsLayer();
+      map.add(sketchGraphicsLayer);
+  
+      selectedFeatureGraphicLayer = new GraphicsLayer();
+      map.add(selectedFeatureGraphicLayer);
+  
+      // Create the new sketch view model and sets its layer
+      sketchViewModel = new SketchViewModel({
+        view: view,
+        layer: sketchGraphicsLayer,
+        updateOnGraphicClick: false,
+        polygonSymbol: {
+          type: "simple-fill",
+          color: [0, 185, 235, 0.2],
+          size: "1px",
+          outline: {
+            color: [0, 185, 235, 0.5],
+            width: "3px",
           },
-        }),
-      ],
-    });
-
-    map = new Map({
-      basemap: basemap,
-    });
-
-    view = new MapView({
-      container: "viewDiv",
-      map: map,
-      center: [-118.248638, 34.06266], // longitude, latitude ,
-      zoom: 8,
-      constraints: {
-        snapToZoom: true,
-        rotationEnabled: false,
-        minZoom: 7,
-      },
-      popup: {
-        autoOpenEnabled: false,
-      },
-      highlightOptions: {
-        color: [0, 185, 235, 0.75],
-        fillOpacity: 0.4,
-      },
-      ui: {
-        components: [],
-      },
-    });
-
-    // Create new GraphicLayers
-    sketchGraphicsLayer = new GraphicsLayer();
-    map.add(sketchGraphicsLayer);
-
-    selectedFeatureGraphicLayer = new GraphicsLayer();
-    map.add(selectedFeatureGraphicLayer);
-
-    // Create the new sketch view model and sets its layer
-    sketchViewModel = new SketchViewModel({
-      view: view,
-      layer: sketchGraphicsLayer,
-      updateOnGraphicClick: false,
-      polygonSymbol: {
-        type: "simple-fill",
-        color: [0, 185, 235, 0.2],
-        size: "1px",
-        outline: {
-          color: [0, 185, 235, 0.5],
-          width: "3px",
         },
-      },
-    });
-
-    zoomViewModel = new ZoomViewModel({
-      view: view,
-    });
-
-    // Configure widget icons
-    var drawContainer = document.getElementById("select-by-polygon");
-    var drawSvg = document.getElementById("brush-path");
-
-    drawContainer.addEventListener(
-      "click",
-      function (event) {
-        event.preventDefault;
-        drawSvg.classList.remove("draw-animation");
-        drawContainer.offsetWidth;
-        drawSvg.classList.add("draw-animation");
-      },
-      false
-    );
-
-    var resetContainer = document.getElementById("return-to-extent");
-    var resetSvg = document.getElementById("reset-widget");
-
-    resetContainer.addEventListener(
-      "click",
-      function (event) {
-        event.preventDefault;
-        resetSvg.classList.remove("reset-animation");
-        resetContainer.offsetWidth;
-        resetSvg.classList.add("reset-animation");
-      },
-      false
-    );
-
-    // Create renderers, LabelClasses and FeatureLayers
-    const localitiesRenderer = {
-      type: "simple",
-      symbol: {
-        type: "simple-marker",
-        size: 6,
-        color: [20, 204, 180, 0.5],
-        outline: {
-          width: 0.5,
-          color: [247, 247, 247, 0.5],
+      });
+  
+      zoomViewModel = new ZoomViewModel({
+        view: view,
+      });
+  
+      // Configure widget icons
+      drawWidget.addEventListener(
+        "click",
+        function (event) {
+          event.preventDefault;
+          drawSvg.classList.remove("draw-widget__animation");
+          drawWidget.offsetWidth;
+          drawSvg.classList.add("draw-widget__animation");
         },
-      },
-    };
-
-    const polygonFeatureRenderer = {
-      type: "simple",
-      symbol: {
-        type: "simple-fill",
-        style: "none",
-        outline: {
-          color: [128, 128, 128, 0.5],
-          width: "1.5px",
+        false
+      );
+  
+      var resetSvg = document.getElementById("resetSvg");
+  
+      resetWidget.addEventListener(
+        "click",
+        function (event) {
+          event.preventDefault;
+          resetSvg.classList.remove("reset-widget__animation");
+          resetWidget.offsetWidth;
+          resetSvg.classList.add("reset-widget__animation");
         },
-      },
-    };
-
-    const countiesLabelClass = new LabelClass({
-      labelExpressionInfo: { expression: "$feature.NAME" },
-      symbol: {
-        type: "text", // autocasts as new TextSymbol()
-        color: "rgb(40, 40, 40)",
-        haloSize: 0.5,
-        haloColor: "white",
-        font: {
-          // autocast as new Font()
-          family: "Avenir Next LT Pro Regular",
-          weight: "bold",
-          size: 13,
+        false
+      );
+  
+      // Create renderers, LabelClasses and FeatureLayers
+      const localitiesRenderer = {
+        type: "simple",
+        symbol: {
+          type: "simple-marker",
+          size: 6,
+          color: [20, 204, 180, 0.5],
+          outline: {
+            width: 0.5,
+            color: [247, 247, 247, 0.5],
+          },
         },
-      },
-    });
-
-    const regionsLabelClass = new LabelClass({
-      labelExpressionInfo: { expression: "$feature.NAME" },
-      symbol: {
-        type: "text", // autocasts as new TextSymbol()
-        color: "rgb(40, 40, 40)",
-        haloSize: 0.5,
-        haloColor: "white",
-        deconflictionStrategy: "static",
-        font: {
-          // autocast as new Font()
-          family: "Avenir Next LT Pro Regular",
-          weight: "normal",
-          size: 9.5,
+      };
+  
+      const heatmapRenderer = {
+        type: "heatmap",
+        colorStops: [
+          { color: "rgba(63, 40, 102, 0)", ratio: 0 },
+  
+          { color: "#5d32a8", ratio: 0.332 },
+  
+          { color: "#a46fbf", ratio: 0.747 },
+          { color: "#c29f80", ratio: 0.83 },
+          { color: "#e0cf40", ratio: 0.913 },
+          { color: "#ffff00", ratio: 1 }
+        ],
+        maxPixelIntensity: 25,
+        minPixelIntensity: 0
+      };
+      
+  
+      const polygonFeatureRenderer = {
+        type: "simple",
+        symbol: {
+          type: "simple-fill",
+          style: "none",
+          outline: {
+            color: [128, 128, 128, 0.5],
+            width: "1.5px",
+          },
         },
-      },
-    });
-
-    const areasLabelClass = new LabelClass({
-      labelExpressionInfo: {
-        expression: "Replace(Trim($feature.name), ' ', TextFormatting.NewLine)",
-      },
-      symbol: {
-        type: "text", // autocasts as new TextSymbol()
-        color: "rgb(40, 40, 40)",
-        haloSize: 0.5,
-        haloColor: "white",
-        deconflictionStrategy: "static",
-        font: {
-          // autocast as new Font()
-          family: "Avenir Next LT Pro Regular",
-          weight: "bold",
-          size: 9.5,
+      };
+  
+      const countiesLabelClass = new LabelClass({
+        labelExpressionInfo: { expression: "$feature.NAME" },
+        symbol: {
+          type: "text", // autocasts as new TextSymbol()
+          color: "rgb(40, 40, 40)",
+          haloSize: 0.5,
+          haloColor: "white",
+          font: {
+            // autocast as new Font()
+            family: "Avenir Next LT Pro Regular",
+            weight: "bold",
+            size: 13,
+          },
         },
-      },
-    });
-
-    var countiesMaxScale = 1155581;
-    var regionsMaxScale = 288895;
-    var neighborhoodsMinScale = 144448;
-
-    clientFeatureLayer = new FeatureLayer({
-      title: "Areas",
-      spatialReference: {
-        wkid: 4326,
-      },
-      fields: [
-        {
-          name: "region_type",
-          alias: "Region Type",
-          type: "string",
+      });
+  
+      const regionsLabelClass = new LabelClass({
+        labelExpressionInfo: { expression: "$feature.NAME" },
+        symbol: {
+          type: "text", // autocasts as new TextSymbol()
+          color: "rgb(40, 40, 40)",
+          haloSize: 0.5,
+          haloColor: "white",
+          deconflictionStrategy: "static",
+          font: {
+            // autocast as new Font()
+            family: "Avenir Next LT Pro Regular",
+            weight: "normal",
+            size: 9.5,
+          },
         },
-        {
-          name: "objectId",
-          alias: "ObjectId",
-          type: "oid",
+      });
+  
+      const areasLabelClass = new LabelClass({
+        labelExpressionInfo: {
+          expression: "Replace(Trim($feature.name), ' ', TextFormatting.NewLine)",
         },
-        {
-          name: "name",
-          alias: "Name",
-          type: "string",
+        symbol: {
+          type: "text", // autocasts as new TextSymbol()
+          color: "rgb(40, 40, 40)",
+          haloSize: 0.5,
+          haloColor: "white",
+          deconflictionStrategy: "static",
+          font: {
+            // autocast as new Font()
+            family: "Avenir Next LT Pro Regular",
+            weight: "bold",
+            size: 9.5,
+          },
         },
-        {
-          name: "legacyId",
-          alias: "Legacy object ID",
-          type: "string",
+      });
+  
+      var countiesMaxScale = 1155581;
+      var regionsMaxScale = 288895;
+      var neighborhoodsMinScale = 144448;
+  
+      clientFeatureLayer = new FeatureLayer({
+        title: "Areas",
+        spatialReference: {
+          wkid: 4326,
         },
-      ],
-      objectIdField: "objectId",
-      geometryType: "polygon",
-      outFields: ["*"],
-      source: [],
-      renderer: polygonFeatureRenderer,
-      labelingInfo: [areasLabelClass],
-    });
+        fields: [
+          {
+            name: "region_type",
+            alias: "Region Type",
+            type: "string",
+          },
+          {
+            name: "objectId",
+            alias: "ObjectId",
+            type: "oid",
+          },
+          {
+            name: "name",
+            alias: "Name",
+            type: "string",
+          },
+          {
+            name: "legacyId",
+            alias: "Legacy object ID",
+            type: "string",
+          },
+        ],
+        objectIdField: "objectId",
+        geometryType: "polygon",
+        outFields: ["*"],
+        source: [],
+        renderer: polygonFeatureRenderer,
+        labelingInfo: [areasLabelClass],
+      });
+  
+      localitiesLayer = new FeatureLayer({
+        url:
+          "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/LAU_Localities_View/FeatureServer",
+        renderer: localitiesRenderer,
+      });
+  
+      countiesLayer = new FeatureLayer({
+        url:
+          "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/SoCal_Counties_View/FeatureServer",
+        maxScale: countiesMaxScale,
+        labelingInfo: [countiesLabelClass],
+        renderer: polygonFeatureRenderer,
+        title: "Counties",
+        outFields: ["*"],
+      });
+  
+      regionsLayer = new FeatureLayer({
+        url:
+          "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/SoCal_Regions_(v2)_View/FeatureServer",
+        minScale: countiesMaxScale,
+        maxScale: regionsMaxScale,
+        labelingInfo: [regionsLabelClass],
+        renderer: polygonFeatureRenderer,
+        title: "Regions",
+        outFields: ["*"],
+      });
+  
+      neighborhoodsLayer = new FeatureLayer({
+        url:
+          "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/SoCal_Neighborhoods_View/FeatureServer",
+        minScale: neighborhoodsMinScale,
+        labelingInfo: [regionsLabelClass],
+        renderer: polygonFeatureRenderer,
+        title: "Neighborhoods",
+        outFields: ["*"],
+      });
+  
+      // Add all features layers to map
+      map.addMany([
+        neighborhoodsLayer,
+        regionsLayer,
+        countiesLayer,
+        clientFeatureLayer,
+        localitiesLayer,
+      ]);
+  
+      // Add widgets to view
+      //view.ui.components = [];
+  
+      for (let widget of document.getElementsByClassName("widget")) {
+        widget.style.opacity = "1";
+      }
+  
+    var ui = document.getElementsByClassName('ui-container');
+    for (let e of ui) {
+      view.ui.add(e);
+    }
+  
+      // Set localityLayerView to layerView when localities are selected (for highlight)
+      view.whenLayerView(localitiesLayer).then(function (layerView) {
+        localityLayerView = layerView;
+      });
 
-    localitiesLayer = new FeatureLayer({
-      url:
-        "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/LAU_Localities_View/FeatureServer",
-      renderer: localitiesRenderer,
-    });
-
-    countiesLayer = new FeatureLayer({
-      url:
-        "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/SoCal_Counties_View/FeatureServer",
-      maxScale: countiesMaxScale,
-      labelingInfo: [countiesLabelClass],
-      renderer: polygonFeatureRenderer,
-      title: "Counties",
-      outFields: ["*"],
-    });
-
-    regionsLayer = new FeatureLayer({
-      url:
-        "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/SoCal_Regions_(v2)_View/FeatureServer",
-      minScale: countiesMaxScale,
-      maxScale: regionsMaxScale,
-      labelingInfo: [regionsLabelClass],
-      renderer: polygonFeatureRenderer,
-      title: "Regions",
-      outFields: ["*"],
-    });
-
-    neighborhoodsLayer = new FeatureLayer({
-      url:
-        "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/SoCal_Neighborhoods_View/FeatureServer",
-      minScale: neighborhoodsMinScale,
-      labelingInfo: [regionsLabelClass],
-      renderer: polygonFeatureRenderer,
-      title: "Neighborhoods",
-      outFields: ["*"],
-    });
-
-    // Add all features layers to map
-    map.addMany([
-      neighborhoodsLayer,
-      regionsLayer,
-      countiesLayer,
-      clientFeatureLayer,
-      localitiesLayer,
-    ]);
-
-    // Add widgets to view
-    //view.ui.components = [];
-    view.ui.add("select-by-polygon", "top-right");
-    view.ui.add("return-to-extent", "top-right");
-    view.ui.add(zoomDiv, "bottom-right");
-    view.ui.add("widgetContainer", "top-left");
-
-    // Set localityLayerView to layerView when localities are selected (for highlight)
-    view.whenLayerView(localitiesLayer).then(function (layerView) {
-      localityLayerView = layerView;
-    });
-  }
+      view.when(function() {
+        setVisible('#viewDiv', true);
+        setVisible('#loading', false);
+      }).catch(function(error){
+        console.log("error: ", error);
+      });
+    
+  
+  
+    }
 });

@@ -1,160 +1,237 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <link rel="stylesheet" href="https://js.arcgis.com/4.18/esri/themes/light/main.css">
     <link rel="stylesheet" href="css/splide.min.css">
-    <link rel="stylesheet" href="css/styles.min.css">
-
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/4.18/esri/themes/light/main.css">
     <meta charset="utf-8" />
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
     <title>LAU Map Interactive (prototype)</title>
   </head>
   <body>
+    <div id="loading">
+    </div>
     <div id="viewDiv">
-      <div id="select-by-polygon" class="small-widget esri-widget--button esri-widget custom-widget esri-interactive" title="Select features by polygon">
-        <svg viewBox="0 0 40 40" id="draw-widget" class="widget-button absolute-position" 
-          <defs>
-            <linearGradient id="linear-gradient" x1="28.29" y1="31.32" x2="33.32" y2="31.32" gradientUnits="userSpaceOnUse">
-              <stop offset="0" stop-color="#444"/>
-              <stop offset="1" stop-color="#444"/>
-            </linearGradient>
-            <linearGradient id="linear-gradient-2" x1="15.83" y1="25.51" x2="39.58" y2="25.51"
-                            gradientTransform="matrix(1.3, 0.27, -0.24, 1.15, -5.05, -13.43)" 
-                            gradientUnits="userSpaceOnUse">
-              <stop offset="0" stop-color="#42afe5"/>
-              <stop offset="1" stop-color="#3fdcff"/>
-            </linearGradient>
-          </defs>
-          <path class="draw-path" class="draw-animation"
-                id = "brush-path" 
-                transform=translate(-3)
-                d="M 28.31,11.68c-1.13.64-2.72,1.36-3.85,2-2,1.19-4,2.41-6,3.69
-                    a 23.08,23.08,0,0,0-6.87,6.45
-                    A 5.75,5.75,0,0,0,10.52,27,3.29,3.29,0,0,0,12,29.61
-                    c 2.39,1.64,6.06,0,8-1.27,1-.69,1.69-1.25,2.49-1.88,1.3-1,2.62-2,4-3
-                    a 18.94,18.94,0,0,1,5.36-2.72,5.32,5.32,0,0,1,2.57-.15,3.9,3.9,0,0,1,
-                      1.68.89,3.28,3.28,0,0,1,1,1.62,3.2,3.2,0,0,1-.3, 2.17,6.43,6.43,0,0,
-                      1-2.45,2.49,40.41,40.41,0,0,1-3.75,1.8,27.59,27.59,0,0,0-4.67,2.35,
-                      2.76,2.76,0,0,0-1.22,1.89,2.4,2.4,0,0,0,1.92,2.4
-                    c 2.48.54,3.86-2.19,6.09-2.58,1.7-.3,2.59,1.29,3.38,2.38"/>
-
-        </svg>
-        <div id="widget-label" class="absolute-position">Draw</div>
-      </div>
-
-      <div id="return-to-extent" 
-        class="-widget esri-widget--button custom-widget esri-interactive esri-widget"
-        title="Return map to original extent">
-        <svg id="reset-widget" class= "widget-button" viewBox="0 0 43.18 48">
-          <defs>
-            <linearGradient id="linear-gradient" x1="28.61" y1="50.09" x2="28.39" y2="6.89" gradientUnits="userSpaceOnUse">
-              <stop offset="0" stop-color="#42afe5"/>
-              <stop offset="1" stop-color="#3fdcff"/>
-            </linearGradient>
-            <linearGradient id="linear-gradient-2" x1="29.16" y1="47.4" x2="28.94" y2="4.21" xlink:href="#linear-gradient"/>
-          </defs>
-          <path class="reset-path" 
-                d="M 47.52, 22 
-                    a 19.91, 19.91, 0, 0, 1, 1.07, 6.63 
-                    A 20.09, 20.09, 0, 1, 1, 21, 9.9, 23.19, 23.19, 0, 0, 1, 32.49, 8.61
-                    a 16.55, 16.55, 0, 0, 1, 7.45, 3" 
-                transform="translate(-6.91 -2.65)"/>
-          <polygon class="reset-arrowhead" points="23.81 12.36 23.49 10.59 32.23 9.04 30.05 0.44 31.8 0 34.45 10.48 23.81 12.36" transform="translate(1, 0.2)"/>
-        </svg> 
-        <div id="widget-label" class="absolute-position">Reset</div>
-      </div>
-
-      <div id="zoomDiv">
-        <div id="zoom-in" 
-        class="zoom custom-widget esri-widget--button custom-widget esri-interactive esri-widget"
-        title="Zoom in">
-     <span aria-hidden="true" role="presentation" class="esri-icon esri-icon-plus"></span>
-   </div>
-
-   <div id="zoom-out" 
-        class="zoom custom-widget esri-widget--button custom-widget esri-interactive esri-widget"
-        title="Zoom out">
-     <span aria-hidden="true" role="presentation" class="esri-icon esri-icon-minus"></span>
-   </div>
-
-      </div>
-
-      <div id="widgetContainer" class="widget-container">
-        <div id="infoDiv" class="large-widget transition">
-          <div id="noFossilsInfo">
-            <h1 class="panel--header">No fossil sites </br> were found in  this area.</h1>
-              <p>
-              Just because the museum hasn't collected in this area doesn't mean there aren't fossils.
-              Try tapping on another area! 
-            </p>
-          </div>
-          <div id="taxaInfo" class="title">
-            <div id="taxaText" class="panel--header"><h1 id="featureCount" class="odometer"></h1><h1 id="featureText"></h1></div>
-            <div id="outer-count-container">
-              <div class="inner-count-container">
-                <svg class="count-svg"xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 122 122">
-                  <defs>
-                    <filter id="shadow">
-                      <feDropShadow dx="0" dy="0" stdDeviation="2" flood-opacity= "0.33"/>
-                    </filter>
-                    <style>
-                      .circle {
-                        fill:url('#linear-gradient');
-                        filter: url(#shadow);
-                      }
-                      .shell{
-                        fill: black;
-                      }
-                   </style>
-                  </defs>
-                    <circle class="circle" cx="61" cy="61" r="48.45"/>
-                    <path class="shell" d="M56.75,47.78c0-.51.06-1,.15-1.44a5.19,5.19,0,0,1,4.54-4.13,10.8,10.8,0,0,1,4.37.36c.81-3.18,3.16-3.44,5.88-3.06.39-2.83,2.34-3.16,4.65-2.85.54-2,2-2.53,4.27-2.16a2.89,2.89,0,0,1,1.79-1.66,14.35,14.35,0,0,1,4.29-1c-.09,2.15-.6,5.31-2.36,6,.28,2.22-.23,3-2.35,3.65a3.82,3.82,0,0,1-.17,3.17,3.35,3.35,0,0,1-2.87,1.41,4.68,4.68,0,0,1-.38,3.58,4.12,4.12,0,0,1-3.16,1.72,7,7,0,0,1-.05,4.81,5.2,5.2,0,0,1-3.73,2.93c.16.63.36,1.23.47,1.84A5.23,5.23,0,0,1,70.43,66,15.18,15.18,0,0,1,68,67.8,3.14,3.14,0,0,1,65,68c-.27-.12-.53-.24-.81-.35-.17.87-.29,1.7-.51,2.51a7.18,7.18,0,0,1-5.52,5.22c-2.09.54-4.22,1-6.36,1.29a39.2,39.2,0,0,0-12.62,3.74.68.68,0,0,1-.2.07l-.07-.15c1.39-.77,2.76-1.57,4.17-2.3A47.25,47.25,0,0,1,54.46,74.3a28,28,0,0,0,3.58-1,5,5,0,0,0,3.54-4.46,20.33,20.33,0,0,0,.1-3.82c-.21-2.51-1.8-3.57-4.23-3a15.88,15.88,0,0,0-5.19,2.62,67.27,67.27,0,0,0-12.15,11.2c-2.23,2.57-4.26,5.32-6.38,8l-.25.3-.17,0c.13-1.16.21-2.33.4-3.48a27.59,27.59,0,0,1,5-11.44c1.68-2.41,3.4-4.8,5-7.26a17.77,17.77,0,0,0,2.53-8.4c.38-4.57,3.5-6.43,7.58-6.16C54.75,47.45,55.72,47.64,56.75,47.78Z" transform="translate(1 3)"/>
-                </svg>
-                <div class="taxa-count" id="invertCount"></div>
+        <div class="card instructions">
+          <h2>Tap on an area of the map to learn about what 
+            fossils the museum has found there!</h2>
+        </div>
+        <div class="ui-container ui-top-left">
+          <div class="card">
+            <div class="card__menu">
+              <div class="button__outer-container">
+                <div class="button__inner-container">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="button__svg feather feather-map-pin" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" >
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle>
+                  </svg>
+                  
+                  <button ripple="ripple" class="button button--active hvr-grow-shadow menu__button" id="locationButton"></button>
+                </div>
+                
+                <div class="button__caption button__caption--active" id="locationButtonCaption"><p>Location</p></div>
               </div>
-              <div class="inner-count-container">
-                <svg id="vert-svg" class="count-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 122 122">
-                  <defs>
-                    <filter id="shadow">
-                      <feDropShadow dx="0" dy="0" stdDeviation="2" flood-opacity= "0.33"/>
-                    </filter>
-                    <radialGradient id="linear-gradient" x1="15.83" y1="25.51" x2="39.58" y2="25.51"
-                                    gradientTransform="matrix(1.3, 0.27, -0.24, 1.15, -5.05, -13.43)" 
-                                    gradientUnits="userSpaceOnUse">
-                      <stop offset="0" stop-color="#42afe5"/>
-                      <stop offset="1" stop-color="#3fdcff"/>
-                  </radialGradient>
-                    <style>
-                      .circle {
-                        fill: url('#linear-gradient')
-                      }
-                   </style>
-                  </defs>
-                  <circle class="circle" cx="61" cy="61" r="48.45"/>
-                  <path id="whale-icon" d="M30.63,73.48c.26-1.2.44-2.43.79-3.61.49-1.64,1.12-3.25,1.65-4.88a1.89,1.89,0,0,0,0-1.08c-1.17-3.35-1-6.54,1.1-9.49.68-.93,1.08-.89,1.79,0,.48.62,1,1.22,1.56,1.91.78-1.15,1.41-2.13,2.1-3.07,1.5-2,3-4,4.55-6a7.16,7.16,0,0,0,1.6-5c-.13-2.9-.23-5.79-.29-8.69A5.59,5.59,0,0,1,47.36,29a5.7,5.7,0,0,1,1.1-.7c.7-.34,1-.21,1.09.55.24,1.4.36,2.83.66,4.21a20.7,20.7,0,0,0,1.13,3.61c1.13,2.69,2.43,3.33,5.32,2.88A49.44,49.44,0,0,1,68.75,39,26.64,26.64,0,0,1,84.62,46a53.35,53.35,0,0,1,8.09,9.28,5.3,5.3,0,0,0,2.6,2c3.9,1.48,5.8,4.39,5.91,8.51a11.21,11.21,0,0,1-.26,1.73l-.55-.69a6.63,6.63,0,0,0-4.94-2.5,9,9,0,0,0-1,0c-1.57.09-1.84,0-2.72-1.25,0,0-.11,0-.12,0a2.77,2.77,0,0,1-2.48,1.64,9.54,9.54,0,0,0-2.57.93c-.37.2-.58.72-.87,1.09-.13.17-.27.44-.43.45s-.39-.2-.5-.38a4.12,4.12,0,0,1,.38-5.21c.61-.72,1.35-1.33,1.92-2.07a14.45,14.45,0,0,0,1.18-2.06.6.6,0,0,0-.26-.88,38.15,38.15,0,0,0-4.34-2.37A12,12,0,0,0,72,55.55a49,49,0,0,0-4.07,3A17,17,0,0,1,63.71,61a.69.69,0,0,0-.38.33h1.82c1.95,0,3.89-.11,5.84-.11,1.05,0,1.28.42.87,1.42a11.74,11.74,0,0,1-5,5.58,20.11,20.11,0,0,1-11.7,2.94,1.41,1.41,0,0,0-1,.34,25.16,25.16,0,0,1-6.29,5.1c-2.75,1.56-5.52,3.11-8.27,4.68a17.19,17.19,0,0,0-1.59,1.09,6.29,6.29,0,0,1-3.28,1.14,3.52,3.52,0,0,1-3.56-3c-.18-1.37-.29-2.74-.43-4.11,0-.25-.1-.49-.15-.74Z" transform="translate(1 3)"/>
-                </svg>
-                <div class="taxa-count" id="vertCount"></div>
-
+              <div class="button__outer-container">
+                <div class="button__inner-container">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="button__svg feather feather-archive" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="21 8 21 21 3 21 3 8"></polyline><rect x="1" y="3" width="22" height="5"></rect><line x1="10" y1="12" x2="14" y2="12"></line>
+                  </svg>
+                  <button ripple="ripple" class="button hvr-grow-shadow menu__button" id="collectionButton"></button>
+                </div>
+                
+                <div class="button__caption" id="collectionButtonCaption"><p>Collection</p></div>
+              </div>
+            </div>
+            <div id="location" class="card__container">
+              <div id="locationTitle"class="card__flex-item card__title">
+                <h1 id="featureName">San Bernadino County</h1>
+                <h2 id="excavationNumber">2,000 excavation sites</h2>
+              </div>
+              <div class="taxa card__flex-item">
+                <h3>225 fossils found</h3>
+                <div class="taxa__grid">
+                  <div class="taxa__cell"><div class="taxa__icon"></div><p>16,487 Clams, oysters</p></div>
+                  <div class="taxa__cell"><div class="taxa__icon"></div><p>21, 586 Snails</p></div>
+                  <div class="taxa__cell"><div class="taxa__icon"></div><p>379 Cephalopods</p></div>
+                  <div class="taxa__cell"><div class="taxa__icon"></div><p>857 Crustaceans</p></div>
+                  <div class="taxa__cell"><div class="taxa__icon"></div><p>504 Insects</p></div>
+                  <div class="taxa__cell"><div class="taxa__icon"></div><p>459 Sea urchins</p></div>
+                  <div class="taxa__cell"><div class="taxa__icon"></div><p>379 Cephalopods</p></div>
+                  <div class="taxa__cell"><div class="taxa__icon"></div><p>103 Bryozoans</p></div>
+                  <div class="taxa__cell"><div class="taxa__icon"></div><p>27 Fish</p></div>
+                  <div class="taxa__cell"><div class="taxa__icon"></div><p>12 Whales, dolphins</p></div>
+                  <div class="taxa__cell"><div class="taxa__icon"></div><p>6 Birds</p></div>
+                  <div class="taxa__cell"><div class="taxa__icon"></div><p>5 Sharks</p></div>
+                  <div class="taxa__cell"><div class="taxa__icon"></div><p>4 Walruses, seals</p></div>
+                  <div class="taxa__cell"><div class="taxa__icon"></div><p>2 Manatees, dugongs</p></div>
+                </div>
+              </div>
+              <div class="seperator card__flex-item"></div>
+              <div class="underwater__container card__flex-item">
+                <div class="underwater__icon">
+                  <svg aria-hidden="true" class="underwater__svg" focusable="false" data-prefix="fas" data-icon="water" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
+                    <path fill="url(#linear-gradient)"class="button-svg__path" d="M562.1 383.9c-21.5-2.4-42.1-10.5-57.9-22.9-14.1-11.1-34.2-11.3-48.2 0-37.9 30.4-107.2 30.4-145.7-1.5-13.5-11.2-33-9.1-46.7 1.8-38 30.1-106.9 30-145.2-1.7-13.5-11.2-33.3-8.9-47.1 2-15.5 12.2-36 20.1-57.7 22.4-7.9.8-13.6 7.8-13.6 15.7v32.2c0 9.1 7.6 16.8 16.7 16 28.8-2.5 56.1-11.4 79.4-25.9 56.5 34.6 137 34.1 192 0 56.5 34.6 137 34.1 192 0 23.3 14.2 50.9 23.3 79.1 25.8 9.1.8 16.7-6.9 16.7-16v-31.6c.1-8-5.7-15.4-13.8-16.3zm0-144c-21.5-2.4-42.1-10.5-57.9-22.9-14.1-11.1-34.2-11.3-48.2 0-37.9 30.4-107.2 30.4-145.7-1.5-13.5-11.2-33-9.1-46.7 1.8-38 30.1-106.9 30-145.2-1.7-13.5-11.2-33.3-8.9-47.1 2-15.5 12.2-36 20.1-57.7 22.4-7.9.8-13.6 7.8-13.6 15.7v32.2c0 9.1 7.6 16.8 16.7 16 28.8-2.5 56.1-11.4 79.4-25.9 56.5 34.6 137 34.1 192 0 56.5 34.6 137 34.1 192 0 23.3 14.2 50.9 23.3 79.1 25.8 9.1.8 16.7-6.9 16.7-16v-31.6c.1-8-5.7-15.4-13.8-16.3zm0-144C540.6 93.4 520 85.4 504.2 73 490.1 61.9 470 61.7 456 73c-37.9 30.4-107.2 30.4-145.7-1.5-13.5-11.2-33-9.1-46.7 1.8-38 30.1-106.9 30-145.2-1.7-13.5-11.2-33.3-8.9-47.1 2-15.5 12.2-36 20.1-57.7 22.4-7.9.8-13.6 7.8-13.6 15.7v32.2c0 9.1 7.6 16.8 16.7 16 28.8-2.5 56.1-11.4 79.4-25.9 56.5 34.6 137 34.1 192 0 56.5 34.6 137 34.1 192 0 23.3 14.2 50.9 23.3 79.1 25.8 9.1.8 16.7-6.9 16.7-16v-31.6c.1-8-5.7-15.4-13.8-16.3z"></path>
+                  </svg>
+                </div>
+                <div class="underwater-text__container">
+                  <h4>San Bernadino County</br>
+                   was last underwater</br>
+                   <strong id="yearsUnderwater">12,000 years ago</strong></h4>
+                </div>
+              </div>
+            </div>
+            <div  id="collection" class="card__container hidden">
+              <div id="collectionTitle"class="card__flex-item card__title">
+                <h1>San Bernadino County</h1>
+                <div id="documentedFossilNumber">
+                  <h2> 13 documented fossils</h2>
+                </div>
+              </div>
+              <div id="sliderDiv" class="card__flex-item">
+                <h3 class="card__header">Swipe to see local fossils!</h3>
+                <div class="splide">
+                  <div class="splide__track">
+                    <ul class="splide__list">
+                    </ul>
+                  </div>
+                </div>  
+              </div>
+              <div class="seperator card__flex-item"></div>
+              <div id="timeDiv" class="timescale card__flex-item">
+                <h3>Fossil age</h3>
+                <div id="timeText" class="card-header__container--2">
+                  <h1 id="timeText" class="card__header"></h1>
+                  <h1 id="timeRange" class="card__header"></h1>
+                </div>
+                <div class="timescale__container">
+                  <div id="indicator" class="indicator">
+                    <div class="indicator__tick"></div>
+                    <div class="indicator__line"></div>
+                    <div class="indicator__tick"></div>
+                  </div>
+                  <div class= "timescale__bar cretaceous"></div>
+                  <div class= "timescale__bar paleogene"></div>
+                  <div class= "timescale__bar neogene"></div>
+                  <div class= "timescale__bar holocene"></div>
+                  <div class="timescale__age holocene__age">
+                    2.6 million </br> years ago
+                  </div>
+                  <div class="timescale__age neogene__age">
+                    20 million </br> years ago
+                  </div>
+                  <div class="timescale__age paleogene__age">
+                    66 million </br> years ago
+                  </div>
+                  <div class="timescale__age cretaceous__age">
+                    100 million </br> years ago
+                  </div>
+                  
+                </div>
+                <div class = "timescale-legend"> 
+                  <div class="timescale-legend__item">
+                    <div class="timescale-legend-circle" id="cretaceous-circle"></div>
+                    <p class= "timescale-legend__text">Late Cretaceous</p>
+                  </div>
+                  <div class="timescale-legend__item">
+                    <div class="timescale-legend-circle" id="paleogene-circle"></div>
+                    <p class= "timescale-legend__text">Paleogene</p>
+                  </div>
+                  <div class="timescale-legend__item">
+                    <div class="timescale-legend-circle" id="neogene-circle"></div>
+                    <p class="timescale-legend__text">Neogene</p>
+                  </div>
+                  <div class="timescale-legend__item">
+                    <div class="timescale-legend-circle" id="recent-circle"></div>
+                    <p class="timescale-legend__text">Recent</p>
+                  </div>
+              </div>
               </div>
             </div>
           </div>
-
-        </div>
-        <div id="sliderDiv" class="splide transition large-widget">
-          <h1 class="panel--header">Swipe to see local fossils!</h1>
-          <div class="splide__track">
-            <ul class="splide__list">
-            </ul>
+          <div class="card legend">
+            <div class="legend__flex-item locality-indicator">
+              <div class="legend__circle legend__circle--locality"></div>
+              <h3 class="legend__text"> Collection event</h3>
+            </div>
+            <div class="legend__flex-item photo-indicator">
+              <div class="legend__circle legend__circle--photo"></div>
+              <h3 class="legend__text"> Selected fossil</h3>
+            </div> 
           </div>
-
         </div>
-        <div id="noFossilsDiv" class="transition large-widget"><h1>No fossils were found in </br> this area.</h1></div>
-      </div>
-
-
+        <div class="ui-container ui-top-right">
+          <button id="resetWidget" ripple = "ripple" class="widget reset-widget hvr-grow-shadow" title="Return map to original extent">
+            <svg id="resetSvg" class= "widget__svg reset-widget__svg reset-widget__animation" viewBox="0 0 43.18 48">
+              <defs>
+                <linearGradient id="linear-gradient" x1="28.61" y1="50.09" x2="28.39" y2="6.89" gradientUnits="userSpaceOnUse">
+                  <stop offset="0" stop-color="#42afe5"/>
+                  <stop offset="1" stop-color="#3fdcff"/>
+                </linearGradient>
+                <linearGradient id="linear-gradient-2" x1="29.16" y1="47.4" x2="28.94" y2="4.21" xlink:href="#linear-gradient"/>
+              </defs>
+              <path class="reset-widget__path" 
+                    d="M 47.52, 22 
+                        a 19.91, 19.91, 0, 0, 1, 1.07, 6.63 
+                        A 20.09, 20.09, 0, 1, 1, 21, 9.9, 23.19, 23.19, 0, 0, 1, 32.49, 8.61
+                        a 16.55, 16.55, 0, 0, 1, 7.45, 3" 
+                    transform="translate(-6.91 -2.65)"/>
+              <polygon class="reset-widget__arrowhead" points="23.81 12.36 23.49 10.59 32.23 9.04 30.05 0.44 31.8 0 34.45 10.48 23.81 12.36" transform="translate(1, 0.2)"/>
+            </svg> 
+            <div class="widget__label">Reset</div>
+          </button>
+          <button id="drawWidget" ripple = "ripple" class="widget draw-widget hvr-grow-shadow" title="Select features by polygon">
+            <svg viewBox="0 0 40 40" class="draw-widget__svg widget_svg" 
+              <defs>
+                <linearGradient id="linear-gradient" x1="28.29" y1="31.32" x2="33.32" y2="31.32" gradientUnits="userSpaceOnUse">
+                  <stop offset="0" stop-color="#444"/>
+                  <stop offset="1" stop-color="#444"/>
+                </linearGradient>
+                <linearGradient id="linear-gradient-2" x1="15.83" y1="25.51" x2="39.58" y2="25.51"
+                                gradientTransform="matrix(1.3, 0.27, -0.24, 1.15, -5.05, -13.43)" 
+                                gradientUnits="userSpaceOnUse">
+                  <stop offset="0" stop-color="#42afe5"/>  
+                  <stop offset="1" stop-color="#3fdcff"/>
+                </linearGradient>
+              </defs>
+              <path class="draw-widget__path draw-widget__animation"
+                    id = "drawPath" 
+                    transform=translate(-3)
+                    d="M 28.31,11.68c-1.13.64-2.72,1.36-3.85,2-2,1.19-4,2.41-6,3.69
+                        a 23.08,23.08,0,0,0-6.87,6.45
+                        A 5.75,5.75,0,0,0,10.52,27,3.29,3.29,0,0,0,12,29.61
+                        c 2.39,1.64,6.06,0,8-1.27,1-.69,1.69-1.25,2.49-1.88,1.3-1,2.62-2,4-3
+                        a 18.94,18.94,0,0,1,5.36-2.72,5.32,5.32,0,0,1,2.57-.15,3.9,3.9,0,0,1,
+                          1.68.89,3.28,3.28,0,0,1,1,1.62,3.2,3.2,0,0,1-.3, 2.17,6.43,6.43,0,0,
+                          1-2.45,2.49,40.41,40.41,0,0,1-3.75,1.8,27.59,27.59,0,0,0-4.67,2.35,
+                          2.76,2.76,0,0,0-1.22,1.89,2.4,2.4,0,0,0,1.92,2.4
+                        c 2.48.54,3.86-2.19,6.09-2.58,1.7-.3,2.59,1.29,3.38,2.38"/>
+            </svg>
+            <div class="absolute-position widget__label">Draw</div>
+          </button>
+          <div class="switch__container">
+            <label class="switch" >
+              <input type="checkbox" id="languageSwitch">
+              <span class="slider hvr-grow-shadow round"></span>
+            </label>
+            <p id="languageLabel">English</p>
+          </div>
+    
+    
+        </div>
+        <div class="ui-container ui-bottom-right">
+          <button id="zoomIn" 
+          class="zoom widget hvr-grow-shadow"
+          ripple = "ripple"
+          title="Zoom in">
+        </button>
+          <button id="zoomOut" 
+          class="zoom widget hvr-grow-shadow"
+          ripple = "ripple"
+          title="Zoom out">
+          </button>
+        </div>
     </div>
     <script src="https://js.arcgis.com/4.17/"></script>
     <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@latest/dist/js/splide.min.js"></script>
-    <script type="module" src="js/app.min.js"></script>
+    <script type="module" src="js/app.js"></script>
   </body>
 </html>
