@@ -28,7 +28,7 @@ body {
 .ui-top-left {
   top: 0;
   left: -100%;
-  transition: left 0.7s ease-out;
+  transition: left 650ms ease-out;
 }
 
 .ui-top-right {
@@ -216,6 +216,13 @@ p {
   margin: 0;
 }
 
+.instructions__container {
+  height: 100vh;
+  width: 100vw;
+  position: absolute;
+  z-index: 10000;
+}
+
 .instructions {
   position: absolute;
   display: flex;
@@ -231,6 +238,8 @@ p {
   box-sizing: border-box;
   padding: 0rem 3rem 0rem 3rem;
   line-height: 3rem;
+  opacity: 0;
+  transition: top 359ms ease-in;
 }
 
 .taxa__grid {
@@ -265,7 +274,7 @@ p {
   align-items: center;
   justify-content: center;
   text-align: left;
-  line-height: 1.85rem;
+  line-height: 1.95rem;
 }
 
 .underwater__icon {
@@ -348,8 +357,8 @@ img {
 .indicator {
   position: absolute;
   bottom: 120%;
-  right: 2.6%;
-  width: 20rem;
+  right: 2%;
+  width: 5rem;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -358,7 +367,7 @@ img {
 
 .indicator__line {
   width: 100%;
-  height: 4px;
+  height: 5px;
   border-radius: 20px;
   background-color: grey;
   transition: width 1s ease-out;
@@ -828,7 +837,8 @@ input:checked + .slider:before {
 }
 
 #viewDiv {
-  visibility: hidden;
+  opacity: 0;
+  transition: opacity 1000ms;
 }
 
 @supports ((-webkit-backdrop-filter: none) or (backdrop-filter: none)) {
@@ -844,7 +854,7 @@ input:checked + .slider:before {
     background-color: rgba(255, 255, 255, 0.75);
   }
 }
-@media only screen and (max-height: 775px) {
+@media only screen and (max-height: 850px) {
   html {
     font-size: calc(.2vmin + 6px);
   }
@@ -853,9 +863,9 @@ input:checked + .slider:before {
     font-size: 1.5rem;
   }
 }
-@media only screen and (max-height: 675px) {
+@media only screen and (max-height: 700px) {
   html {
-    font-size: calc(.2vmin + 5px);
+    font-size: calc(.2vmin + 4.5px);
   }
 
   .widget {

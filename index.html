@@ -2,7 +2,7 @@
 <html>
   <head>
     <link rel="stylesheet" href="css/splide.min.css">
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/styles.min.css">
     <link rel="stylesheet" href="https://js.arcgis.com/4.18/esri/themes/light/main.css">
     <meta charset="utf-8" />
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
@@ -11,240 +11,242 @@
   <body>
     <div id="loading">
     </div>
+    <div class="instructions__container">
+      <div class="card instructions">
+        <h2>Tap on an area of the map to learn about what 
+          fossils the museum has found there!</h2>
+      </div>
+    </div>
     <div id="viewDiv">
-        <div class="card instructions">
-          <h2>Tap on an area of the map to learn about what 
-            fossils the museum has found there!</h2>
-        </div>
-        <div class="ui-container ui-top-left" id="infoCard">
-          <div class="card info-card__card">
-            <div class="card__menu">
-              <div class="button__outer-container">
-                <div class="button__inner-container">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="button__svg feather feather-map-pin" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" >
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle>
-                  </svg>
-                  
-                  <button ripple="ripple" class="button button--active hvr-grow-shadow menu__button" id="locationButton"></button>
-                </div>
+      <div class="ui-container ui-top-left" id="infoCard">
+        <div class="card info-card__card">
+          <div class="card__menu">
+            <div class="button__outer-container">
+              <div class="button__inner-container">
+                <svg xmlns="http://www.w3.org/2000/svg" class="button__svg feather feather-map-pin" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" >
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle>
+                </svg>
                 
-                <div class="button__caption button__caption--active" id="locationButtonCaption"><p>Location</p></div>
+                <button ripple="ripple" class="button button--active hvr-grow-shadow menu__button" id="locationButton"></button>
               </div>
-              <div class="button__outer-container">
-                <div class="button__inner-container">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="button__svg feather feather-archive" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="21 8 21 21 3 21 3 8"></polyline><rect x="1" y="3" width="22" height="5"></rect><line x1="10" y1="12" x2="14" y2="12"></line>
-                  </svg>
-                  <button ripple="ripple" class="button hvr-grow-shadow menu__button" id="collectionButton"></button>
-                </div>
-                
-                <div class="button__caption" id="collectionButtonCaption"><p>Collection</p></div>
+              
+              <div class="button__caption button__caption--active" id="locationButtonCaption"><p>Location</p></div>
+            </div>
+            <div class="button__outer-container">
+              <div class="button__inner-container">
+                <svg xmlns="http://www.w3.org/2000/svg" class="button__svg feather feather-archive" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="21 8 21 21 3 21 3 8"></polyline><rect x="1" y="3" width="22" height="5"></rect><line x1="10" y1="12" x2="14" y2="12"></line>
+                </svg>
+                <button ripple="ripple" class="button hvr-grow-shadow menu__button" id="collectionButton"></button>
+              </div>
+              
+              <div class="button__caption" id="collectionButtonCaption"><p>Collection</p></div>
+            </div>
+          </div>
+          <div id="location" class="card__container">
+            <div id="locationTitle"class="card__flex-item card__title">
+              <h1 class="featureName">San Bernadino County</h1>
+              <h2 id="excavationNumber">2,000 excavation sites</h2>
+            </div>
+            <div class="taxa card__flex-item taxa--info">
+              <h3>225 fossils found</h3>
+              <div class="taxa__grid">
               </div>
             </div>
-            <div id="location" class="card__container">
-              <div id="locationTitle"class="card__flex-item card__title">
-                <h1 class="featureName">San Bernadino County</h1>
-                <h2 id="excavationNumber">2,000 excavation sites</h2>
+            <div class="taxa card__flex-item taxa--null">
+              <h3>Try selecting a different area on the map!</h3>
+              <h4>The museum currently does not have information on the kinds of fossils
+                found here, but is always learning about fossils from around Southern California.</h4>
+            </div>
+            <div class="seperator card__flex-item"></div>
+            <div class="underwater__container card__flex-item">
+              <div class="underwater__icon">
+                <svg aria-hidden="true" class="underwater__svg" focusable="false" data-prefix="fas" data-icon="water" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
+                  <path fill="url(#linear-gradient)"class="button-svg__path" d="M562.1 383.9c-21.5-2.4-42.1-10.5-57.9-22.9-14.1-11.1-34.2-11.3-48.2 0-37.9 30.4-107.2 30.4-145.7-1.5-13.5-11.2-33-9.1-46.7 1.8-38 30.1-106.9 30-145.2-1.7-13.5-11.2-33.3-8.9-47.1 2-15.5 12.2-36 20.1-57.7 22.4-7.9.8-13.6 7.8-13.6 15.7v32.2c0 9.1 7.6 16.8 16.7 16 28.8-2.5 56.1-11.4 79.4-25.9 56.5 34.6 137 34.1 192 0 56.5 34.6 137 34.1 192 0 23.3 14.2 50.9 23.3 79.1 25.8 9.1.8 16.7-6.9 16.7-16v-31.6c.1-8-5.7-15.4-13.8-16.3zm0-144c-21.5-2.4-42.1-10.5-57.9-22.9-14.1-11.1-34.2-11.3-48.2 0-37.9 30.4-107.2 30.4-145.7-1.5-13.5-11.2-33-9.1-46.7 1.8-38 30.1-106.9 30-145.2-1.7-13.5-11.2-33.3-8.9-47.1 2-15.5 12.2-36 20.1-57.7 22.4-7.9.8-13.6 7.8-13.6 15.7v32.2c0 9.1 7.6 16.8 16.7 16 28.8-2.5 56.1-11.4 79.4-25.9 56.5 34.6 137 34.1 192 0 56.5 34.6 137 34.1 192 0 23.3 14.2 50.9 23.3 79.1 25.8 9.1.8 16.7-6.9 16.7-16v-31.6c.1-8-5.7-15.4-13.8-16.3zm0-144C540.6 93.4 520 85.4 504.2 73 490.1 61.9 470 61.7 456 73c-37.9 30.4-107.2 30.4-145.7-1.5-13.5-11.2-33-9.1-46.7 1.8-38 30.1-106.9 30-145.2-1.7-13.5-11.2-33.3-8.9-47.1 2-15.5 12.2-36 20.1-57.7 22.4-7.9.8-13.6 7.8-13.6 15.7v32.2c0 9.1 7.6 16.8 16.7 16 28.8-2.5 56.1-11.4 79.4-25.9 56.5 34.6 137 34.1 192 0 56.5 34.6 137 34.1 192 0 23.3 14.2 50.9 23.3 79.1 25.8 9.1.8 16.7-6.9 16.7-16v-31.6c.1-8-5.7-15.4-13.8-16.3z"></path>
+                </svg>
               </div>
-              <div class="taxa card__flex-item taxa--info">
-                <h3>225 fossils found</h3>
-                <div class="taxa__grid">
-                </div>
+              <div class="underwater-text__container">
+                <h4><div class="featureName">San Bernadino County</div>
+                  was last underwater</br>
+                  <strong id="yearsUnderwater">12,000 years ago</strong></h4>
               </div>
-              <div class="taxa card__flex-item taxa--null">
-                <h3>Try selecting a different area on the map!</h3>
-                <h4>The museum currently does not have information on the kinds of fossils
-                  found here, but is always learning about fossils from around Southern California.</h4>
+            </div>
+          </div>
+          <div  id="collection" class="card__container">
+            <div id="collectionTitle"class="card__flex-item card__title">
+              <h1 class="featureName">San Bernadino County</h1>
+              <div id="documentedFossilNumber">
+                <h2><span id="attachmentCount">13</span> photographed fossils</h2>
+              </div>
+            </div>
+            <div class="collection--info card__container">
+              <div id="sliderDiv" class="card__flex-item">
+                <h3 class="card__header">Swipe to see local fossils!</h3>
+                <div class="splide">
+                  <div class="splide__track">
+                    <ul class="splide__list">
+                    </ul>
+                  </div>
+                </div>  
               </div>
               <div class="seperator card__flex-item"></div>
-              <div class="underwater__container card__flex-item">
-                <div class="underwater__icon">
-                  <svg aria-hidden="true" class="underwater__svg" focusable="false" data-prefix="fas" data-icon="water" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
-                    <path fill="url(#linear-gradient)"class="button-svg__path" d="M562.1 383.9c-21.5-2.4-42.1-10.5-57.9-22.9-14.1-11.1-34.2-11.3-48.2 0-37.9 30.4-107.2 30.4-145.7-1.5-13.5-11.2-33-9.1-46.7 1.8-38 30.1-106.9 30-145.2-1.7-13.5-11.2-33.3-8.9-47.1 2-15.5 12.2-36 20.1-57.7 22.4-7.9.8-13.6 7.8-13.6 15.7v32.2c0 9.1 7.6 16.8 16.7 16 28.8-2.5 56.1-11.4 79.4-25.9 56.5 34.6 137 34.1 192 0 56.5 34.6 137 34.1 192 0 23.3 14.2 50.9 23.3 79.1 25.8 9.1.8 16.7-6.9 16.7-16v-31.6c.1-8-5.7-15.4-13.8-16.3zm0-144c-21.5-2.4-42.1-10.5-57.9-22.9-14.1-11.1-34.2-11.3-48.2 0-37.9 30.4-107.2 30.4-145.7-1.5-13.5-11.2-33-9.1-46.7 1.8-38 30.1-106.9 30-145.2-1.7-13.5-11.2-33.3-8.9-47.1 2-15.5 12.2-36 20.1-57.7 22.4-7.9.8-13.6 7.8-13.6 15.7v32.2c0 9.1 7.6 16.8 16.7 16 28.8-2.5 56.1-11.4 79.4-25.9 56.5 34.6 137 34.1 192 0 56.5 34.6 137 34.1 192 0 23.3 14.2 50.9 23.3 79.1 25.8 9.1.8 16.7-6.9 16.7-16v-31.6c.1-8-5.7-15.4-13.8-16.3zm0-144C540.6 93.4 520 85.4 504.2 73 490.1 61.9 470 61.7 456 73c-37.9 30.4-107.2 30.4-145.7-1.5-13.5-11.2-33-9.1-46.7 1.8-38 30.1-106.9 30-145.2-1.7-13.5-11.2-33.3-8.9-47.1 2-15.5 12.2-36 20.1-57.7 22.4-7.9.8-13.6 7.8-13.6 15.7v32.2c0 9.1 7.6 16.8 16.7 16 28.8-2.5 56.1-11.4 79.4-25.9 56.5 34.6 137 34.1 192 0 56.5 34.6 137 34.1 192 0 23.3 14.2 50.9 23.3 79.1 25.8 9.1.8 16.7-6.9 16.7-16v-31.6c.1-8-5.7-15.4-13.8-16.3z"></path>
-                  </svg>
+              <div id="timeDiv" class="timescale card__flex-item">
+                <h3>Fossil age</h3>
+                <div id="timeText" class="card-header__container--2">
+                  <h1 id="timeText" class="card__header"></h1>
+                  <h1 id="timeRange" class="card__header"></h1>
                 </div>
-                <div class="underwater-text__container">
-                  <h4>San Bernadino County</br>
-                   was last underwater</br>
-                   <strong id="yearsUnderwater">12,000 years ago</strong></h4>
-                </div>
-              </div>
-            </div>
-            <div  id="collection" class="card__container">
-              <div id="collectionTitle"class="card__flex-item card__title">
-                <h1>San Bernadino County</h1>
-                <div id="documentedFossilNumber">
-                  <h2> 13 documented fossils</h2>
-                </div>
-              </div>
-              <div class="collection--info card__container">
-                <div id="sliderDiv" class="card__flex-item">
-                  <h3 class="card__header">Swipe to see local fossils!</h3>
-                  <div class="splide">
-                    <div class="splide__track">
-                      <ul class="splide__list">
-                      </ul>
-                    </div>
-                  </div>  
-                </div>
-                <div class="seperator card__flex-item"></div>
-                <div id="timeDiv" class="timescale card__flex-item">
-                  <h3>Fossil age</h3>
-                  <div id="timeText" class="card-header__container--2">
-                    <h1 id="timeText" class="card__header"></h1>
-                    <h1 id="timeRange" class="card__header"></h1>
+                <div class="timescale__container">
+                  <div id="indicator" class="indicator">
+                    <div class="indicator__tick"></div>
+                    <div class="indicator__line"></div>
+                    <div class="indicator__tick"></div>
                   </div>
-                  <div class="timescale__container">
-                    <div id="indicator" class="indicator">
-                      <div class="indicator__tick"></div>
-                      <div class="indicator__line"></div>
-                      <div class="indicator__tick"></div>
-                    </div>
-                    <div class= "timescale__bar cretaceous"></div>
-                    <div class= "timescale__bar paleogene"></div>
-                    <div class= "timescale__bar neogene"></div>
-                    <div class= "timescale__bar holocene"></div>
-                    <div class="timescale__age holocene__age">
-                      2.6 million </br> years ago
-                    </div>
-                    <div class="timescale__age neogene__age">
-                      20 million </br> years ago
-                    </div>
-                    <div class="timescale__age paleogene__age">
-                      66 million </br> years ago
-                    </div>
-                    <div class="timescale__age cretaceous__age">
-                      100 million </br> years ago
-                    </div>
-                    
+                  <div class= "timescale__bar cretaceous"></div>
+                  <div class= "timescale__bar paleogene"></div>
+                  <div class= "timescale__bar neogene"></div>
+                  <div class= "timescale__bar holocene"></div>
+                  <div class="timescale__age holocene__age">
+                    2.6 million </br> years ago
                   </div>
-                  <div class = "timescale-legend"> 
-                    <div class="timescale-legend__item">
-                      <div class="timescale-legend__indicator" id="cretaceous-circle"></div>
-                      <p class= "timescale-legend__text">Late Cretaceous</p>
-                    </div>
-                    <div class="timescale-legend__item">
-                      <div class="timescale-legend__indicator" id="paleogene-circle"></div>
-                      <p class= "timescale-legend__text">Paleogene</p>
-                    </div>
-                    <div class="timescale-legend__item">
-                      <div class="timescale-legend__indicator" id="neogene-circle"></div>
-                      <p class="timescale-legend__text">Neogene</p>
-                    </div>
-                    <div class="timescale-legend__item">
-                      <div class="timescale-legend__indicator" id="recent-circle"></div>
-                      <p class="timescale-legend__text">Recent</p>
-                    </div>
+                  <div class="timescale__age neogene__age">
+                    20 million </br> years ago
+                  </div>
+                  <div class="timescale__age paleogene__age">
+                    66 million </br> years ago
+                  </div>
+                  <div class="timescale__age cretaceous__age">
+                    100 million </br> years ago
+                  </div>
+                  
                 </div>
-                </div>
+                <div class = "timescale-legend"> 
+                  <div class="timescale-legend__item">
+                    <div class="timescale-legend__indicator" id="cretaceous-circle"></div>
+                    <p class= "timescale-legend__text">Late Cretaceous</p>
+                  </div>
+                  <div class="timescale-legend__item">
+                    <div class="timescale-legend__indicator" id="paleogene-circle"></div>
+                    <p class= "timescale-legend__text">Paleogene</p>
+                  </div>
+                  <div class="timescale-legend__item">
+                    <div class="timescale-legend__indicator" id="neogene-circle"></div>
+                    <p class="timescale-legend__text">Neogene</p>
+                  </div>
+                  <div class="timescale-legend__item">
+                    <div class="timescale-legend__indicator" id="recent-circle"></div>
+                    <p class="timescale-legend__text">Recent</p>
+                  </div>
               </div>
-              <div class="collection--null">
-                <div class="card__flex-item">
-                  <h3>Try selecting a different area on the map!</h3>
-                  <h4>The museum has not collected fossils from this area, 
-                    but is always collecting new fossils from around Southern California.</h4>
-                </div>
               </div>
             </div>
-          </div>
-          <div class="card legend">
-            <div class="legend__flex-item locality-indicator">
-              <div class="legend__circle legend__circle--locality"></div>
-              <h3 class="legend__text"> Collection event</h3>
+            <div class="collection--null">
+              <div class="card__flex-item">
+                <h3>Try selecting a different area on the map!</h3>
+                <h4>The museum has not photographed fossils from this area, 
+                  but is always photographing new fossils from around Southern California.</h4>
+              </div>
             </div>
-            <div class="legend__flex-item photo-indicator">
-              <div class="legend__circle legend__circle--photo"></div>
-              <h3 class="legend__text"> Selected fossil</h3>
-            </div> 
           </div>
         </div>
-        <div class="ui-container ui-top-left" id="noInfoCard">
-          <div class="card card__container">
-            <div class="card__menu">
-              <h1>No fossil sites found in <br> <span class="featureName"></span></h1>
-            </div>
-            <div class="card__flex-item">
-              <h3>Try selecting a different area on the map!</h3>
-              <h4>The museum has not collected fossils from this area, but is always collecting new fossils from around Southern California. </h4>
-            </div>
-            
+        <div class="card legend">
+          <div class="legend__flex-item locality-indicator">
+            <div class="legend__circle legend__circle--locality"></div>
+            <h3 class="legend__text"> Collection event</h3>
           </div>
+          <div class="legend__flex-item photo-indicator">
+            <div class="legend__circle legend__circle--photo"></div>
+            <h3 class="legend__text"> Selected fossil</h3>
+          </div> 
         </div>
-        <div class="ui-container ui-top-right">
-          <button id="resetWidget" ripple = "ripple" class="widget reset-widget hvr-grow-shadow" title="Return map to original extent">
-            <svg id="resetSvg" class= "widget__svg reset-widget__svg reset-widget__animation" viewBox="0 0 43.18 48">
-              <defs>
-                <linearGradient id="linear-gradient" x1="28.61" y1="50.09" x2="28.39" y2="6.89" gradientUnits="userSpaceOnUse">
-                  <stop offset="0" stop-color="#42afe5"/>
-                  <stop offset="1" stop-color="#3fdcff"/>
-                </linearGradient>
-                <linearGradient id="linear-gradient-2" x1="29.16" y1="47.4" x2="28.94" y2="4.21" xlink:href="#linear-gradient"/>
-              </defs>
-              <path class="reset-widget__path" 
-                    d="M 47.52, 22 
-                        a 19.91, 19.91, 0, 0, 1, 1.07, 6.63 
-                        A 20.09, 20.09, 0, 1, 1, 21, 9.9, 23.19, 23.19, 0, 0, 1, 32.49, 8.61
-                        a 16.55, 16.55, 0, 0, 1, 7.45, 3" 
-                    transform="translate(-6.91 -2.65)"/>
-              <polygon class="reset-widget__arrowhead" points="23.81 12.36 23.49 10.59 32.23 9.04 30.05 0.44 31.8 0 34.45 10.48 23.81 12.36" transform="translate(1, 0.2)"/>
-            </svg> 
-            <div class="widget__label">Reset</div>
-          </button>
+      </div>
+      <div class="ui-container ui-top-left" id="noInfoCard">
+        <div class="card card__container">
+          <div class="card__menu">
+            <h1>No fossil sites found in <br> <span class="featureName"></span></h1>
+          </div>
+          <div class="card__flex-item">
+            <h3>Try selecting a different area on the map!</h3>
+            <h4>The museum has not collected fossils from this area, but is always collecting new fossils from around Southern California. </h4>
+          </div>
           
-          <button id="drawWidget" ripple = "ripple" class="widget draw-widget hvr-grow-shadow" title="Select features by polygon">
-            <svg viewBox="0 0 40 40" class="draw-widget__svg widget_svg" 
-              <defs>
-                <linearGradient id="linear-gradient" x1="28.29" y1="31.32" x2="33.32" y2="31.32" gradientUnits="userSpaceOnUse">
-                  <stop offset="0" stop-color="#444"/>
-                  <stop offset="1" stop-color="#444"/>
-                </linearGradient>
-                <linearGradient id="linear-gradient-2" x1="15.83" y1="25.51" x2="39.58" y2="25.51"
-                                gradientTransform="matrix(1.3, 0.27, -0.24, 1.15, -5.05, -13.43)" 
-                                gradientUnits="userSpaceOnUse">
-                  <stop offset="0" stop-color="#42afe5"/>  
-                  <stop offset="1" stop-color="#3fdcff"/>
-                </linearGradient>
-              </defs>
-              <path class="draw-widget__path draw-widget__animation"
-                    id = "drawPath" 
-                    transform=translate(-3)
-                    d="M 28.31,11.68c-1.13.64-2.72,1.36-3.85,2-2,1.19-4,2.41-6,3.69
-                        a 23.08,23.08,0,0,0-6.87,6.45
-                        A 5.75,5.75,0,0,0,10.52,27,3.29,3.29,0,0,0,12,29.61
-                        c 2.39,1.64,6.06,0,8-1.27,1-.69,1.69-1.25,2.49-1.88,1.3-1,2.62-2,4-3
-                        a 18.94,18.94,0,0,1,5.36-2.72,5.32,5.32,0,0,1,2.57-.15,3.9,3.9,0,0,1,
-                          1.68.89,3.28,3.28,0,0,1,1,1.62,3.2,3.2,0,0,1-.3, 2.17,6.43,6.43,0,0,
-                          1-2.45,2.49,40.41,40.41,0,0,1-3.75,1.8,27.59,27.59,0,0,0-4.67,2.35,
-                          2.76,2.76,0,0,0-1.22,1.89,2.4,2.4,0,0,0,1.92,2.4
-                        c 2.48.54,3.86-2.19,6.09-2.58,1.7-.3,2.59,1.29,3.38,2.38"/>
-            </svg>
-            <div class="absolute-position widget__label">Draw</div>
-          </button>
-          <div class="switch__container">
-            <label class="switch" >
-              <input type="checkbox" id="languageSwitch">
-              <span class="slider hvr-grow-shadow round"></span>
-            </label>
-            <p id="languageLabel">English</p>
-          </div>
-    
-    
         </div>
-        <div class="ui-container ui-bottom-right">
-          <button id="zoomIn" 
-          class="zoom widget hvr-grow-shadow"
-          ripple = "ripple"
-          title="Zoom in">
+      </div>
+      <div class="ui-container ui-top-right">
+        <button id="resetWidget" ripple = "ripple" class="widget reset-widget hvr-grow-shadow" title="Return map to original extent">
+          <svg id="resetSvg" class= "widget__svg reset-widget__svg reset-widget__animation" viewBox="0 0 43.18 48">
+            <defs>
+              <linearGradient id="linear-gradient" x1="28.61" y1="50.09" x2="28.39" y2="6.89" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#42afe5"/>
+                <stop offset="1" stop-color="#3fdcff"/>
+              </linearGradient>
+              <linearGradient id="linear-gradient-2" x1="29.16" y1="47.4" x2="28.94" y2="4.21" xlink:href="#linear-gradient"/>
+            </defs>
+            <path class="reset-widget__path" 
+                  d="M 47.52, 22 
+                      a 19.91, 19.91, 0, 0, 1, 1.07, 6.63 
+                      A 20.09, 20.09, 0, 1, 1, 21, 9.9, 23.19, 23.19, 0, 0, 1, 32.49, 8.61
+                      a 16.55, 16.55, 0, 0, 1, 7.45, 3" 
+                  transform="translate(-6.91 -2.65)"/>
+            <polygon class="reset-widget__arrowhead" points="23.81 12.36 23.49 10.59 32.23 9.04 30.05 0.44 31.8 0 34.45 10.48 23.81 12.36" transform="translate(1, 0.2)"/>
+          </svg> 
+          <div class="widget__label">Reset</div>
         </button>
-          <button id="zoomOut" 
-          class="zoom widget hvr-grow-shadow"
-          ripple = "ripple"
-          title="Zoom out">
-          </button>
+        
+        <button id="drawWidget" ripple = "ripple" class="widget draw-widget hvr-grow-shadow" title="Select features by polygon">
+          <svg viewBox="0 0 40 40" class="draw-widget__svg widget_svg" 
+            <defs>
+              <linearGradient id="linear-gradient" x1="28.29" y1="31.32" x2="33.32" y2="31.32" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#444"/>
+                <stop offset="1" stop-color="#444"/>
+              </linearGradient>
+              <linearGradient id="linear-gradient-2" x1="15.83" y1="25.51" x2="39.58" y2="25.51"
+                              gradientTransform="matrix(1.3, 0.27, -0.24, 1.15, -5.05, -13.43)" 
+                              gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#42afe5"/>  
+                <stop offset="1" stop-color="#3fdcff"/>
+              </linearGradient>
+            </defs>
+            <path class="draw-widget__path draw-widget__animation"
+                  id = "drawPath" 
+                  transform=translate(-3)
+                  d="M 28.31,11.68c-1.13.64-2.72,1.36-3.85,2-2,1.19-4,2.41-6,3.69
+                      a 23.08,23.08,0,0,0-6.87,6.45
+                      A 5.75,5.75,0,0,0,10.52,27,3.29,3.29,0,0,0,12,29.61
+                      c 2.39,1.64,6.06,0,8-1.27,1-.69,1.69-1.25,2.49-1.88,1.3-1,2.62-2,4-3
+                      a 18.94,18.94,0,0,1,5.36-2.72,5.32,5.32,0,0,1,2.57-.15,3.9,3.9,0,0,1,
+                        1.68.89,3.28,3.28,0,0,1,1,1.62,3.2,3.2,0,0,1-.3, 2.17,6.43,6.43,0,0,
+                        1-2.45,2.49,40.41,40.41,0,0,1-3.75,1.8,27.59,27.59,0,0,0-4.67,2.35,
+                        2.76,2.76,0,0,0-1.22,1.89,2.4,2.4,0,0,0,1.92,2.4
+                      c 2.48.54,3.86-2.19,6.09-2.58,1.7-.3,2.59,1.29,3.38,2.38"/>
+          </svg>
+          <div class="absolute-position widget__label">Draw</div>
+        </button>
+        <div class="switch__container">
+          <label class="switch" >
+            <input type="checkbox" id="languageSwitch">
+            <span class="slider hvr-grow-shadow round"></span>
+          </label>
+          <p id="languageLabel">English</p>
         </div>
+  
+  
+      </div>
+      <div class="ui-container ui-bottom-right">
+        <button id="zoomIn" 
+        class="zoom widget hvr-grow-shadow"
+        ripple = "ripple"
+        title="Zoom in">
+      </button>
+        <button id="zoomOut" 
+        class="zoom widget hvr-grow-shadow"
+        ripple = "ripple"
+        title="Zoom out">
+        </button>
+      </div>
     </div>
     <script src="https://js.arcgis.com/4.17/"></script>
     <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@latest/dist/js/splide.min.js"></script>
-    <script type="module" src="js/app.js"></script>
+    <script type="module" src="js/app.min.js"></script>
   </body>
 </html>

@@ -86,7 +86,9 @@ require([
   var collectionNullDiv = document.getElementsByClassName('collection--null')[0];
   var taxaInfoDiv = document.getElementsByClassName('taxa--info')[0];
   var taxaNullDiv = document.getElementsByClassName('taxa--null')[0];
-  var uiTopLeftCollection = document.getElementsByClassName('ui-top-left');
+  var uiTopLeftCollection = document.getElementsByClassName('ui-top-left')[0];
+  const instructionsContainer = document.getElementsByClassName('instructions__container')[0];
+  const instructionsDiv = document.getElementsByClassName('instructions')[0];
 
 
       
@@ -155,7 +157,12 @@ require([
 
   // Instructions pop-up animation
   document.onclick = function() {
-    document.getElementsByClassName('instructions')[0].style.top = "150%";
+    
+    instructionsDiv.style.top = "150%";
+    setTimeout(()=> {
+      instructionsContainer.style.display = 'none';
+    }, 401);
+    
   }
 
   // Event handler for reset widget
@@ -345,7 +352,7 @@ require([
     ========================================================== */
 
   function hideDiv(div) {
-    div.style.left = "-150%";
+    div.style.left = "-125%";
   }
 
   function displayDiv(div) {
@@ -410,9 +417,17 @@ require([
     collectionButton.classList.add('button--active');
     collectionCaption.classList.add("button__caption--active");
     locationCaption.classList.remove("button__caption--active");
-    if (splide.Components.Elements.slides.length > 0) {
+    if (splide) {
+      const splideSlides = splide.Components.Elements.slides
       setFlex(photoLegend, true);
       view.graphics.items[0].visible = true;
+      if (splideSlides[0].classList.contains('is-active')){
+        // Move timescale at initial Splide slide
+        const specimenID = splideSlides[0].getElementsByTagName('img')[0].id;
+        
+        const timeRange = returnTimeRange(specimenID)
+        moveTimescale(timeRange);
+      }
     }
   })
 
@@ -488,24 +503,29 @@ require([
   // Zooms to input feature
   function zoomToFeature(featureName, geometry) {
     const geometryOffset = -(geometry.extent.width / 2);
+    const goToOptions = {
+      animate: true,
+      duration: 600,
+      ease: "ease-in-out"
+    }
 
     if (featureName === "Los Angeles") {
       view
         .goTo({
           center: [-118.735491, 34.222515],
-          zoom: 8,
-        })
+          zoom: 8
+        }, goToOptions)
         .catch(function (error) {
           if (error.name != "AbortError") {
             console.error(error);
           }
-        });
+        }, goToOptions);
     } else if (featureName == "Ventura") {
       view
         .goTo({
           center: [-119.254898, 34.515522],
           zoom: 8,
-        })
+        }, goToOptions)
         .catch(function (error) {
           if (error.name != "AbortError") {
             console.error(error);
@@ -513,7 +533,7 @@ require([
         });
     } else {
       view
-        .goTo(geometry.extent.expand(2).offset(geometryOffset, 0))
+        .goTo(geometry.extent.expand(2).offset(geometryOffset, 0), goToOptions)
         .catch(function (error) {
           if (error.name != "AbortError") {
             console.error(error);
@@ -582,6 +602,7 @@ require([
 
     // Display/hide divs based on fossils returned from query
     if (fossilsFound > 0) {
+      setTimeout
       hideDiv(noInfoCardDiv);
       displayDiv(infoCardDiv);
       const taxa = (returnedLocalities.map(
@@ -751,6 +772,7 @@ require([
       const attachmentList = Object.values(attachments).map(
         (attachment) => attachment[0]
       );
+      document.getElementById('attachmentCount').innerText = attachmentList.length;
       if (attachmentList.length > 0) {
         setFlex(collectionInfoDiv, true);
         setFlex(collectionNullDiv, false);
@@ -781,11 +803,7 @@ require([
 
         // Create graphic at initial Splide slide
         createPointGraphicAtObjectId(attachmentList[0].parentObjectId);
-        // Move timescale at initial Splide slide
-      
-        const specimenID = attachmentList[0].name.split(".")[0];
-        const timeRange = returnTimeRange(specimenID)
-        moveTimescale(timeRange);
+
       
         
 
@@ -1136,14 +1154,16 @@ require([
         localityLayerView = layerView;
       });
 
-      view.when(function() {
-        setVisible('#viewDiv', true);
-        setVisible('#loading', false);
-      }).catch(function(error){
-        console.log("error: ", error);
-      });
-    
-  
-  
+      setTimeout(()=> {
+        localityLayerView.when(function() {
+          setVisible('#loading', false);
+          document.getElementById('viewDiv').style.opacity = '1';
+          instructionsDiv.style.opacity = '1';          
+        }).catch(function(error){
+          console.log("error: ", error);
+        });
+
+      }, 2000)
+
     }
 });
