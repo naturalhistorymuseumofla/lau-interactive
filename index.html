@@ -16,8 +16,8 @@
           <h2>Tap on an area of the map to learn about what 
             fossils the museum has found there!</h2>
         </div>
-        <div class="ui-container ui-top-left">
-          <div class="card">
+        <div class="ui-container ui-top-left" id="infoCard">
+          <div class="card info-card__card">
             <div class="card__menu">
               <div class="button__outer-container">
                 <div class="button__inner-container">
@@ -43,13 +43,18 @@
             </div>
             <div id="location" class="card__container">
               <div id="locationTitle"class="card__flex-item card__title">
-                <h1 id="featureName">San Bernadino County</h1>
+                <h1 class="featureName">San Bernadino County</h1>
                 <h2 id="excavationNumber">2,000 excavation sites</h2>
               </div>
-              <div class="taxa card__flex-item">
+              <div class="taxa card__flex-item taxa--info">
                 <h3>225 fossils found</h3>
                 <div class="taxa__grid">
                 </div>
+              </div>
+              <div class="taxa card__flex-item taxa--null">
+                <h3>Try selecting a different area on the map!</h3>
+                <h4>The museum currently does not have information on the kinds of fossils
+                  found here, but is always learning about fossils from around Southern California.</h4>
               </div>
               <div class="seperator card__flex-item"></div>
               <div class="underwater__container card__flex-item">
@@ -65,71 +70,80 @@
                 </div>
               </div>
             </div>
-            <div  id="collection" class="card__container hidden">
+            <div  id="collection" class="card__container">
               <div id="collectionTitle"class="card__flex-item card__title">
                 <h1>San Bernadino County</h1>
                 <div id="documentedFossilNumber">
                   <h2> 13 documented fossils</h2>
                 </div>
               </div>
-              <div id="sliderDiv" class="card__flex-item">
-                <h3 class="card__header">Swipe to see local fossils!</h3>
-                <div class="splide">
-                  <div class="splide__track">
-                    <ul class="splide__list">
-                    </ul>
-                  </div>
-                </div>  
-              </div>
-              <div class="seperator card__flex-item"></div>
-              <div id="timeDiv" class="timescale card__flex-item">
-                <h3>Fossil age</h3>
-                <div id="timeText" class="card-header__container--2">
-                  <h1 id="timeText" class="card__header"></h1>
-                  <h1 id="timeRange" class="card__header"></h1>
+              <div class="collection--info card__container">
+                <div id="sliderDiv" class="card__flex-item">
+                  <h3 class="card__header">Swipe to see local fossils!</h3>
+                  <div class="splide">
+                    <div class="splide__track">
+                      <ul class="splide__list">
+                      </ul>
+                    </div>
+                  </div>  
                 </div>
-                <div class="timescale__container">
-                  <div id="indicator" class="indicator">
-                    <div class="indicator__tick"></div>
-                    <div class="indicator__line"></div>
-                    <div class="indicator__tick"></div>
+                <div class="seperator card__flex-item"></div>
+                <div id="timeDiv" class="timescale card__flex-item">
+                  <h3>Fossil age</h3>
+                  <div id="timeText" class="card-header__container--2">
+                    <h1 id="timeText" class="card__header"></h1>
+                    <h1 id="timeRange" class="card__header"></h1>
                   </div>
-                  <div class= "timescale__bar cretaceous"></div>
-                  <div class= "timescale__bar paleogene"></div>
-                  <div class= "timescale__bar neogene"></div>
-                  <div class= "timescale__bar holocene"></div>
-                  <div class="timescale__age holocene__age">
-                    2.6 million </br> years ago
+                  <div class="timescale__container">
+                    <div id="indicator" class="indicator">
+                      <div class="indicator__tick"></div>
+                      <div class="indicator__line"></div>
+                      <div class="indicator__tick"></div>
+                    </div>
+                    <div class= "timescale__bar cretaceous"></div>
+                    <div class= "timescale__bar paleogene"></div>
+                    <div class= "timescale__bar neogene"></div>
+                    <div class= "timescale__bar holocene"></div>
+                    <div class="timescale__age holocene__age">
+                      2.6 million </br> years ago
+                    </div>
+                    <div class="timescale__age neogene__age">
+                      20 million </br> years ago
+                    </div>
+                    <div class="timescale__age paleogene__age">
+                      66 million </br> years ago
+                    </div>
+                    <div class="timescale__age cretaceous__age">
+                      100 million </br> years ago
+                    </div>
+                    
                   </div>
-                  <div class="timescale__age neogene__age">
-                    20 million </br> years ago
-                  </div>
-                  <div class="timescale__age paleogene__age">
-                    66 million </br> years ago
-                  </div>
-                  <div class="timescale__age cretaceous__age">
-                    100 million </br> years ago
-                  </div>
-                  
+                  <div class = "timescale-legend"> 
+                    <div class="timescale-legend__item">
+                      <div class="timescale-legend__indicator" id="cretaceous-circle"></div>
+                      <p class= "timescale-legend__text">Late Cretaceous</p>
+                    </div>
+                    <div class="timescale-legend__item">
+                      <div class="timescale-legend__indicator" id="paleogene-circle"></div>
+                      <p class= "timescale-legend__text">Paleogene</p>
+                    </div>
+                    <div class="timescale-legend__item">
+                      <div class="timescale-legend__indicator" id="neogene-circle"></div>
+                      <p class="timescale-legend__text">Neogene</p>
+                    </div>
+                    <div class="timescale-legend__item">
+                      <div class="timescale-legend__indicator" id="recent-circle"></div>
+                      <p class="timescale-legend__text">Recent</p>
+                    </div>
                 </div>
-                <div class = "timescale-legend"> 
-                  <div class="timescale-legend__item">
-                    <div class="timescale-legend-circle" id="cretaceous-circle"></div>
-                    <p class= "timescale-legend__text">Late Cretaceous</p>
-                  </div>
-                  <div class="timescale-legend__item">
-                    <div class="timescale-legend-circle" id="paleogene-circle"></div>
-                    <p class= "timescale-legend__text">Paleogene</p>
-                  </div>
-                  <div class="timescale-legend__item">
-                    <div class="timescale-legend-circle" id="neogene-circle"></div>
-                    <p class="timescale-legend__text">Neogene</p>
-                  </div>
-                  <div class="timescale-legend__item">
-                    <div class="timescale-legend-circle" id="recent-circle"></div>
-                    <p class="timescale-legend__text">Recent</p>
-                  </div>
+                </div>
               </div>
+              <div class="collection--null">
+                <div class="card__flex-item">
+                  <h3>Try selecting a different area on the map!</h3>
+                  <h4>The museum has not collected fossils from this area, 
+                    but is always collecting new fossils from around Southern California.</h4>
+                </div>
               </div>
             </div>
           </div>
@@ -142,6 +156,18 @@
               <div class="legend__circle legend__circle--photo"></div>
               <h3 class="legend__text"> Selected fossil</h3>
             </div> 
+          </div>
+        </div>
+        <div class="ui-container ui-top-left" id="noInfoCard">
+          <div class="card card__container">
+            <div class="card__menu">
+              <h1>No fossil sites found in <br> <span class="featureName"></span></h1>
+            </div>
+            <div class="card__flex-item">
+              <h3>Try selecting a different area on the map!</h3>
+              <h4>The museum has not collected fossils from this area, but is always collecting new fossils from around Southern California. </h4>
+            </div>
+            
           </div>
         </div>
         <div class="ui-container ui-top-right">
@@ -164,6 +190,7 @@
             </svg> 
             <div class="widget__label">Reset</div>
           </button>
+          
           <button id="drawWidget" ripple = "ripple" class="widget draw-widget hvr-grow-shadow" title="Select features by polygon">
             <svg viewBox="0 0 40 40" class="draw-widget__svg widget_svg" 
               <defs>

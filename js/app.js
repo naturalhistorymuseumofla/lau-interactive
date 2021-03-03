@@ -51,7 +51,9 @@ require([
     zoomViewModel,
     highlight,
     polygonHighlight,
-    splide;
+    splide,
+    captionsJSON;
+
 
   // Get DOM elements
   var infoDiv = document.getElementById("infoDiv");
@@ -65,7 +67,7 @@ require([
   var noFossilsInfo = document.getElementById("noFossilsInfo");
   var taxaInfo = document.getElementById("taxaInfo");
   var drawSvg = document.getElementById("drawPath");
-  var resetSvg = document.getElementById("resetSvg");
+  var resetSvg = document.getElementById("resetWidget");
 
   var locationButton = document.getElementById('locationButton');
   var locationDiv = document.getElementById('location');
@@ -76,8 +78,16 @@ require([
   var cardDiv = document.getElementsByClassName('card')[0];
   var photoLegend = document.getElementsByClassName('photo-indicator')[0];
   var taxaGrid = document.getElementsByClassName('taxa__grid')[0];
-  var timescaleDiv = document.getElementById('timeDiv');
+  var timescaleDiv = document.getElementsByClassName('timescale__container')[0];
   var timescaleBar = document.getElementById('indicator');
+  var infoCardDiv = document.getElementById('infoCard');
+  var noInfoCardDiv = document.getElementById('noInfoCard');
+  var collectionInfoDiv = document.getElementsByClassName('collection--info')[0];
+  var collectionNullDiv = document.getElementsByClassName('collection--null')[0];
+  var taxaInfoDiv = document.getElementsByClassName('taxa--info')[0];
+  var taxaNullDiv = document.getElementsByClassName('taxa--null')[0];
+  var uiTopLeftCollection = document.getElementsByClassName('ui-top-left');
+
 
       
 
@@ -146,7 +156,6 @@ require([
   // Instructions pop-up animation
   document.onclick = function() {
     document.getElementsByClassName('instructions')[0].style.top = "150%";
-    document.getElementsByClassName('ui-top-left')[0].style.left="0"
   }
 
   // Event handler for reset widget
@@ -199,25 +208,42 @@ require([
     ========================================================== */
 
     // Returns an array of ages sorted ascending from AgeRange
-    function returnTimeRange(ageRange, age) {
-      var rangeArray = ageRange.split(" - ").map(age => parseFloat(age));
+    function returnTimeRange(specimenID) {
+      /*
+      var splitAgeRange = ageRange.split(" ");
+      const age = splitAgeRange[4];
+      const rangeArray = [splitAgeRange[0], splitAgeRange[2]].map(
+        age => parseFloat(age)
+      );
       if (age === "years old") {
         rangeArray.map(age => age * .001);
       }
-      sortedAgeArray = rangeArray.sort((a,b) => a-b);
+      const sortedAgeArray = rangeArray.sort((a,b) => a-b);
+      return sortedAgeArray;
+      */
+      var ageRange, age;
+      ageRange = captionsJSON[specimenID]["AgeRange"]
+      age = captionsJSON[specimenID]["Age"]
+      return [ageRange, age]
     }
 
     function moveTimescale(ageArray) {
-      [minAge, maxAge] = ageArray;
-      const timescaleWidth = timescaleDiv.clientWidth;
-      const rightPosition = `${(minAge/timescaleWidth) * 100}%`
-      timescaleBar.style.right = rightPosition;
-      var indicatorLineDiv = document.getElementsByClassName("indicator-line")[0]
+      let ageRange, age, minAge, maxAge;
+      [ageRange, age] = ageArray;
+      ageRange = ageRange.split(" - ");
+      const sortedAgeArray = ageRange.sort((a,b) => a-b);
+      [minAge, maxAge] = sortedAgeArray;
+      if (maxAge) {
+        var fossilAgeRange = maxAge-minAge;
+      } else {
+        var fossiAgeRange = minAge;
+      }
       
-      const totalAge = minAge + maxAge;
-      const timeratio = (maxAge - minAge)/totalAge * timescaleWidth;
-      indicatorLineDiv.style.width = timeRatio + "px";
-
+      const totalAge = 100;
+      timescaleBar.style.right = `${(minAge/totalAge)*100}%`;    
+      const timescaleWidth = timescaleDiv.clientWidth;
+      const timeRatio = timescaleWidth/totalAge;
+      timescaleBar.style.width = `${timeRatio*fossilAgeRange}px`;
     }
 
   /* ==========================================================
@@ -251,6 +277,10 @@ require([
     }
   }
 
+  loadJSON((json) => {
+    captionsJSON = JSON.parse(json);
+  });
+
   // returns a div with properly formatted captions from input photo filename
   function formatCaptions(attachment) {
     var attachmentName = removeFileExtension(attachment.name);
@@ -263,16 +293,12 @@ require([
     var captionsDiv = document.createElement("div");
     captionsDiv.classList.add("splide__captions");
 
-    loadJSON((json) => {
-      var captionsJSON = JSON.parse(json);
-      var attachmentRecord = captionsJSON[attachmentName];
-      taxonCaption.innerHTML = attachmentRecord["Taxon"];
-      ageCaption.innerHTML = `${attachmentRecord["AgeRange"]} ${attachmentRecord["Age"]}`;
-      descriptionCaption.innerHTML = attachmentRecord["Description"];
-      const ageRange = returnTimeRange(attachmentRecord["AgeRange"], attachmentRecord["Age"]);
-      moveTimescale(ageRange);
 
-    });
+    var attachmentRecord = captionsJSON[attachmentName];
+    taxonCaption.innerHTML = attachmentRecord["Taxon"];
+    ageCaption.innerHTML = `${attachmentRecord["AgeRange"]} ${attachmentRecord["Age"]}`;
+    descriptionCaption.innerHTML = attachmentRecord["Description"];
+  
 
     specimenCaption.append(
       taxonCaption,
@@ -297,6 +323,7 @@ require([
     // Format HTML for Splide carousel
     li.classList.add("splide__slide");
     li.classList.add(attachment.parentObjectId);
+    img.id = attachment.name.split(".")[0];
     img.src = attachment.url;
 
     var newSlide = splideList.appendChild(li);
@@ -318,17 +345,18 @@ require([
     ========================================================== */
 
   function hideDiv(div) {
-    div.style.marginLeft = "-1000px";
+    div.style.left = "-150%";
   }
 
   function displayDiv(div) {
     div.style.display = "flex";
-    div.style.marginLeft = "0px";
+    div.style.left = "0";
   }
 
   function clearWidgets() {
-    hideDiv(sliderDiv);
-    hideDiv(infoDiv);
+    for (let container of uiTopLeftCollection) {
+      setFlex(container, false);
+    }
   }
 
   function resetInfoDiv() {
@@ -372,17 +400,20 @@ require([
     collectionButton.classList.remove('button--active');
     collectionCaption.classList.remove("button__caption--active");
     locationCaption.classList.add("button__caption--active");
+    view.graphics.items[0].visible = false;
   })
 
   collectionButton.addEventListener('click', function(){
-    
     setFlex(locationDiv, false);
-    setFlex(collectionDiv, true);
-    setFlex(photoLegend, true);
+    setFlex(collectionDiv, true); 
     locationButton.classList.remove('button--active');
     collectionButton.classList.add('button--active');
     collectionCaption.classList.add("button__caption--active");
     locationCaption.classList.remove("button__caption--active");
+    if (splide.Components.Elements.slides.length > 0) {
+      setFlex(photoLegend, true);
+      view.graphics.items[0].visible = true;
+    }
   })
 
   /* ==========================================================
@@ -500,11 +531,16 @@ require([
     for (var i=0; i< taxaList.length; i++) {
       Object.keys(taxaList[i]).map(taxon =>{
         var locTaxa = taxaList[i];
-        if (combinedTaxaObject[taxon]) {
-          combinedTaxaObject[taxon] += locTaxa[taxon];
+        if (taxon == 'Insects' || taxon == 'Hydrozoa') {
+          //pass
         } else {
-          combinedTaxaObject[taxon] = locTaxa[taxon];
+          if (combinedTaxaObject[taxon]) {
+            combinedTaxaObject[taxon] += locTaxa[taxon];
+          } else {
+            combinedTaxaObject[taxon] = locTaxa[taxon];
+          }
         }
+
       })
     }
     return combinedTaxaObject
@@ -530,6 +566,8 @@ require([
 
   // Displays info cards after intersecting localities have been queried
   function populateInfoCards(returnedLocalities, polygonName) {
+    //const infoCard = document.getElementsByClassName('info-card__card')[0];
+    //infoCard.style.height = `${infoCardDiv.clientHeight}px`;
     taxaGrid.innerHTML="";
     // Get counts of Invert/Vert localities based on Category field of 'attributes' property of selected locality records
     const objectIds = returnedLocalities.map(
@@ -538,27 +576,42 @@ require([
 
     const fossilsFound = returnedLocalities.length;
 
+    for (let div of document.getElementsByClassName('featureName')) {
+      div.innerText = polygonName;
+    }
+
     // Display/hide divs based on fossils returned from query
     if (fossilsFound > 0) {
-
+      hideDiv(noInfoCardDiv);
+      displayDiv(infoCardDiv);
       const taxa = (returnedLocalities.map(
         loc => loc["attributes"]["taxa"])).filter(taxa => !(taxa=='')
-        ); 
+      );
+      
+      if (taxa.length !== 0) {
+        setFlex(taxaNullDiv, false);
+        setFlex(taxaInfoDiv, true);
+        const formattedTaxa = formatTaxa(taxa);
+        for (const taxon in formattedTaxa) {
+          formatTaxaCell(taxon, formattedTaxa[taxon]);
+        }
+      } else {
+        setFlex(taxaInfoDiv, false);
+        setFlex(taxaNullDiv, true);
 
-      const formattedTaxa = formatTaxa(taxa);
-      for (const taxon in formattedTaxa) {
-        formatTaxaCell(taxon, formattedTaxa[taxon]);
       }
+
 
       createSplideFromAttachments(localitiesLayer, objectIds);
       // Hide/Display other divs
 
       // Send info to div
       featureCountDiv.innerHTML = fossilsFound.toString() + " excavation sites";
-      document.getElementById("featureName").innerHTML = polygonName;
-      invertCountDiv.innerHTML = invertCount + " invertebrates";
-      vertCountDiv.innerHTML = vertCount + " vertebrates";
+      //setTimeout(() => (infoCard.style.height = "auto"), 301);
     } else {
+      hideDiv(infoCard);
+      displayDiv(noInfoCardDiv);
+      /*
       if (taxaInfo.style.display === "block") {
         hideDiv(infoDiv);
         setTimeout(() => {
@@ -568,6 +621,7 @@ require([
         }, 500);
       }
       hideDiv(sliderDiv);
+      */
     }
   }
 
@@ -698,6 +752,8 @@ require([
         (attachment) => attachment[0]
       );
       if (attachmentList.length > 0) {
+        setFlex(collectionInfoDiv, true);
+        setFlex(collectionNullDiv, false);
 
         var selectedAttachmentList = [];
         if (attachmentList.length > 7) {
@@ -725,14 +781,30 @@ require([
 
         // Create graphic at initial Splide slide
         createPointGraphicAtObjectId(attachmentList[0].parentObjectId);
+        // Move timescale at initial Splide slide
+      
+        const specimenID = attachmentList[0].name.split(".")[0];
+        const timeRange = returnTimeRange(specimenID)
+        moveTimescale(timeRange);
+      
+        
 
         // Splide event listener
         splide.on("active", function (slide) {
           const slideObjectId = slide.slide.classList[1];
           createPointGraphicAtObjectId(slideObjectId);
+          //const slideAgeRangeText = slide.slide.lastElementChild.children[0].innerText;
+          const slideImg = slide.slide.getElementsByTagName('img')[0];
+          const specimenID = slideImg.id;
+          const timeRange = returnTimeRange(specimenID);
+          moveTimescale(timeRange);
+
+
         });
       } else {
-        hideDiv(sliderDiv);
+        collectionNullDiv.style.display = 'block';
+        setFlex(collectionInfoDiv, false);
+        setFlex(photoLegend, false);
       }
     });
   }
@@ -767,6 +839,9 @@ require([
       });
       view.graphics.removeAll();
       view.graphics.add(selectedGraphic);
+      if (locationButton.classList.contains('button--active')) {
+        view.graphics.items[0].visible = false;
+      }   
     });
   }
 
@@ -872,7 +947,7 @@ require([
           size: 6,
           color: [20, 204, 180, 0.5],
           outline: {
-            width: 0.5,
+            width: 0,
             color: [247, 247, 247, 0.5],
           },
         },

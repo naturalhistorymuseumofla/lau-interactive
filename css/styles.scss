@@ -60,13 +60,17 @@ body {
 }
 
 .card {
-  height: auto;
   width: $card-width;
   border-radius: $card-border-radius;
   background-color: rgba(255, 255, 255, 0.95);
-  transition: height 1s;
   margin-bottom: $card-margin-bottom;
   box-shadow: $box-shadow;
+  
+  
+}
+
+.info-card__card {
+  transition: height 250ms;
 }
 
 .card__title {
@@ -291,7 +295,8 @@ $taxa-col-width: 15rem;
   height: $radius;
   width: $radius;
   box-shadow: 0px 0px 2px 1px rgba(24, 24, 24, .2);
-  margin-right: 0.7rem
+  margin-right: 0.7rem;
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
 .underwater__container {
@@ -311,6 +316,7 @@ $taxa-col-width: 15rem;
   margin-right: 2rem;
   position:relative;
   box-shadow:0px 0px 3px 2px rgba(24, 24, 24, .07);
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
 .underwater__svg {
@@ -369,8 +375,15 @@ img {
   bottom: -5% !important;
 }
 
+
+.splide__pagination__page {
+  background-color:rgb(221, 221, 221) !important;
+  box-shadow:rgba(0, 0, 0, 0) !important;
+}
+
+
 .splide__pagination__page.is-active {
-  background:#33cfff !important;
+  background: $linear-gradient !important;
 }
 
 .timescale__container {
@@ -389,20 +402,18 @@ img {
   display:flex;
   flex-direction: row;
   align-items: center;
+  transition: all .6s;
 }
 
 .indicator__line {
   width:100%;
-  height:2px;
+  height:4px;
+  border-radius:20px;
   background-color: grey;
   transition: width 1s ease-out;
 }
 
-.indicator__tick {
-  width:2px;
-  height:10px;
-  background-color: grey;
-}
+
 
 .timescale__bar {
   position: relative;
@@ -410,23 +421,23 @@ img {
 }
 
 .cretaceous {
-  background-color: green;
+  background-color: #26566a;
   width: 34.7%;
   border-radius: 5px 0px 0px 5px
 }
 
 .paleogene {
-  background-color: orange;
+  background-color: #3a838a;
   width: 42.6%;
 }
 
 .neogene {
-  background-color: yellow;
+  background-color: #4aa8ab;
   width: 20%;
 }
 
 .holocene {
-  background-color: tan;
+  background-color: #7ecbc6;
   width: 2.8%;
   border-radius: 0px 5px 5px 0px
 }
@@ -484,30 +495,30 @@ img {
   margin-right:0rem;
 }
 
-.timescale-legend-circle {
-  $radius: 1.15rem;
+.timescale-legend__indicator {
+  $radius: 1.25rem;
   min-width: $radius;
   min-height: $radius;
   width: $radius;
   height: $radius;
   margin-right: 0.5rem;
-  border-radius: 50%;
+  border-radius: .2rem;
 }
 
 #cretaceous-circle {
-  background-color: green;
+  background-color: #26566a;
 }
 
 #paleogene-circle {
-  background-color: orange;
+  background-color: #3a838a;
 }
 
 #neogene-circle {
-  background-color: yellow;
+  background-color: #4aa8ab;
 }
 
 #recent-circle {
-  background-color: tan;
+  background-color: #7ecbc6;
 }
 
 
@@ -551,8 +562,8 @@ img {
 }
 
 .legend__circle--photo {
-  background-color:#33cfff;
-  box-shadow: 0px 0px 0px 0.3rem #5df7fc;
+  background-color:orange;
+  box-shadow: 0px 0px 0px 0.3rem yellow;
 }
 
 $widget-size: 5.75rem;
@@ -585,6 +596,10 @@ $widget-size: 5.75rem;
   pointer-events: none;
   -webkit-filter: drop-shadow(0px 0px 0.5px rgba(0, 0, 0, 0.3));
   filter: drop-shadow(0px 0px 0.5px rgba(0, 0, 0, 0.3));
+}
+
+#drawWidget {
+  display:none;
 }
 
 .draw-widget__svg {
