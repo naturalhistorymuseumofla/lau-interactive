@@ -1,3 +1,15 @@
+
+
+// Applies styling to splide arrows
+let splideArrows = document.getElementsByClassName('splide__arrow');
+for (let arrow of splideArrows) {
+  arrow.classList.add('hvr-grow-shadow--arrow');
+}
+
+
+
+  
+
 require([
   "esri/Map",
   "esri/views/MapView",
@@ -39,19 +51,47 @@ require([
     zoomViewModel,
     highlight,
     polygonHighlight,
-    splide;
+    splide,
+    captionsJSON;
+
 
   // Get DOM elements
   var infoDiv = document.getElementById("infoDiv");
   var sliderDiv = document.getElementById("sliderDiv");
   var zoomDiv = document.getElementById("zoomDiv");
-  var zoomInDiv = document.getElementById("zoom-in");
-  var zoomOutDiv = document.getElementById("zoom-out");
-  var featureCountDiv = document.getElementById("featureCount");
+  var zoomInDiv = document.getElementById("zoomIn");
+  var zoomOutDiv = document.getElementById("zoomOut");
+  var featureCountDiv = document.getElementById("excavationNumber");
   var invertCountDiv = document.getElementById("invertCount");
   var vertCountDiv = document.getElementById("vertCount");
   var noFossilsInfo = document.getElementById("noFossilsInfo");
   var taxaInfo = document.getElementById("taxaInfo");
+  var drawSvg = document.getElementById("drawPath");
+  var resetSvg = document.getElementById("resetWidget");
+
+  var locationButton = document.getElementById('locationButton');
+  var locationDiv = document.getElementById('location');
+  var collectionButton = document.getElementById('collectionButton');
+  var collectionDiv = document.getElementById('collection');
+  var collectionCaption = document.getElementById('collectionButtonCaption');
+  var locationCaption = document.getElementById('locationButtonCaption');
+  var cardDiv = document.getElementsByClassName('card')[0];
+  var photoLegend = document.getElementsByClassName('photo-indicator')[0];
+  var taxaGrid = document.getElementsByClassName('taxa__grid')[0];
+  var timescaleDiv = document.getElementsByClassName('timescale__container')[0];
+  var timescaleBar = document.getElementById('indicator');
+  var infoCardDiv = document.getElementById('infoCard');
+  var noInfoCardDiv = document.getElementById('noInfoCard');
+  var collectionInfoDiv = document.getElementsByClassName('collection--info')[0];
+  var collectionNullDiv = document.getElementsByClassName('collection--null')[0];
+  var taxaInfoDiv = document.getElementsByClassName('taxa--info')[0];
+  var taxaNullDiv = document.getElementsByClassName('taxa--null')[0];
+  var uiTopLeftCollection = document.getElementsByClassName('ui-top-left')[0];
+  const instructionsContainer = document.getElementsByClassName('instructions__container')[0];
+  const instructionsDiv = document.getElementsByClassName('instructions')[0];
+
+
+      
 
   /* ==========================================================
      Initialize map
@@ -69,12 +109,8 @@ require([
   document.onclick = clearInterval(resetMapSetInterval);
 
   // Add event listeners to custom widgets
-  document
-    .getElementById("select-by-polygon")
-    .addEventListener("click", drawButtonClickHandler);
-  document
-    .getElementById("return-to-extent")
-    .addEventListener("click", resetButtonClickHandler);
+  drawSvg.addEventListener("click", drawButtonClickHandler);
+  resetSvg.addEventListener("click", resetButtonClickHandler);
   zoomInDiv.addEventListener("click", zoomInClickHandler);
   zoomOutDiv.addEventListener("click", zoomOutClickHandler);
 
@@ -118,6 +154,16 @@ require([
   /* ==========================================================
      Event handler functions
     ========================================================== */
+
+  // Instructions pop-up animation
+  document.onclick = function() {
+    
+    instructionsDiv.style.top = "150%";
+    setTimeout(()=> {
+      instructionsContainer.style.display = 'none';
+    }, 401);
+    
+  }
 
   // Event handler for reset widget
   function resetButtonClickHandler() {
@@ -165,6 +211,49 @@ require([
   });
 
   /* ==========================================================
+     Timescale functions
+    ========================================================== */
+
+    // Returns an array of ages sorted ascending from AgeRange
+    function returnTimeRange(specimenID) {
+      /*
+      var splitAgeRange = ageRange.split(" ");
+      const age = splitAgeRange[4];
+      const rangeArray = [splitAgeRange[0], splitAgeRange[2]].map(
+        age => parseFloat(age)
+      );
+      if (age === "years old") {
+        rangeArray.map(age => age * .001);
+      }
+      const sortedAgeArray = rangeArray.sort((a,b) => a-b);
+      return sortedAgeArray;
+      */
+      var ageRange, age;
+      ageRange = captionsJSON[specimenID]["AgeRange"]
+      age = captionsJSON[specimenID]["Age"]
+      return [ageRange, age]
+    }
+
+    function moveTimescale(ageArray) {
+      let ageRange, age, minAge, maxAge;
+      [ageRange, age] = ageArray;
+      ageRange = ageRange.split(" - ");
+      const sortedAgeArray = ageRange.sort((a,b) => a-b);
+      [minAge, maxAge] = sortedAgeArray;
+      if (maxAge) {
+        var fossilAgeRange = maxAge-minAge;
+      } else {
+        var fossiAgeRange = minAge;
+      }
+      
+      const totalAge = 100;
+      timescaleBar.style.right = `${(minAge/totalAge)*100}%`;    
+      const timescaleWidth = timescaleDiv.clientWidth;
+      const timeRatio = timescaleWidth/totalAge;
+      timescaleBar.style.width = `${timeRatio*fossilAgeRange}px`;
+    }
+
+  /* ==========================================================
      Splide functions
     ========================================================== */
   function loadJSON(callback) {
@@ -195,6 +284,10 @@ require([
     }
   }
 
+  loadJSON((json) => {
+    captionsJSON = JSON.parse(json);
+  });
+
   // returns a div with properly formatted captions from input photo filename
   function formatCaptions(attachment) {
     var attachmentName = removeFileExtension(attachment.name);
@@ -205,14 +298,14 @@ require([
     var catNumber = attachmentName.replace("_", " ").replace("-", ".");
     var catNumberCaption = document.createTextNode(` (${catNumber})`);
     var captionsDiv = document.createElement("div");
+    captionsDiv.classList.add("splide__captions");
 
-    loadJSON((json) => {
-      var captionsJSON = JSON.parse(json);
-      var attachmentRecord = captionsJSON[attachmentName];
-      taxonCaption.innerHTML = attachmentRecord["Taxon"];
-      ageCaption.innerHTML = attachmentRecord["Age"];
-      descriptionCaption.innerHTML = attachmentRecord["Description"];
-    });
+
+    var attachmentRecord = captionsJSON[attachmentName];
+    taxonCaption.innerHTML = attachmentRecord["Taxon"];
+    ageCaption.innerHTML = `${attachmentRecord["AgeRange"]} ${attachmentRecord["Age"]}`;
+    descriptionCaption.innerHTML = attachmentRecord["Description"];
+  
 
     specimenCaption.append(
       taxonCaption,
@@ -237,6 +330,7 @@ require([
     // Format HTML for Splide carousel
     li.classList.add("splide__slide");
     li.classList.add(attachment.parentObjectId);
+    img.id = attachment.name.split(".")[0];
     img.src = attachment.url;
 
     var newSlide = splideList.appendChild(li);
@@ -258,17 +352,18 @@ require([
     ========================================================== */
 
   function hideDiv(div) {
-    div.style.marginLeft = "-1000px";
+    div.style.left = "-125%";
   }
 
   function displayDiv(div) {
-    div.style.display = "block";
-    div.style.marginLeft = "0px";
+    div.style.display = "flex";
+    div.style.left = "0";
   }
 
   function clearWidgets() {
-    hideDiv(sliderDiv);
-    hideDiv(infoDiv);
+    for (let container of uiTopLeftCollection) {
+      setFlex(container, false);
+    }
   }
 
   function resetInfoDiv() {
@@ -282,6 +377,59 @@ require([
     selectedFeatureGraphicLayer.removeAll();
     view.graphics.removeAll();
   }
+
+  // Toggles visibility
+  function setVisible(selector, boolean) {
+    document.querySelector(selector).style.visibility = boolean ? 'visible' : 'hidden';
+  }
+
+  // Toggles hidden property
+  function setFlex(element, boolean) {
+    element.style.display = boolean ? 'flex' : 'none';
+  }
+
+  // Toggles hidden property
+  function setDisplay(element, boolean) {
+    element.style.display = boolean ? 'block' : 'none';
+  }
+
+
+
+  /* ==========================================================
+     UI functions
+    ========================================================== */
+  
+  locationButton.addEventListener('click', function(){
+    setFlex(collectionDiv, false);
+    setFlex(locationDiv, true);
+    setFlex(photoLegend, false);
+    locationButton.classList.add('button--active');
+    collectionButton.classList.remove('button--active');
+    collectionCaption.classList.remove("button__caption--active");
+    locationCaption.classList.add("button__caption--active");
+    view.graphics.items[0].visible = false;
+  })
+
+  collectionButton.addEventListener('click', function(){
+    setFlex(locationDiv, false);
+    setFlex(collectionDiv, true); 
+    locationButton.classList.remove('button--active');
+    collectionButton.classList.add('button--active');
+    collectionCaption.classList.add("button__caption--active");
+    locationCaption.classList.remove("button__caption--active");
+    if (splide) {
+      const splideSlides = splide.Components.Elements.slides
+      setFlex(photoLegend, true);
+      view.graphics.items[0].visible = true;
+      if (splideSlides[0].classList.contains('is-active')){
+        // Move timescale at initial Splide slide
+        const specimenID = splideSlides[0].getElementsByTagName('img')[0].id;
+        
+        const timeRange = returnTimeRange(specimenID)
+        moveTimescale(timeRange);
+      }
+    }
+  })
 
   /* ==========================================================
      ClientFeatureLayer functions
@@ -355,24 +503,29 @@ require([
   // Zooms to input feature
   function zoomToFeature(featureName, geometry) {
     const geometryOffset = -(geometry.extent.width / 2);
+    const goToOptions = {
+      animate: true,
+      duration: 600,
+      ease: "ease-in-out"
+    }
 
     if (featureName === "Los Angeles") {
       view
         .goTo({
           center: [-118.735491, 34.222515],
-          zoom: 8,
-        })
+          zoom: 8
+        }, goToOptions)
         .catch(function (error) {
           if (error.name != "AbortError") {
             console.error(error);
           }
-        });
+        }, goToOptions);
     } else if (featureName == "Ventura") {
       view
         .goTo({
           center: [-119.254898, 34.515522],
           zoom: 8,
-        })
+        }, goToOptions)
         .catch(function (error) {
           if (error.name != "AbortError") {
             console.error(error);
@@ -380,7 +533,7 @@ require([
         });
     } else {
       view
-        .goTo(geometry.extent.expand(2).offset(geometryOffset, 0))
+        .goTo(geometry.extent.expand(2).offset(geometryOffset, 0), goToOptions)
         .catch(function (error) {
           if (error.name != "AbortError") {
             console.error(error);
@@ -389,44 +542,97 @@ require([
     }
   }
 
+  // Formats list of taxa
+  function formatTaxa(taxa) {
+    const taxaList = taxa.map(taxon => JSON.parse(taxon));
+
+    var combinedTaxaObject = {};
+
+    for (var i=0; i< taxaList.length; i++) {
+      Object.keys(taxaList[i]).map(taxon =>{
+        var locTaxa = taxaList[i];
+        if (taxon == 'Insects' || taxon == 'Hydrozoa') {
+          //pass
+        } else {
+          if (combinedTaxaObject[taxon]) {
+            combinedTaxaObject[taxon] += locTaxa[taxon];
+          } else {
+            combinedTaxaObject[taxon] = locTaxa[taxon];
+          }
+        }
+
+      })
+    }
+    return combinedTaxaObject
+    }  
+
+  
+  // Formats taxa cell in taxa grid
+  function formatTaxaCell(taxonName, taxonNumber) {
+    if (taxonName === "Clams, oysters, ect.") {
+      taxonName = "Clams, oysters";
+    } else if (taxonName === "Ammonoids, nautiloids") {
+      taxonName = "Nautiloids";
+    }
+    var cell = document.createElement("div");
+    var taxaIcon = document.createElement("div");
+    var taxonDiv = document.createElement("p");
+    cell.classList.add('taxa__cell');
+    taxaIcon.classList.add('taxa__icon');
+    taxonDiv.innerHTML = `${taxonNumber.toString()} ${taxonName}`;
+    cell.append(taxaIcon, taxonDiv);
+    taxaGrid.append(cell);
+  }
+
   // Displays info cards after intersecting localities have been queried
   function populateInfoCards(returnedLocalities, polygonName) {
+    //const infoCard = document.getElementsByClassName('info-card__card')[0];
+    //infoCard.style.height = `${infoCardDiv.clientHeight}px`;
+    taxaGrid.innerHTML="";
     // Get counts of Invert/Vert localities based on Category field of 'attributes' property of selected locality records
     const objectIds = returnedLocalities.map(
       (loc) => loc["attributes"]["OBJECTID"]
     );
-    const invertCount = returnedLocalities.filter(
-      (loc) => loc["attributes"]["category"] == "Invertebrate"
-    ).length;
-    const vertCount = returnedLocalities.filter(
-      (loc) => loc["attributes"]["category"] == "Vertebrate"
-    ).length;
+
     const fossilsFound = returnedLocalities.length;
+
+    for (let div of document.getElementsByClassName('featureName')) {
+      div.innerText = polygonName;
+    }
 
     // Display/hide divs based on fossils returned from query
     if (fossilsFound > 0) {
-      createSplideFromAttachments(localitiesLayer, objectIds);
-      if (noFossilsInfo.style.display === "block") {
-        hideDiv(infoDiv);
-        setTimeout(() => {
-          noFossilsInfo.style.display = "none";
-          displayDiv(taxaInfo);
-          displayDiv(infoDiv);
-        }, 500);
+      setTimeout
+      hideDiv(noInfoCardDiv);
+      displayDiv(infoCardDiv);
+      const taxa = (returnedLocalities.map(
+        loc => loc["attributes"]["taxa"])).filter(taxa => !(taxa=='')
+      );
+      
+      if (taxa.length !== 0) {
+        setFlex(taxaNullDiv, false);
+        setFlex(taxaInfoDiv, true);
+        const formattedTaxa = formatTaxa(taxa);
+        for (const taxon in formattedTaxa) {
+          formatTaxaCell(taxon, formattedTaxa[taxon]);
+        }
       } else {
-        displayDiv(taxaInfo);
-        displayDiv(infoDiv);
+        setFlex(taxaInfoDiv, false);
+        setFlex(taxaNullDiv, true);
+
       }
 
+
+      createSplideFromAttachments(localitiesLayer, objectIds);
+      // Hide/Display other divs
+
       // Send info to div
-      document.getElementById(
-        "featureCount"
-      ).innerHTML = fossilsFound.toString();
-      document.getElementById("featureText").innerHTML =
-        " fossil site in </br>" + polygonName + "!";
-      invertCountDiv.innerHTML = invertCount + " invertebrates";
-      vertCountDiv.innerHTML = vertCount + " vertebrates";
+      featureCountDiv.innerHTML = fossilsFound.toString() + " excavation sites";
+      //setTimeout(() => (infoCard.style.height = "auto"), 301);
     } else {
+      hideDiv(infoCard);
+      displayDiv(noInfoCardDiv);
+      /*
       if (taxaInfo.style.display === "block") {
         hideDiv(infoDiv);
         setTimeout(() => {
@@ -436,6 +642,7 @@ require([
         }, 500);
       }
       hideDiv(sliderDiv);
+      */
     }
   }
 
@@ -565,11 +772,28 @@ require([
       const attachmentList = Object.values(attachments).map(
         (attachment) => attachment[0]
       );
+      document.getElementById('attachmentCount').innerText = attachmentList.length;
       if (attachmentList.length > 0) {
+        setFlex(collectionInfoDiv, true);
+        setFlex(collectionNullDiv, false);
+
+        var selectedAttachmentList = [];
+        if (attachmentList.length > 7) {
+          let i = 0;
+          while(i < 7) {
+            const randomNumber = Math.floor(Math.random() * attachmentList.length);
+            const randomAttachment = attachmentList.splice(randomNumber, 1)[0];
+            selectedAttachmentList.push(randomAttachment);
+            i++;
+          } 
+        } else {
+          selectedAttachmentList = attachmentList;
+        } 
+
         resetSplide();
 
         // Retrieve list of urls of attached images from selected localities
-        attachmentList.forEach((attachment) => {
+        selectedAttachmentList.forEach((attachment) => {
           addPhotoToSplide(attachment);
         });
 
@@ -580,13 +804,25 @@ require([
         // Create graphic at initial Splide slide
         createPointGraphicAtObjectId(attachmentList[0].parentObjectId);
 
+      
+        
+
         // Splide event listener
         splide.on("active", function (slide) {
           const slideObjectId = slide.slide.classList[1];
           createPointGraphicAtObjectId(slideObjectId);
+          //const slideAgeRangeText = slide.slide.lastElementChild.children[0].innerText;
+          const slideImg = slide.slide.getElementsByTagName('img')[0];
+          const specimenID = slideImg.id;
+          const timeRange = returnTimeRange(specimenID);
+          moveTimescale(timeRange);
+
+
         });
       } else {
-        hideDiv(sliderDiv);
+        collectionNullDiv.style.display = 'block';
+        setFlex(collectionInfoDiv, false);
+        setFlex(photoLegend, false);
       }
     });
   }
@@ -621,6 +857,9 @@ require([
       });
       view.graphics.removeAll();
       view.graphics.add(selectedGraphic);
+      if (locationButton.classList.contains('button--active')) {
+        view.graphics.items[0].visible = false;
+      }   
     });
   }
 
@@ -628,273 +867,303 @@ require([
     Function to set up the view, map and add widgets & layers
     ========================================================== */
 
-  function setUpMap() {
-    // Create new Basemap
-    var basemap = new Basemap({
-      baseLayers: [
-        new VectorTileLayer({
-          portalItem: {
-            id: "c65f3f7dc5754366b4e515e73e2f7d8b", // Custom LAU Basemap
+    function setUpMap() {
+      // Create new Basemap
+      var basemap = new Basemap({
+        baseLayers: [
+          new VectorTileLayer({
+            portalItem: {
+              id: "c65f3f7dc5754366b4e515e73e2f7d8b", // Custom LAU Basemap
+            },
+          }),
+        ],
+      });
+  
+      map = new Map({
+        basemap: basemap,
+      });
+  
+      view = new MapView({
+        container: "viewDiv",
+        map: map,
+        center: [-118.248638, 34.06266], // longitude, latitude ,
+        zoom: 8,
+        constraints: {
+          snapToZoom: true,
+          rotationEnabled: false,
+          minZoom: 7,
+        },
+        popup: {
+          autoOpenEnabled: false,
+        },
+        highlightOptions: {
+          color: [0, 185, 235, 0.75],
+          fillOpacity: 0.4,
+        },
+        ui: {
+          components: [],
+        },
+      });
+  
+      // Create new GraphicLayers
+      sketchGraphicsLayer = new GraphicsLayer();
+      map.add(sketchGraphicsLayer);
+  
+      selectedFeatureGraphicLayer = new GraphicsLayer();
+      map.add(selectedFeatureGraphicLayer);
+  
+      // Create the new sketch view model and sets its layer
+      sketchViewModel = new SketchViewModel({
+        view: view,
+        layer: sketchGraphicsLayer,
+        updateOnGraphicClick: false,
+        polygonSymbol: {
+          type: "simple-fill",
+          color: [0, 185, 235, 0.2],
+          size: "1px",
+          outline: {
+            color: [0, 185, 235, 0.5],
+            width: "3px",
           },
-        }),
-      ],
-    });
-
-    map = new Map({
-      basemap: basemap,
-    });
-
-    view = new MapView({
-      container: "viewDiv",
-      map: map,
-      center: [-118.248638, 34.06266], // longitude, latitude ,
-      zoom: 8,
-      constraints: {
-        snapToZoom: true,
-        rotationEnabled: false,
-        minZoom: 7,
-      },
-      popup: {
-        autoOpenEnabled: false,
-      },
-      highlightOptions: {
-        color: [0, 185, 235, 0.75],
-        fillOpacity: 0.4,
-      },
-      ui: {
-        components: [],
-      },
-    });
-
-    // Create new GraphicLayers
-    sketchGraphicsLayer = new GraphicsLayer();
-    map.add(sketchGraphicsLayer);
-
-    selectedFeatureGraphicLayer = new GraphicsLayer();
-    map.add(selectedFeatureGraphicLayer);
-
-    // Create the new sketch view model and sets its layer
-    sketchViewModel = new SketchViewModel({
-      view: view,
-      layer: sketchGraphicsLayer,
-      updateOnGraphicClick: false,
-      polygonSymbol: {
-        type: "simple-fill",
-        color: [0, 185, 235, 0.2],
-        size: "1px",
-        outline: {
-          color: [0, 185, 235, 0.5],
-          width: "3px",
         },
-      },
-    });
-
-    zoomViewModel = new ZoomViewModel({
-      view: view,
-    });
-
-    // Configure widget icons
-    var drawContainer = document.getElementById("select-by-polygon");
-    var drawSvg = document.getElementById("brush-path");
-
-    drawContainer.addEventListener(
-      "click",
-      function (event) {
-        event.preventDefault;
-        drawSvg.classList.remove("draw-animation");
-        drawContainer.offsetWidth;
-        drawSvg.classList.add("draw-animation");
-      },
-      false
-    );
-
-    var resetContainer = document.getElementById("return-to-extent");
-    var resetSvg = document.getElementById("reset-widget");
-
-    resetContainer.addEventListener(
-      "click",
-      function (event) {
-        event.preventDefault;
-        resetSvg.classList.remove("reset-animation");
-        resetContainer.offsetWidth;
-        resetSvg.classList.add("reset-animation");
-      },
-      false
-    );
-
-    // Create renderers, LabelClasses and FeatureLayers
-    const localitiesRenderer = {
-      type: "simple",
-      symbol: {
-        type: "simple-marker",
-        size: 6,
-        color: [20, 204, 180, 0.5],
-        outline: {
-          width: 0.5,
-          color: [247, 247, 247, 0.5],
+      });
+  
+      zoomViewModel = new ZoomViewModel({
+        view: view,
+      });
+  
+      // Configure widget icons
+      drawWidget.addEventListener(
+        "click",
+        function (event) {
+          event.preventDefault;
+          drawSvg.classList.remove("draw-widget__animation");
+          drawWidget.offsetWidth;
+          drawSvg.classList.add("draw-widget__animation");
         },
-      },
-    };
-
-    const polygonFeatureRenderer = {
-      type: "simple",
-      symbol: {
-        type: "simple-fill",
-        style: "none",
-        outline: {
-          color: [128, 128, 128, 0.5],
-          width: "1.5px",
+        false
+      );
+  
+      var resetSvg = document.getElementById("resetSvg");
+  
+      resetWidget.addEventListener(
+        "click",
+        function (event) {
+          event.preventDefault;
+          resetSvg.classList.remove("reset-widget__animation");
+          resetWidget.offsetWidth;
+          resetSvg.classList.add("reset-widget__animation");
         },
-      },
-    };
-
-    const countiesLabelClass = new LabelClass({
-      labelExpressionInfo: { expression: "$feature.NAME" },
-      symbol: {
-        type: "text", // autocasts as new TextSymbol()
-        color: "rgb(40, 40, 40)",
-        haloSize: 0.5,
-        haloColor: "white",
-        font: {
-          // autocast as new Font()
-          family: "Avenir Next LT Pro Regular",
-          weight: "bold",
-          size: 13,
+        false
+      );
+  
+      // Create renderers, LabelClasses and FeatureLayers
+      const localitiesRenderer = {
+        type: "simple",
+        symbol: {
+          type: "simple-marker",
+          size: 6,
+          color: [20, 204, 180, 0.5],
+          outline: {
+            width: 0,
+            color: [247, 247, 247, 0.5],
+          },
         },
-      },
-    });
-
-    const regionsLabelClass = new LabelClass({
-      labelExpressionInfo: { expression: "$feature.NAME" },
-      symbol: {
-        type: "text", // autocasts as new TextSymbol()
-        color: "rgb(40, 40, 40)",
-        haloSize: 0.5,
-        haloColor: "white",
-        deconflictionStrategy: "static",
-        font: {
-          // autocast as new Font()
-          family: "Avenir Next LT Pro Regular",
-          weight: "normal",
-          size: 9.5,
+      };
+  
+      const heatmapRenderer = {
+        type: "heatmap",
+        colorStops: [
+          { color: "rgba(63, 40, 102, 0)", ratio: 0 },
+  
+          { color: "#5d32a8", ratio: 0.332 },
+  
+          { color: "#a46fbf", ratio: 0.747 },
+          { color: "#c29f80", ratio: 0.83 },
+          { color: "#e0cf40", ratio: 0.913 },
+          { color: "#ffff00", ratio: 1 }
+        ],
+        maxPixelIntensity: 25,
+        minPixelIntensity: 0
+      };
+      
+  
+      const polygonFeatureRenderer = {
+        type: "simple",
+        symbol: {
+          type: "simple-fill",
+          style: "none",
+          outline: {
+            color: [128, 128, 128, 0.5],
+            width: "1.5px",
+          },
         },
-      },
-    });
-
-    const areasLabelClass = new LabelClass({
-      labelExpressionInfo: {
-        expression: "Replace(Trim($feature.name), ' ', TextFormatting.NewLine)",
-      },
-      symbol: {
-        type: "text", // autocasts as new TextSymbol()
-        color: "rgb(40, 40, 40)",
-        haloSize: 0.5,
-        haloColor: "white",
-        deconflictionStrategy: "static",
-        font: {
-          // autocast as new Font()
-          family: "Avenir Next LT Pro Regular",
-          weight: "bold",
-          size: 9.5,
+      };
+  
+      const countiesLabelClass = new LabelClass({
+        labelExpressionInfo: { expression: "$feature.NAME" },
+        symbol: {
+          type: "text", // autocasts as new TextSymbol()
+          color: "rgb(40, 40, 40)",
+          haloSize: 0.5,
+          haloColor: "white",
+          font: {
+            // autocast as new Font()
+            family: "Avenir Next LT Pro Regular",
+            weight: "bold",
+            size: 13,
+          },
         },
-      },
-    });
-
-    var countiesMaxScale = 1155581;
-    var regionsMaxScale = 288895;
-    var neighborhoodsMinScale = 144448;
-
-    clientFeatureLayer = new FeatureLayer({
-      title: "Areas",
-      spatialReference: {
-        wkid: 4326,
-      },
-      fields: [
-        {
-          name: "region_type",
-          alias: "Region Type",
-          type: "string",
+      });
+  
+      const regionsLabelClass = new LabelClass({
+        labelExpressionInfo: { expression: "$feature.NAME" },
+        symbol: {
+          type: "text", // autocasts as new TextSymbol()
+          color: "rgb(40, 40, 40)",
+          haloSize: 0.5,
+          haloColor: "white",
+          deconflictionStrategy: "static",
+          font: {
+            // autocast as new Font()
+            family: "Avenir Next LT Pro Regular",
+            weight: "normal",
+            size: 9.5,
+          },
         },
-        {
-          name: "objectId",
-          alias: "ObjectId",
-          type: "oid",
+      });
+  
+      const areasLabelClass = new LabelClass({
+        labelExpressionInfo: {
+          expression: "Replace(Trim($feature.name), ' ', TextFormatting.NewLine)",
         },
-        {
-          name: "name",
-          alias: "Name",
-          type: "string",
+        symbol: {
+          type: "text", // autocasts as new TextSymbol()
+          color: "rgb(40, 40, 40)",
+          haloSize: 0.5,
+          haloColor: "white",
+          deconflictionStrategy: "static",
+          font: {
+            // autocast as new Font()
+            family: "Avenir Next LT Pro Regular",
+            weight: "bold",
+            size: 9.5,
+          },
         },
-        {
-          name: "legacyId",
-          alias: "Legacy object ID",
-          type: "string",
+      });
+  
+      var countiesMaxScale = 1155581;
+      var regionsMaxScale = 288895;
+      var neighborhoodsMinScale = 144448;
+  
+      clientFeatureLayer = new FeatureLayer({
+        title: "Areas",
+        spatialReference: {
+          wkid: 4326,
         },
-      ],
-      objectIdField: "objectId",
-      geometryType: "polygon",
-      outFields: ["*"],
-      source: [],
-      renderer: polygonFeatureRenderer,
-      labelingInfo: [areasLabelClass],
-    });
+        fields: [
+          {
+            name: "region_type",
+            alias: "Region Type",
+            type: "string",
+          },
+          {
+            name: "objectId",
+            alias: "ObjectId",
+            type: "oid",
+          },
+          {
+            name: "name",
+            alias: "Name",
+            type: "string",
+          },
+          {
+            name: "legacyId",
+            alias: "Legacy object ID",
+            type: "string",
+          },
+        ],
+        objectIdField: "objectId",
+        geometryType: "polygon",
+        outFields: ["*"],
+        source: [],
+        renderer: polygonFeatureRenderer,
+        labelingInfo: [areasLabelClass],
+      });
+  
+      localitiesLayer = new FeatureLayer({
+        url:
+          "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/LAU_Localities_View/FeatureServer",
+        renderer: localitiesRenderer,
+      });
+  
+      countiesLayer = new FeatureLayer({
+        url:
+          "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/SoCal_Counties_View/FeatureServer",
+        maxScale: countiesMaxScale,
+        labelingInfo: [countiesLabelClass],
+        renderer: polygonFeatureRenderer,
+        title: "Counties",
+        outFields: ["*"],
+      });
+  
+      regionsLayer = new FeatureLayer({
+        url:
+          "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/SoCal_Regions_(v2)_View/FeatureServer",
+        minScale: countiesMaxScale,
+        maxScale: regionsMaxScale,
+        labelingInfo: [regionsLabelClass],
+        renderer: polygonFeatureRenderer,
+        title: "Regions",
+        outFields: ["*"],
+      });
+  
+      neighborhoodsLayer = new FeatureLayer({
+        url:
+          "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/SoCal_Neighborhoods_View/FeatureServer",
+        minScale: neighborhoodsMinScale,
+        labelingInfo: [regionsLabelClass],
+        renderer: polygonFeatureRenderer,
+        title: "Neighborhoods",
+        outFields: ["*"],
+      });
+  
+      // Add all features layers to map
+      map.addMany([
+        neighborhoodsLayer,
+        regionsLayer,
+        countiesLayer,
+        clientFeatureLayer,
+        localitiesLayer,
+      ]);
+  
+      // Add widgets to view
+      //view.ui.components = [];
+  
+      for (let widget of document.getElementsByClassName("widget")) {
+        widget.style.opacity = "1";
+      }
+  
+    var ui = document.getElementsByClassName('ui-container');
+    for (let e of ui) {
+      view.ui.add(e);
+    }
+  
+      // Set localityLayerView to layerView when localities are selected (for highlight)
+      view.whenLayerView(localitiesLayer).then(function (layerView) {
+        localityLayerView = layerView;
+      });
 
-    localitiesLayer = new FeatureLayer({
-      url:
-        "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/LAU_Localities_View/FeatureServer",
-      renderer: localitiesRenderer,
-    });
+      setTimeout(()=> {
+        localityLayerView.when(function() {
+          setVisible('#loading', false);
+          document.getElementById('viewDiv').style.opacity = '1';
+          instructionsDiv.style.opacity = '1';          
+        }).catch(function(error){
+          console.log("error: ", error);
+        });
 
-    countiesLayer = new FeatureLayer({
-      url:
-        "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/SoCal_Counties_View/FeatureServer",
-      maxScale: countiesMaxScale,
-      labelingInfo: [countiesLabelClass],
-      renderer: polygonFeatureRenderer,
-      title: "Counties",
-      outFields: ["*"],
-    });
+      }, 2000)
 
-    regionsLayer = new FeatureLayer({
-      url:
-        "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/SoCal_Regions_(v2)_View/FeatureServer",
-      minScale: countiesMaxScale,
-      maxScale: regionsMaxScale,
-      labelingInfo: [regionsLabelClass],
-      renderer: polygonFeatureRenderer,
-      title: "Regions",
-      outFields: ["*"],
-    });
-
-    neighborhoodsLayer = new FeatureLayer({
-      url:
-        "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/SoCal_Neighborhoods_View/FeatureServer",
-      minScale: neighborhoodsMinScale,
-      labelingInfo: [regionsLabelClass],
-      renderer: polygonFeatureRenderer,
-      title: "Neighborhoods",
-      outFields: ["*"],
-    });
-
-    // Add all features layers to map
-    map.addMany([
-      neighborhoodsLayer,
-      regionsLayer,
-      countiesLayer,
-      clientFeatureLayer,
-      localitiesLayer,
-    ]);
-
-    // Add widgets to view
-    //view.ui.components = [];
-    view.ui.add("select-by-polygon", "top-right");
-    view.ui.add("return-to-extent", "top-right");
-    view.ui.add(zoomDiv, "bottom-right");
-    view.ui.add("widgetContainer", "top-left");
-
-    // Set localityLayerView to layerView when localities are selected (for highlight)
-    view.whenLayerView(localitiesLayer).then(function (layerView) {
-      localityLayerView = layerView;
-    });
-  }
+    }
 });
