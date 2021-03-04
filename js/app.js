@@ -86,7 +86,7 @@ require([
   var collectionNullDiv = document.getElementsByClassName('collection--null')[0];
   var taxaInfoDiv = document.getElementsByClassName('taxa--info')[0];
   var taxaNullDiv = document.getElementsByClassName('taxa--null')[0];
-  var uiTopLeftCollection = document.getElementsByClassName('ui-top-left')[0];
+  var uiTopLeftCollection = document.getElementsByClassName('ui-top-left');
   const instructionsContainer = document.getElementsByClassName('instructions__container')[0];
   const instructionsDiv = document.getElementsByClassName('instructions')[0];
 
@@ -362,7 +362,7 @@ require([
 
   function clearWidgets() {
     for (let container of uiTopLeftCollection) {
-      setFlex(container, false);
+      container.style.left="-100%";
     }
   }
 
