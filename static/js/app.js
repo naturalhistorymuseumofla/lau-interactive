@@ -7,18 +7,18 @@ to compute and display locality data using the ArcGIS API for JavaSccript
 
 // Load all required Esri AMD modules with esri dojo loader
 require([
-  "esri/Map",
-  "esri/views/MapView",
-  "esri/layers/FeatureLayer",
-  "esri/layers/GraphicsLayer",
-  "esri/widgets/Sketch/SketchViewModel",
-  "esri/Graphic",
-  "esri/tasks/support/AttachmentQuery",
-  "esri/Basemap",
-  "esri/layers/VectorTileLayer",
-  "esri/widgets/Zoom/ZoomViewModel",
-  "esri/layers/support/LabelClass",
-  "esri/geometry/geometryEngine",
+  `esri/Map`,
+  `esri/views/MapView`,
+  `esri/layers/FeatureLayer`,
+  `esri/layers/GraphicsLayer`,
+  `esri/widgets/Sketch/SketchViewModel`,
+  `esri/Graphic`,
+  `esri/tasks/support/AttachmentQuery`,
+  `esri/Basemap`,
+  `esri/layers/VectorTileLayer`,
+  `esri/widgets/Zoom/ZoomViewModel`,
+  `esri/layers/support/LabelClass`,
+  `esri/geometry/geometryEngine`,
 ], function (
   Map,
   MapView,
@@ -52,14 +52,14 @@ require([
 
 
     // DOM elements  
-    const sliderDiv = document.getElementById("sliderDiv");
-    const zoomInDiv = document.getElementById("zoomIn");
-    const zoomOutDiv = document.getElementById("zoomOut");
-    const featureCountDiv = document.getElementById("excavationNumber");
-    const invertCountDiv = document.getElementById("invertCount");
-    const vertCountDiv = document.getElementById("vertCount");
-    const drawSvg = document.getElementById("drawPath");
-    const resetSvg = document.getElementById("resetWidget");
+    const sliderDiv = document.getElementById(`sliderDiv`);
+    const zoomInDiv = document.getElementById(`zoomIn`);
+    const zoomOutDiv = document.getElementById(`zoomOut`);
+    const featureCountDiv = document.getElementById(`excavationNumber`);
+    const invertCountDiv = document.getElementById(`invertCount`);
+    const vertCountDiv = document.getElementById(`vertCount`);
+    const drawSvg = document.getElementById(`drawPath`);
+    const resetSvg = document.getElementById(`resetWidget`);
     const locationButton = document.getElementById('locationButton');
     const locationDiv = document.getElementById('location');
     const collectionButton = document.getElementById('collectionButton');
@@ -108,7 +108,7 @@ require([
     // Stops panning of the map past a defined bounding box
     function setNavigationBounds() {
       var initialExtent = view.extent;
-      view.watch("stationary", function (event) {
+      view.watch(`stationary`, function (event) {
         if (!event) {
           return;
         }
@@ -146,17 +146,17 @@ require([
     // Instructions pop-up animation
 
     document.onclick = function() {
-      instructionsDiv.style.top = "150%";
+      instructionsDiv.style.top = `150%`;
       setTimeout(()=> {
         instructionsContainer.style.display = 'none';
       }, 401);
     }
 
     // Add event listeners to custom widgets
-    drawSvg.addEventListener("click", drawButtonClickHandler);
-    resetSvg.addEventListener("click", resetButtonClickHandler);
-    zoomInDiv.addEventListener("click", zoomInClickHandler);
-    zoomOutDiv.addEventListener("click", zoomOutClickHandler);
+    drawSvg.addEventListener(`click`, drawButtonClickHandler);
+    resetSvg.addEventListener(`click`, resetButtonClickHandler);
+    zoomInDiv.addEventListener(`click`, zoomInClickHandler);
+    zoomOutDiv.addEventListener(`click`, zoomOutClickHandler);
 
 
     // Event handler for reset widget
@@ -180,7 +180,7 @@ require([
         polygonHighlight.remove();
       }
       clearGraphics();
-      sketchViewModel.create("polygon", { mode: "freehand" });
+      sketchViewModel.create(`polygon`, { mode: `freehand` });
     }
 
     // Click event for the Zoom widgets
@@ -192,13 +192,13 @@ require([
     }
 
     // Click event to select feature from feature layers
-    view.on("click", function (event) {
+    view.on(`click`, function (event) {
       selectFeaturesFromClick(event);
     });
 
     // Add selectLocalities function to creation of new Sketch
-    sketchViewModel.on("create", function (event) {
-      if (event.state === "complete") {
+    sketchViewModel.on(`create`, function (event) {
+      if (event.state === `complete`) {
         // This polygon will be used to query features that intersect it;
         selectLocalities(event.graphic);
       }
@@ -211,8 +211,8 @@ require([
       setFlex(photoLegend, false);
       locationButton.classList.add('button--active');
       collectionButton.classList.remove('button--active');
-      collectionCaption.classList.remove("button__caption--active");
-      locationCaption.classList.add("button__caption--active");
+      collectionCaption.classList.remove(`button__caption--active`);
+      locationCaption.classList.add(`button__caption--active`);
       view.graphics.items[0].visible = false;
     })
 
@@ -221,8 +221,8 @@ require([
       setFlex(collectionDiv, true); 
       locationButton.classList.remove('button--active');
       collectionButton.classList.add('button--active');
-      collectionCaption.classList.add("button__caption--active");
-      locationCaption.classList.remove("button__caption--active");
+      collectionCaption.classList.add(`button__caption--active`);
+      locationCaption.classList.remove(`button__caption--active`);
       if (splide) {
         const splideSlides = splide.Components.Elements.slides
         setFlex(photoLegend, true);
@@ -243,8 +243,8 @@ require([
       // Returns an array of ages sorted ascending from AgeRange
       function returnTimeRange(specimenID) {
         var ageRange, age;
-        ageRange = captionsJSON[specimenID]["AgeRange"]
-        age = captionsJSON[specimenID]["Age"]
+        ageRange = captionsJSON[specimenID][`AgeRange`]
+        age = captionsJSON[specimenID][`Age`]
         return [ageRange, age]
       }
 
@@ -252,7 +252,7 @@ require([
       function moveTimescale(ageArray) {
         let ageRange, age, minAge, maxAge;
         [ageRange, age] = ageArray;
-        ageRange = ageRange.split(" - ");
+        ageRange = ageRange.split(` - `);
         const sortedAgeArray = ageRange.sort((a,b) => a-b);
         [minAge, maxAge] = sortedAgeArray;
         if (maxAge) {
@@ -273,10 +273,10 @@ require([
       ========================================================== */
     function loadJSON(callback) {
       var xobj = new XMLHttpRequest();
-      xobj.overrideMimeType("application/json");
-      xobj.open("GET", "captions.json", true);
+      xobj.overrideMimeType(`application/json`);
+      xobj.open(`GET`, `./static/captions.json`, true);
       xobj.onreadystatechange = function () {
-        if (xobj.readyState == 4 && xobj.status == "200") {
+        if (xobj.readyState == 4 && xobj.status == `200`) {
           callback(xobj.responseText);
         }
       };
@@ -284,16 +284,16 @@ require([
     }
 
     function removeFileExtension(fileName) {
-      return fileName.substr(0, fileName.lastIndexOf("."));
+      return fileName.substr(0, fileName.lastIndexOf(`.`));
     }
 
     // Reformats html to remove photos/captions from splide slider div
     function resetSplide() {
-      const splideTrack = document.getElementsByClassName("splide__list")[0];
+      const splideTrack = document.getElementsByClassName(`splide__list`)[0];
       const splidePagination = document.getElementsByClassName(
-        "splide__pagination"
+        `splide__pagination`
       )[0];
-      splideTrack.innerHTML = "";
+      splideTrack.innerHTML = ``;
       if (splidePagination) {
         splidePagination.remove();
       }
@@ -306,20 +306,20 @@ require([
     // returns a div with properly formatted captions from input photo filename
     function formatCaptions(attachment) {
       const attachmentName = removeFileExtension(attachment.name);
-      const specimenCaption = document.createElement("p");
-      const taxonCaption = document.createElement("b");
-      const ageCaption = document.createElement("p");
-      const descriptionCaption = document.createElement("p");
-      const catNumber = attachmentName.replace("_", " ").replace("-", ".");
+      const specimenCaption = document.createElement(`p`);
+      const taxonCaption = document.createElement(`b`);
+      const ageCaption = document.createElement(`p`);
+      const descriptionCaption = document.createElement(`p`);
+      const catNumber = attachmentName.replace(`_`, ` `).replace(`-`, `.`);
       const catNumberCaption = document.createTextNode(` (${catNumber})`);
-      const captionsDiv = document.createElement("div");
-      captionsDiv.classList.add("splide__captions");
+      const captionsDiv = document.createElement(`div`);
+      captionsDiv.classList.add(`splide__captions`);
 
 
       const attachmentRecord = captionsJSON[attachmentName];
-      taxonCaption.innerHTML = attachmentRecord["Taxon"];
-      ageCaption.innerHTML = `${attachmentRecord["AgeRange"]} ${attachmentRecord["Age"]}`;
-      descriptionCaption.innerHTML = attachmentRecord["Description"];
+      taxonCaption.innerHTML = attachmentRecord[`Taxon`];
+      ageCaption.innerHTML = `${attachmentRecord[`AgeRange`]} ${attachmentRecord[`Age`]}`;
+      descriptionCaption.innerHTML = attachmentRecord[`Description`];
     
 
       specimenCaption.append(
@@ -337,20 +337,20 @@ require([
 
     // Adds attachment photo to splide carousel after formatting splide
     function addPhotoToSplide(attachment) {
-      var img = document.createElement("img");
-      var li = document.createElement("li");
-      var splideList = document.getElementsByClassName("splide__list")[0];
+      var img = document.createElement(`img`);
+      var li = document.createElement(`li`);
+      var splideList = document.getElementsByClassName(`splide__list`)[0];
       var captions = formatCaptions(attachment);
 
       // Format HTML for Splide carousel
-      li.classList.add("splide__slide");
+      li.classList.add(`splide__slide`);
       li.classList.add(attachment.parentObjectId);
-      img.id = attachment.name.split(".")[0];
+      img.id = attachment.name.split(`.`)[0];
       img.src = attachment.url;
 
       var newSlide = splideList.appendChild(li);
-      var div = document.createElement("div");
-      div.className = "splide__slide--imageContainer";
+      var div = document.createElement(`div`);
+      div.className = `splide__slide--imageContainer`;
 
       newSlide.appendChild(div).appendChild(img);
       newSlide.appendChild(captions);
@@ -358,7 +358,7 @@ require([
 
     // Mounts splide 
     function newSplide() {
-      splide = new Splide(".splide", {
+      splide = new Splide(`.splide`, {
         lazyLoad: true,
       }).mount();
     }
@@ -368,17 +368,17 @@ require([
       ========================================================== */
 
     function hideDiv(div) {
-      div.style.left = "-125%";
+      div.style.left = `-125%`;
     }
 
     function displayDiv(div) {
-      div.style.display = "flex";
-      div.style.left = "0";
+      div.style.display = `flex`;
+      div.style.left = `0`;
     }
 
     function clearWidgets() {
       for (let container of uiTopLeftCollection) {
-        container.style.left="-100%";
+        container.style.left=`-100%`;
       }
     }
 
@@ -455,7 +455,7 @@ require([
           if (results.deleteFeatureResults.length > 0) {
             console.log(
               results.deleteFeatureResults.length,
-              "features have been removed"
+              `features have been removed`
             );
           }
           // if features were added - call queryFeatures to return newly added graphics
@@ -470,7 +470,7 @@ require([
                 objectIds: objectIds,
               })
               .then(function (results) {
-                console.log(results.features.length, "features have been added.");
+                console.log(results.features.length, `features have been added.`);
               });
           }
         })
@@ -489,28 +489,28 @@ require([
       const goToOptions = {
         animate: true,
         duration: 600,
-        ease: "ease-in-out"
+        ease: `ease-in-out`
       }
 
-      if (featureName === "Los Angeles") {
+      if (featureName === `Los Angeles`) {
         view
           .goTo({
             center: [-118.735491, 34.222515],
             zoom: 8
           }, goToOptions)
           .catch(function (error) {
-            if (error.name != "AbortError") {
+            if (error.name != `AbortError`) {
               console.error(error);
             }
           }, goToOptions);
-      } else if (featureName == "Ventura") {
+      } else if (featureName == `Ventura`) {
         view
           .goTo({
             center: [-119.254898, 34.515522],
             zoom: 8,
           }, goToOptions)
           .catch(function (error) {
-            if (error.name != "AbortError") {
+            if (error.name != `AbortError`) {
               console.error(error);
             }
           });
@@ -518,7 +518,7 @@ require([
         view
           .goTo(geometry.extent.expand(2).offset(geometryOffset, 0), goToOptions)
           .catch(function (error) {
-            if (error.name != "AbortError") {
+            if (error.name != `AbortError`) {
               console.error(error);
             }
           });
@@ -553,14 +553,14 @@ require([
     
     // Formats each call in taxa grid with a taxon
     function formatTaxaCell(taxonName, taxonNumber) {
-      if (taxonName === "Clams, oysters, ect.") {
-        taxonName = "Clams, oysters";
-      } else if (taxonName === "Ammonoids, nautiloids") {
-        taxonName = "Nautiloids";
+      if (taxonName === `Clams, oysters, ect.`) {
+        taxonName = `Clams, oysters`;
+      } else if (taxonName === `Ammonoids, nautiloids`) {
+        taxonName = `Nautiloids`;
       }
-      var cell = document.createElement("div");
-      var taxaIcon = document.createElement("div");
-      var taxonDiv = document.createElement("p");
+      var cell = document.createElement(`div`);
+      var taxaIcon = document.createElement(`div`);
+      var taxonDiv = document.createElement(`p`);
       cell.classList.add('taxa__cell');
       taxaIcon.classList.add('taxa__icon');
       taxonDiv.innerHTML = `${taxonNumber.toString()} ${taxonName}`;
@@ -570,10 +570,10 @@ require([
 
     // Displays info cards after intersecting localities have been queried
     function populateInfoCards(returnedLocalities, polygonName) {
-      taxaGrid.innerHTML="";
+      taxaGrid.innerHTML=``;
       // Get counts of Invert/Vert localities based on Category field of 'attributes' property of selected locality records
       const objectIds = returnedLocalities.map(
-        (loc) => loc["attributes"]["OBJECTID"]
+        (loc) => loc[`attributes`][`OBJECTID`]
       );
       const fossilsFound = returnedLocalities.length;
       
@@ -588,7 +588,7 @@ require([
         hideDiv(noInfoCardDiv);
         displayDiv(infoCardDiv);
         const taxa = (returnedLocalities.map(
-          loc => loc["attributes"]["taxa"])).filter(taxa => !(taxa=='')
+          loc => loc[`attributes`][`taxa`])).filter(taxa => !(taxa=='')
         );
         
         if (taxa.length !== 0) {
@@ -609,8 +609,8 @@ require([
         // Hide/Display other divs
 
         // Send info to div
-        featureCountDiv.innerHTML = fossilsFound.toString() + " excavation sites";
-        //setTimeout(() => (infoCard.style.height = "auto"), 301);
+        featureCountDiv.innerHTML = fossilsFound.toString() + ` excavation sites`;
+        //setTimeout(() => (infoCard.style.height = `auto`), 301);
       } else {
         hideDiv(infoCard);
         displayDiv(noInfoCardDiv);
@@ -646,7 +646,7 @@ require([
             const regionsQuery = {
               where: `name = '${returnedFeature.attributes.name}'`,
               returnGeometry: true,
-              outFields: ["*"],
+              outFields: [`*`],
             };
             // Queries feature service of selected feature using 
             // the query object defined above as params
@@ -659,7 +659,7 @@ require([
                 const selectedFeatureGraphic = new Graphic({
                   geometry: clickFeature.geometry,
                   symbol: {
-                    type: "simple-fill",
+                    type: `simple-fill`,
                     color: [0, 185, 235, 0.2],
                     outline: {
                       // autocasts as new SimpleLineSymbol()
@@ -685,15 +685,15 @@ require([
       if (feature.attributes) {
         var featureName = feature.attributes.name;
       } else {
-        var featureName = "the area";
+        var featureName = `the area`;
       }
       // Results in faster query time if the polygon feature is simplified
       const geometry = geometryEngine.simplify(feature.geometry);
       zoomToFeature(featureName, geometry);
       const query = {
         geometry: geometry,
-        spatialRelationship: "intersects",
-        outFields: ["*"],
+        spatialRelationship: `intersects`,
+        outFields: [`*`],
         maxRecordCountFactor: 3,
       };
       // Queries localityLayer with query object defined above as params
@@ -716,7 +716,7 @@ require([
       const query = {
         where: "parent_region = '" + feature.attributes.name + "'",
         returnGeometry: true,
-        outFields: ["*"],
+        outFields: [`*`],
       };
       clientFeatureLayer.queryFeatures().then(function (results) {
         const removeFeatures = {
@@ -725,7 +725,7 @@ require([
         applyEditsToClientFeatureLayer(removeFeatures);
       });
 
-      if (regionType == "Counties") {
+      if (regionType == `Counties`) {
         regionsLayer.queryFeatures(query).then(function (results) {
           addEdits(results);
         });
@@ -750,7 +750,7 @@ require([
         const attachmentList = Object.values(attachments).map(
           (attachment) => attachment[0]
         );
-        document.getElementById('attachmentCount').innerText = attachmentList.length;
+        document.getElementById(`attachmentCount`).innerText = attachmentList.length;
         if (attachmentList.length > 0) {
           setFlex(collectionInfoDiv, true);
           setFlex(collectionNullDiv, false);
@@ -784,7 +784,7 @@ require([
           
 
           // Splide event listener
-          splide.on("active", function (slide) {
+          splide.on(`active`, function (slide) {
             const slideObjectId = slide.slide.classList[1];
             createPointGraphicAtObjectId(slideObjectId);
             //const slideAgeRangeText = slide.slide.lastElementChild.children[0].innerText;
@@ -812,7 +812,7 @@ require([
       };
       localityLayerView.queryFeatures(highlightQuery).then(function (attachment) {
         var visibleAttachmentGeometry = {
-          type: "point", // autocasts as new Point()
+          type: `point`, // autocasts as new Point()
           longitude: attachment.features[0].geometry.longitude,
           latitude: attachment.features[0].geometry.latitude,
         };
@@ -820,10 +820,10 @@ require([
         const selectedGraphic = new Graphic({
           geometry: visibleAttachmentGeometry,
           symbol: {
-            type: "simple-marker",
-            style: "circle",
-            color: "orange",
-            size: "12px", // pixels
+            type: `simple-marker`,
+            style: `circle`,
+            color: `orange`,
+            size: `12px`, // pixels
             outline: {
               // autocasts as new SimpleLineSymbol()
               color: [255, 255, 0],
@@ -849,7 +849,7 @@ require([
           baseLayers: [
             new VectorTileLayer({
               portalItem: {
-                id: "c65f3f7dc5754366b4e515e73e2f7d8b", // Custom LAU Basemap
+                id: `c65f3f7dc5754366b4e515e73e2f7d8b`, // Custom LAU Basemap
               },
             }),
           ],
@@ -860,7 +860,7 @@ require([
         });
     
         view = new MapView({
-          container: "viewDiv",
+          container: `viewDiv`,
           map: map,
           center: [-118.248638, 34.06266], // longitude, latitude ,
           zoom: 8,
@@ -894,12 +894,12 @@ require([
           layer: sketchGraphicsLayer,
           updateOnGraphicClick: false,
           polygonSymbol: {
-            type: "simple-fill",
+            type: `simple-fill`,
             color: [0, 185, 235, 0.2],
-            size: "1px",
+            size: `1px`,
             outline: {
               color: [0, 185, 235, 0.5],
-              width: "3px",
+              width: `3px`,
             },
           },
         });
@@ -910,12 +910,12 @@ require([
     
         // Configure widget icons
         drawWidget.addEventListener(
-          "click",
+          `click`,
           function (event) {
             event.preventDefault;
-            drawSvg.classList.remove("draw-widget__animation");
+            drawSvg.classList.remove(`draw-widget__animation`);
             drawWidget.offsetWidth;
-            drawSvg.classList.add("draw-widget__animation");
+            drawSvg.classList.add(`draw-widget__animation`);
           },
           false
         );
@@ -923,21 +923,21 @@ require([
         var resetSvg = document.getElementById("resetSvg");
     
         resetWidget.addEventListener(
-          "click",
+          `click`,
           function (event) {
             event.preventDefault;
-            resetSvg.classList.remove("reset-widget__animation");
+            resetSvg.classList.remove(`reset-widget__animation`);
             resetWidget.offsetWidth;
-            resetSvg.classList.add("reset-widget__animation");
+            resetSvg.classList.add(`reset-widget__animation`);
           },
           false
         );
     
         // Create renderers, LabelClasses and FeatureLayers
         const localitiesRenderer = {
-          type: "simple",
+          type: `simple`,
           symbol: {
-            type: "simple-marker",
+            type: `simple-marker`,
             size: 6,
             color: [20, 204, 180, 0.5],
             outline: {
@@ -948,16 +948,16 @@ require([
         };
     
         const heatmapRenderer = {
-          type: "heatmap",
+          type: `heatmap`,
           colorStops: [
-            { color: "rgba(63, 40, 102, 0)", ratio: 0 },
+            { color: `rgba(63, 40, 102, 0)`, ratio: 0 },
     
-            { color: "#5d32a8", ratio: 0.332 },
+            { color: `#5d32a8`, ratio: 0.332 },
     
-            { color: "#a46fbf", ratio: 0.747 },
-            { color: "#c29f80", ratio: 0.83 },
-            { color: "#e0cf40", ratio: 0.913 },
-            { color: "#ffff00", ratio: 1 }
+            { color: `#a46fbf`, ratio: 0.747 },
+            { color: `#c29f80`, ratio: 0.83 },
+            { color: `#e0cf40`, ratio: 0.913 },
+            { color: `#ffff00`, ratio: 1 }
           ],
           maxPixelIntensity: 25,
           minPixelIntensity: 0
@@ -965,45 +965,45 @@ require([
         
     
         const polygonFeatureRenderer = {
-          type: "simple",
+          type: `simple`,
           symbol: {
-            type: "simple-fill",
-            style: "none",
+            type: `simple-fill`,
+            style: `none`,
             outline: {
               color: [128, 128, 128, 0.5],
-              width: "1.5px",
+              width: `1.5px`,
             },
           },
         };
     
         const countiesLabelClass = new LabelClass({
-          labelExpressionInfo: { expression: "$feature.NAME" },
+          labelExpressionInfo: { expression: `$feature.NAME` },
           symbol: {
-            type: "text", // autocasts as new TextSymbol()
-            color: "rgb(40, 40, 40)",
+            type: `text`, // autocasts as new TextSymbol()
+            color: `rgb(40, 40, 40)`,
             haloSize: 0.5,
-            haloColor: "white",
+            haloColor: `white`,
             font: {
               // autocast as new Font()
-              family: "Avenir Next LT Pro Regular",
-              weight: "bold",
+              family: `Avenir Next LT Pro Regular`,
+              weight: `bold`,
               size: 13,
             },
           },
         });
     
         const regionsLabelClass = new LabelClass({
-          labelExpressionInfo: { expression: "$feature.NAME" },
+          labelExpressionInfo: { expression: `$feature.NAME` },
           symbol: {
-            type: "text", // autocasts as new TextSymbol()
-            color: "rgb(40, 40, 40)",
+            type: `text`, // autocasts as new TextSymbol()
+            color: `rgb(40, 40, 40)`,
             haloSize: 0.5,
-            haloColor: "white",
-            deconflictionStrategy: "static",
+            haloColor: `white`,
+            deconflictionStrategy: `static`,
             font: {
               // autocast as new Font()
-              family: "Avenir Next LT Pro Regular",
-              weight: "normal",
+              family: `Avenir Next LT Pro Regular`,
+              weight: `normal`,
               size: 9.5,
             },
           },
@@ -1014,15 +1014,15 @@ require([
             expression: "Replace(Trim($feature.name), ' ', TextFormatting.NewLine)",
           },
           symbol: {
-            type: "text", // autocasts as new TextSymbol()
-            color: "rgb(40, 40, 40)",
+            type: `text`, // autocasts as new TextSymbol()
+            color: `rgb(40, 40, 40)`,
             haloSize: 0.5,
-            haloColor: "white",
-            deconflictionStrategy: "static",
+            haloColor: `white`,
+            deconflictionStrategy: `static`,
             font: {
               // autocast as new Font()
-              family: "Avenir Next LT Pro Regular",
-              weight: "bold",
+              family: `Avenir Next LT Pro Regular`,
+              weight: `bold`,
               size: 9.5,
             },
           },
@@ -1033,35 +1033,35 @@ require([
         var neighborhoodsMinScale = 144448;
     
         clientFeatureLayer = new FeatureLayer({
-          title: "Areas",
+          title: `Areas`,
           spatialReference: {
             wkid: 4326,
           },
           fields: [
             {
-              name: "region_type",
-              alias: "Region Type",
-              type: "string",
+              name: `region_type`,
+              alias: `Region Type`,
+              type: `string`,
             },
             {
-              name: "objectId",
-              alias: "ObjectId",
-              type: "oid",
+              name: `objectId`,
+              alias: `ObjectId`,
+              type: `oid`,
             },
             {
-              name: "name",
-              alias: "Name",
-              type: "string",
+              name: `name`,
+              alias: `Name`,
+              type: `string`,
             },
             {
-              name: "legacyId",
-              alias: "Legacy object ID",
-              type: "string",
+              name: `legacyId`,
+              alias: `Legacy object ID`,
+              type: `string`,
             },
           ],
-          objectIdField: "objectId",
-          geometryType: "polygon",
-          outFields: ["*"],
+          objectIdField: `objectId`,
+          geometryType: `polygon`,
+          outFields: [`*`],
           source: [],
           renderer: polygonFeatureRenderer,
           labelingInfo: [areasLabelClass],
@@ -1071,39 +1071,39 @@ require([
 
         localitiesLayer = new FeatureLayer({
           url:
-            "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/LAU_Localities_View/FeatureServer",
+            `https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/LAU_Localities_View/FeatureServer`,
           renderer: localitiesRenderer,
         });
     
         countiesLayer = new FeatureLayer({
           url:
-            "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/SoCal_Counties_View/FeatureServer",
+            `https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/SoCal_Counties_View/FeatureServer`,
           maxScale: countiesMaxScale,
           labelingInfo: [countiesLabelClass],
           renderer: polygonFeatureRenderer,
-          title: "Counties",
-          outFields: ["*"],
+          title: `Counties`,
+          outFields: [`*`],
         });
     
         regionsLayer = new FeatureLayer({
           url:
-            "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/SoCal_Regions_(v2)_View/FeatureServer",
+            `https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/SoCal_Regions_(v2)_View/FeatureServer`,
           minScale: countiesMaxScale,
           maxScale: regionsMaxScale,
           labelingInfo: [regionsLabelClass],
           renderer: polygonFeatureRenderer,
-          title: "Regions",
-          outFields: ["*"],
+          title: `Regions`,
+          outFields: [`*`],
         });
     
         neighborhoodsLayer = new FeatureLayer({
           url:
-            "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/SoCal_Neighborhoods_View/FeatureServer",
+            `https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/SoCal_Neighborhoods_View/FeatureServer`,
           minScale: neighborhoodsMinScale,
           labelingInfo: [regionsLabelClass],
           renderer: polygonFeatureRenderer,
-          title: "Neighborhoods",
-          outFields: ["*"],
+          title: `Neighborhoods`,
+          outFields: [`*`],
         });
     
         map.addMany([
@@ -1115,8 +1115,8 @@ require([
         ]);
     
         // Make widgets visible to map view
-        for (let widget of document.getElementsByClassName("widget")) {
-          widget.style.opacity = "1";
+        for (let widget of document.getElementsByClassName(`widget`)) {
+          widget.style.opacity = `1`;
         }
     
         // Add ui elements to map view
