@@ -1,15 +1,12 @@
 
-
-// Applies styling to splide arrows
-let splideArrows = document.getElementsByClassName('splide__arrow');
-for (let arrow of splideArrows) {
-  arrow.classList.add('hvr-grow-shadow--arrow');
-}
-
+      
+/*
+Script that loads esri modules, map and data. Inlcudes all functions
+to compute and display locality data using the ArcGIS API for JavaSccript
+*/
 
 
-  
-
+// Load all required Esri AMD modules with esri dojo loader
 require([
   "esri/Map",
   "esri/views/MapView",
@@ -55,85 +52,77 @@ require([
     captionsJSON;
 
 
-  // Get DOM elements
-  var infoDiv = document.getElementById("infoDiv");
-  var sliderDiv = document.getElementById("sliderDiv");
-  var zoomDiv = document.getElementById("zoomDiv");
-  var zoomInDiv = document.getElementById("zoomIn");
-  var zoomOutDiv = document.getElementById("zoomOut");
-  var featureCountDiv = document.getElementById("excavationNumber");
-  var invertCountDiv = document.getElementById("invertCount");
-  var vertCountDiv = document.getElementById("vertCount");
-  var noFossilsInfo = document.getElementById("noFossilsInfo");
-  var taxaInfo = document.getElementById("taxaInfo");
-  var drawSvg = document.getElementById("drawPath");
-  var resetSvg = document.getElementById("resetWidget");
-
-  var locationButton = document.getElementById('locationButton');
-  var locationDiv = document.getElementById('location');
-  var collectionButton = document.getElementById('collectionButton');
-  var collectionDiv = document.getElementById('collection');
-  var collectionCaption = document.getElementById('collectionButtonCaption');
-  var locationCaption = document.getElementById('locationButtonCaption');
-  var cardDiv = document.getElementsByClassName('card')[0];
-  var photoLegend = document.getElementsByClassName('photo-indicator')[0];
-  var taxaGrid = document.getElementsByClassName('taxa__grid')[0];
-  var timescaleDiv = document.getElementsByClassName('timescale__container')[0];
-  var timescaleBar = document.getElementById('indicator');
-  var infoCardDiv = document.getElementById('infoCard');
-  var noInfoCardDiv = document.getElementById('noInfoCard');
-  var collectionInfoDiv = document.getElementsByClassName('collection--info')[0];
-  var collectionNullDiv = document.getElementsByClassName('collection--null')[0];
-  var taxaInfoDiv = document.getElementsByClassName('taxa--info')[0];
-  var taxaNullDiv = document.getElementsByClassName('taxa--null')[0];
-  var uiTopLeftCollection = document.getElementsByClassName('ui-top-left');
+  // DOM elements  
+  const sliderDiv = document.getElementById("sliderDiv");
+  const zoomInDiv = document.getElementById("zoomIn");
+  const zoomOutDiv = document.getElementById("zoomOut");
+  const featureCountDiv = document.getElementById("excavationNumber");
+  const invertCountDiv = document.getElementById("invertCount");
+  const vertCountDiv = document.getElementById("vertCount");
+  const drawSvg = document.getElementById("drawPath");
+  const resetSvg = document.getElementById("resetWidget");
+  const locationButton = document.getElementById('locationButton');
+  const locationDiv = document.getElementById('location');
+  const collectionButton = document.getElementById('collectionButton');
+  const collectionDiv = document.getElementById('collection');
+  const collectionCaption = document.getElementById('collectionButtonCaption');
+  const locationCaption = document.getElementById('locationButtonCaption');
+  const photoLegend = document.getElementsByClassName('photo-indicator')[0];
+  const taxaGrid = document.getElementsByClassName('taxa__grid')[0];
+  const timescaleDiv = document.getElementsByClassName('timescale__container')[0];
+  const timescaleBar = document.getElementById('indicator');
+  const infoCardDiv = document.getElementById('infoCard');
+  const noInfoCardDiv = document.getElementById('noInfoCard');
+  const collectionInfoDiv = document.getElementsByClassName('collection--info')[0];
+  const collectionNullDiv = document.getElementsByClassName('collection--null')[0];
+  const taxaInfoDiv = document.getElementsByClassName('taxa--info')[0];
+  const taxaNullDiv = document.getElementsByClassName('taxa--null')[0];
+  const uiTopLeftCollection = document.getElementsByClassName('ui-top-left');
   const instructionsContainer = document.getElementsByClassName('instructions__container')[0];
   const instructionsDiv = document.getElementsByClassName('instructions')[0];
 
 
       
 
-  /* ==========================================================
-     Initialize map
-    ========================================================== */
+/* ==========================================================
+    Initialize map
+  ========================================================== */
 
   setUpMap();
 
+  // Used to query feature service based on returned feature layer 
+  // attribute name
   var regionsObject = {
     Neighborhoods: neighborhoodsLayer,
     Regions: regionsLayer,
     Counties: countiesLayer,
   };
 
+  // Refresh map after period of inactivity
   var resetMapSetInterval = setInterval(resetButtonClickHandler, 90000);
   document.onclick = clearInterval(resetMapSetInterval);
 
-  // Add event listeners to custom widgets
-  drawSvg.addEventListener("click", drawButtonClickHandler);
-  resetSvg.addEventListener("click", resetButtonClickHandler);
-  zoomInDiv.addEventListener("click", zoomInClickHandler);
-  zoomOutDiv.addEventListener("click", zoomOutClickHandler);
-
-  view.when(function () {
+  view.when(() => {
     setNavigationBounds();
   });
 
+  // Stops panning of the map past a defined bounding box
   function setNavigationBounds() {
     var initialExtent = view.extent;
     view.watch("stationary", function (event) {
       if (!event) {
         return;
       }
-      //If the map has moved to the point where it's center is
-      //outside the initial boundaries, then move it back to the
-      //edge where it moved out
+      // If the map has moved to the point where it's center is
+      // outside the initial boundaries, then move it back to the
+      // edge where it moved out
       var currentCenter = view.extent.center;
       if (!initialExtent.contains(currentCenter)) {
         var newCenter = view.extent.center;
 
-        //check each side of the initial extent and if the
-        //current center is outside that extent,
-        //set the new center to be on the edge that it went out on
+        // check each side of the initial extent and if the
+        // current center is outside that extent,
+        // set the new center to be on the edge that it went out on
         if (currentCenter.x < initialExtent.xmin) {
           newCenter.x = initialExtent.xmin;
         }
@@ -156,14 +145,20 @@ require([
     ========================================================== */
 
   // Instructions pop-up animation
+
   document.onclick = function() {
-    
     instructionsDiv.style.top = "150%";
     setTimeout(()=> {
       instructionsContainer.style.display = 'none';
     }, 401);
-    
   }
+
+  // Add event listeners to custom widgets
+  drawSvg.addEventListener("click", drawButtonClickHandler);
+  resetSvg.addEventListener("click", resetButtonClickHandler);
+  zoomInDiv.addEventListener("click", zoomInClickHandler);
+  zoomOutDiv.addEventListener("click", zoomOutClickHandler);
+
 
   // Event handler for reset widget
   function resetButtonClickHandler() {
@@ -210,30 +205,51 @@ require([
     }
   });
 
+    
+  locationButton.addEventListener('click', () => {
+    setFlex(collectionDiv, false);
+    setFlex(locationDiv, true);
+    setFlex(photoLegend, false);
+    locationButton.classList.add('button--active');
+    collectionButton.classList.remove('button--active');
+    collectionCaption.classList.remove("button__caption--active");
+    locationCaption.classList.add("button__caption--active");
+    view.graphics.items[0].visible = false;
+  })
+
+  collectionButton.addEventListener('click', () => {
+    setFlex(locationDiv, false);
+    setFlex(collectionDiv, true); 
+    locationButton.classList.remove('button--active');
+    collectionButton.classList.add('button--active');
+    collectionCaption.classList.add("button__caption--active");
+    locationCaption.classList.remove("button__caption--active");
+    if (splide) {
+      const splideSlides = splide.Components.Elements.slides
+      setFlex(photoLegend, true);
+      view.graphics.items[0].visible = true;
+      if (splideSlides[0].classList.contains('is-active')){
+        // Move timescale at initial Splide slide
+        const specimenID = splideSlides[0].getElementsByTagName('img')[0].id;
+        const timeRange = returnTimeRange(specimenID)
+        moveTimescale(timeRange);
+      }
+    }
+  })
+
   /* ==========================================================
      Timescale functions
     ========================================================== */
 
     // Returns an array of ages sorted ascending from AgeRange
     function returnTimeRange(specimenID) {
-      /*
-      var splitAgeRange = ageRange.split(" ");
-      const age = splitAgeRange[4];
-      const rangeArray = [splitAgeRange[0], splitAgeRange[2]].map(
-        age => parseFloat(age)
-      );
-      if (age === "years old") {
-        rangeArray.map(age => age * .001);
-      }
-      const sortedAgeArray = rangeArray.sort((a,b) => a-b);
-      return sortedAgeArray;
-      */
       var ageRange, age;
       ageRange = captionsJSON[specimenID]["AgeRange"]
       age = captionsJSON[specimenID]["Age"]
       return [ageRange, age]
     }
 
+    // Moves timescale indicator div based on age range array
     function moveTimescale(ageArray) {
       let ageRange, age, minAge, maxAge;
       [ageRange, age] = ageArray;
@@ -272,7 +288,7 @@ require([
     return fileName.substr(0, fileName.lastIndexOf("."));
   }
 
-  // Reformats html to remove photos/captions from splide
+  // Reformats html to remove photos/captions from splide slider div
   function resetSplide() {
     const splideTrack = document.getElementsByClassName("splide__list")[0];
     const splidePagination = document.getElementsByClassName(
@@ -290,18 +306,18 @@ require([
 
   // returns a div with properly formatted captions from input photo filename
   function formatCaptions(attachment) {
-    var attachmentName = removeFileExtension(attachment.name);
-    var specimenCaption = document.createElement("p");
-    var taxonCaption = document.createElement("b");
-    var ageCaption = document.createElement("p");
-    var descriptionCaption = document.createElement("p");
-    var catNumber = attachmentName.replace("_", " ").replace("-", ".");
-    var catNumberCaption = document.createTextNode(` (${catNumber})`);
-    var captionsDiv = document.createElement("div");
+    const attachmentName = removeFileExtension(attachment.name);
+    const specimenCaption = document.createElement("p");
+    const taxonCaption = document.createElement("b");
+    const ageCaption = document.createElement("p");
+    const descriptionCaption = document.createElement("p");
+    const catNumber = attachmentName.replace("_", " ").replace("-", ".");
+    const catNumberCaption = document.createTextNode(` (${catNumber})`);
+    const captionsDiv = document.createElement("div");
     captionsDiv.classList.add("splide__captions");
 
 
-    var attachmentRecord = captionsJSON[attachmentName];
+    const attachmentRecord = captionsJSON[attachmentName];
     taxonCaption.innerHTML = attachmentRecord["Taxon"];
     ageCaption.innerHTML = `${attachmentRecord["AgeRange"]} ${attachmentRecord["Age"]}`;
     descriptionCaption.innerHTML = attachmentRecord["Description"];
@@ -341,6 +357,7 @@ require([
     newSlide.appendChild(captions);
   }
 
+  // Mounts splide 
   function newSplide() {
     splide = new Splide(".splide", {
       lazyLoad: true,
@@ -364,12 +381,6 @@ require([
     for (let container of uiTopLeftCollection) {
       container.style.left="-100%";
     }
-  }
-
-  function resetInfoDiv() {
-    featureCountDiv.innerHTML = "";
-    invertCountDiv.innerHTML = "";
-    vertCountDiv.innerHTML = "";
   }
 
   function clearGraphics() {
@@ -398,42 +409,15 @@ require([
   /* ==========================================================
      UI functions
     ========================================================== */
-  
-  locationButton.addEventListener('click', function(){
-    setFlex(collectionDiv, false);
-    setFlex(locationDiv, true);
-    setFlex(photoLegend, false);
-    locationButton.classList.add('button--active');
-    collectionButton.classList.remove('button--active');
-    collectionCaption.classList.remove("button__caption--active");
-    locationCaption.classList.add("button__caption--active");
-    view.graphics.items[0].visible = false;
-  })
 
-  collectionButton.addEventListener('click', function(){
-    setFlex(locationDiv, false);
-    setFlex(collectionDiv, true); 
-    locationButton.classList.remove('button--active');
-    collectionButton.classList.add('button--active');
-    collectionCaption.classList.add("button__caption--active");
-    locationCaption.classList.remove("button__caption--active");
-    if (splide) {
-      const splideSlides = splide.Components.Elements.slides
-      setFlex(photoLegend, true);
-      view.graphics.items[0].visible = true;
-      if (splideSlides[0].classList.contains('is-active')){
-        // Move timescale at initial Splide slide
-        const specimenID = splideSlides[0].getElementsByTagName('img')[0].id;
-        
-        const timeRange = returnTimeRange(specimenID)
-        moveTimescale(timeRange);
-      }
-    }
-  })
 
   /* ==========================================================
      ClientFeatureLayer functions
     ========================================================== */
+
+  // A clientFeatuerLayer is used to display intersecting regions
+  // of a selecteed polygon, regardless of the zoom level of the
+  // ma.
 
   function resetClientFeatureLayer() {
     clientFeatureLayer.queryFeatures().then(function (results) {
@@ -500,7 +484,7 @@ require([
      Functions to query & select localities layer
     ========================================================== */
 
-  // Zooms to input feature
+  // Zooms to feature after it is selected
   function zoomToFeature(featureName, geometry) {
     const geometryOffset = -(geometry.extent.width / 2);
     const goToOptions = {
@@ -542,7 +526,8 @@ require([
     }
   }
 
-  // Formats list of taxa
+  // Formats json representation of taxa from aggregated intersected
+  // localities
   function formatTaxa(taxa) {
     const taxaList = taxa.map(taxon => JSON.parse(taxon));
 
@@ -567,7 +552,7 @@ require([
     }  
 
   
-  // Formats taxa cell in taxa grid
+  // Formats each call in taxa grid with a taxon
   function formatTaxaCell(taxonName, taxonNumber) {
     if (taxonName === "Clams, oysters, ect.") {
       taxonName = "Clams, oysters";
@@ -586,16 +571,14 @@ require([
 
   // Displays info cards after intersecting localities have been queried
   function populateInfoCards(returnedLocalities, polygonName) {
-    //const infoCard = document.getElementsByClassName('info-card__card')[0];
-    //infoCard.style.height = `${infoCardDiv.clientHeight}px`;
     taxaGrid.innerHTML="";
     // Get counts of Invert/Vert localities based on Category field of 'attributes' property of selected locality records
     const objectIds = returnedLocalities.map(
       (loc) => loc["attributes"]["OBJECTID"]
     );
-
     const fossilsFound = returnedLocalities.length;
-
+    
+    // Set name of feature name to all title divs
     for (let div of document.getElementsByClassName('featureName')) {
       div.innerText = polygonName;
     }
@@ -632,17 +615,6 @@ require([
     } else {
       hideDiv(infoCard);
       displayDiv(noInfoCardDiv);
-      /*
-      if (taxaInfo.style.display === "block") {
-        hideDiv(infoDiv);
-        setTimeout(() => {
-          taxaInfo.style.display = "none";
-          displayDiv(infoDiv);
-          displayDiv(noFossilsInfo);
-        }, 500);
-      }
-      hideDiv(sliderDiv);
-      */
     }
   }
 
@@ -664,7 +636,9 @@ require([
       neighborhoodsLayer,
       regionsLayer,
       clientFeatureLayer,
-    ];
+    ]
+    // hitTest returns feature that intersects with tap/click, 
+    // i.e. screenPoint
     view
       .hitTest(screenPoint, { include: includeLayers })
       .then(function (response) {
@@ -675,6 +649,8 @@ require([
             returnGeometry: true,
             outFields: ["*"],
           };
+          // Queries feature service of selected feature using 
+          // the query object defined above as params
           regionsObject[returnedFeature.attributes.region_type]
             .queryFeatures(regionsQuery)
             .then(function (f) {
@@ -705,13 +681,14 @@ require([
       });
   }
 
-  // Selects locality features from geometry
+  // Returns locality features that intersect with feature geometry
   function selectLocalities(feature) {
     if (feature.attributes) {
       var featureName = feature.attributes.name;
     } else {
       var featureName = "the area";
     }
+    // Results in faster query time if the polygon feature is simplified
     const geometry = geometryEngine.simplify(feature.geometry);
     zoomToFeature(featureName, geometry);
     const query = {
@@ -720,6 +697,7 @@ require([
       outFields: ["*"],
       maxRecordCountFactor: 3,
     };
+    // Queries localityLayer with query object defined above as params
     localitiesLayer
       .queryFeatures(query)
       .then(function (results) {
@@ -732,7 +710,8 @@ require([
       });
   }
 
-  // Populates client feature layer with features that intersect input feature
+  // Populates client feature layer with regions that intersect
+  // the input (selected) region feature
   function displayIntersectingFeatures(feature) {
     const regionType = feature.layer.title;
     const query = {
@@ -802,9 +781,7 @@ require([
         displayDiv(sliderDiv);
 
         // Create graphic at initial Splide slide
-        createPointGraphicAtObjectId(attachmentList[0].parentObjectId);
-
-      
+        createPointGraphicAtObjectId(attachmentList[0].parentObjectId); 
         
 
         // Splide event listener
@@ -1091,6 +1068,8 @@ require([
         labelingInfo: [areasLabelClass],
       });
   
+      // Define feature layers and add to map
+
       localitiesLayer = new FeatureLayer({
         url:
           "https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/LAU_Localities_View/FeatureServer",
@@ -1128,7 +1107,6 @@ require([
         outFields: ["*"],
       });
   
-      // Add all features layers to map
       map.addMany([
         neighborhoodsLayer,
         regionsLayer,
@@ -1137,23 +1115,25 @@ require([
         localitiesLayer,
       ]);
   
-      // Add widgets to view
-      //view.ui.components = [];
-  
+      // Make widgets visible to map view
       for (let widget of document.getElementsByClassName("widget")) {
         widget.style.opacity = "1";
       }
   
-    var ui = document.getElementsByClassName('ui-container');
-    for (let e of ui) {
-      view.ui.add(e);
-    }
-  
+      // Add ui elements to map view
+      var ui = document.getElementsByClassName('ui-container');
+      for (let e of ui) {
+        view.ui.add(e);
+      }
+    
       // Set localityLayerView to layerView when localities are selected (for highlight)
       view.whenLayerView(localitiesLayer).then(function (layerView) {
         localityLayerView = layerView;
       });
 
+      // Stops loading animation and makes map view visible after 
+      // localityLayerView has finished loading
+      /*
       setTimeout(()=> {
         localityLayerView.when(function() {
           setVisible('#loading', false);
@@ -1162,8 +1142,16 @@ require([
         }).catch(function(error){
           console.log("error: ", error);
         });
-
       }, 2000)
-
+      */
     }
 });
+
+
+
+// Applies styling to splide arrows
+let splideArrows = document.getElementsByClassName('splide__arrow');
+for (let arrow of splideArrows) {
+  arrow.classList.add('hvr-grow-shadow--arrow');
+}
+
