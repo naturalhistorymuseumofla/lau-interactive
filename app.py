@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request
+import requests
 import urllib.parse
 from datetime import datetime
 from mongoengine import Document, EmbeddedDocument
@@ -18,18 +19,14 @@ from mongoengine.fields import (
 app = Flask(__name__)
 
 
-app.config['MONGODB_SETTINGS'] = {
-    'db': 'db_name'
-}
-
-connect(db="lau-test")
+db = connect(db="lau-test")
 
 
 class FossilPhotos(EmbeddedDocument):
     uid = ObjectIdField(required=True, unique=True, primary_key=True),
     url = URLField(required=True),
     age = FloatField(),
-    description: StringField()
+    description = StringField()
 
 
 class LocalityQuery(Document):
@@ -46,21 +43,49 @@ class LocalityQuery(Document):
 @app.route("/")
 def home():
     return render_template("index.html")
-    print(db.objects())
 
 
 @app.route("/query", methods=["GET", "POST"])
 def query():
-    global_id = request.args.get('id')
-    query = LocalityQuery.objects(uid=global_id)
+    #global_id = request.args.get('id')
+    # query = LocalityQuery.objects(uid=global_id)
 
-    return "Hello, Salvador"
+    return "Hello, Salvador"    
 
 
 @app.route("/json", methods=["GET", "POST"])
 def json():
     if request.method == 'POST':
-        return f'{request.json} was sucesfully recevied'
+        #if LocalityQuery.objects(uid=globalId):
+         #   return LocalityQuery.objects(uid=globalId)
+        #else:
+
+        feature =  request.json
+        
+        localities_url = 'https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/LAU_Localities_View/FeatureServer/0/query'
+        
+        geometry = '{"spatialReference":{"latestWkid":3857,"wkid":102100},"rings":' + str(feature["geometry"]) + '}'
+        data = {
+            'f' : 'json',
+            'geometry' : geometry,
+            'maxRecordCountFactor': '3',
+            'outFields': '*',
+            'returnGeometry': 'false',
+            'spatialRel': 'esriSpatialRelIntersects',
+            'geometryType': 'esriGeometryPolygon',
+            'inSR': '102100'
+        }
+
+        response = requests.post(localities_url, data=data)
+        response = response.json()
+        
+        if 'error' in response.keys():
+            return f'Response error code {response["error"]}'
+        else: 
+            return response
+        
+
+#.json["globalId"]} was sucesfully recevied'
 
 
 @app.route("/salvador")

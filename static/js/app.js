@@ -443,7 +443,7 @@ require([
       const edits = {
         addFeatures: graphics,
       };
-      console.log(edits);
+      //console.log(edits);
       applyEditsToClientFeatureLayer(edits);
     }
 
@@ -453,10 +453,12 @@ require([
         .then(function (results) {
           // if edits were removed
           if (results.deleteFeatureResults.length > 0) {
+            /*
             console.log(
               results.deleteFeatureResults.length,
               `features have been removed`
             );
+            */
           }
           // if features were added - call queryFeatures to return newly added graphics
           if (results.addFeatureResults.length > 0) {
@@ -627,6 +629,24 @@ require([
       highlight = localityLayerView.highlight(queriedLocalities);
     }
 
+    async function database(feature) {
+      const queryObject = {
+        'globalId' : feature.attributes.globalid,
+        'name': feature.attributes.name,
+        'region_type': feature.attributes.region_type,
+        'geometry': feature.geometry.rings,
+        'layer_url': feature.layer.parsedUrl.path,
+        'serviceItemId': feature.layer.sourceJSON.serviceItemId
+      }
+      let response = await fetch('/json', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json;charset=utf-8'},
+        body: JSON.stringify(queryObject)
+      });
+      let text = await response.text();
+      console.log(text);
+    }
+
     // Selects feature from feature layer after click event
     function selectFeaturesFromClick(screenPoint) {
       clearGraphics();
@@ -642,6 +662,8 @@ require([
         .hitTest(screenPoint, { include: includeLayers })
         .then(function (response) {
           var returnedFeature = response.results[0].graphic;
+          database(returnedFeature);
+          //console.log(returnedFeature.geometry.rings);
           if (response.results.length > 0) {
             const regionsQuery = {
               where: `name = '${returnedFeature.attributes.name}'`,
