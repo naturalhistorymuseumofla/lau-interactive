@@ -823,7 +823,7 @@ input:checked + .slider:before {
 }
 
 #loading {
-  display: block;
+  display: none;
   position: absolute;
   top: 0;
   left: 0;
@@ -837,7 +837,7 @@ input:checked + .slider:before {
 }
 
 #viewDiv {
-  opacity: 0;
+  opacity: 1;
   transition: opacity 1000ms;
 }
 

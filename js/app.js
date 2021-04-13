@@ -1106,13 +1106,17 @@ require([
         title: "Neighborhoods",
         outFields: ["*"],
       });
+
+      const vectorLocalitiesLayer = new VectorTileLayer({
+        url: 'https://vectortileservices7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/LAU_Localities_View_Vector_Tile_Layer/VectorTileServer'
+      })
   
       map.addMany([
         neighborhoodsLayer,
         regionsLayer,
         countiesLayer,
         clientFeatureLayer,
-        localitiesLayer,
+        vectorLocalitiesLayer
       ]);
   
       // Make widgets visible to map view
