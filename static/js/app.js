@@ -634,7 +634,7 @@ require([
         'globalId' : feature.attributes.globalid,
         'name': feature.attributes.name,
         'region_type': feature.attributes.region_type,
-        'geometry': feature.geometry.rings,
+        'geometry': feature.geometry,
         'layer_url': feature.layer.parsedUrl.path,
         'serviceItemId': feature.layer.sourceJSON.serviceItemId
       }
@@ -644,7 +644,7 @@ require([
         body: JSON.stringify(queryObject)
       });
       let text = await response.text();
-      console.log(text);
+      //console.log(text);
     }
 
     // Selects feature from feature layer after click event
