@@ -1,0 +1,15 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
+#mapid {
+  height: 99vh;
+}
+
+html {
+  font-size: calc(.25vmin + 7px);
+  margin: 0;
+}
+
+body {
+  font-family: "Inter", "Segoe UI", sans-serif;
+  margin: 0;
+  overflow: hidden;
+}/*# sourceMappingURL=leaflet-styles.css.map */
