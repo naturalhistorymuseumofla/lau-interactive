@@ -5,6 +5,7 @@ import shapely
 import requests
 import urllib.parse
 from datetime import datetime
+'''
 from mongoengine import Document, EmbeddedDocument
 from mongoengine import connect
 from mongoengine.fields import (
@@ -18,10 +19,10 @@ from mongoengine.fields import (
     FloatField,
     EmbeddedDocumentListField
 )
-
+'''
 app = Flask(__name__)
 
-
+'''
 db = connect(db="lau-test")
 
 
@@ -41,7 +42,7 @@ class LocalityQuery(Document):
     underwater_age = FloatField(),
     taxa = DictField(),
     photos = EmbeddedDocumentListField(FossilPhotos)
-
+'''
 
 gis = GIS('https://nhmlac.maps.arcgis.com/', 'dmarkbreiter_NHMLAC', 'j5BDj%k3@BaG')
 localities = gis.content.get('2b5d6edf8da849859c4f17a89ca63f6e')
