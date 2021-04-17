@@ -630,12 +630,15 @@ require([
     }
 
     async function database(feature) {
+      const oidField = feature.layer.objectIdField
       const queryObject = {
         'globalId' : feature.attributes.globalid,
+        'oid': feature.attributes[oidField],
+        'regionType': feature.attributes.region_type,
         'name': feature.attributes.name,
         'region_type': feature.attributes.region_type,
-        'geometry': feature.geometry,
-        'layer_url': feature.layer.parsedUrl.path,
+        //'geometry': feature.geometry,
+        //'layer_url': feature.layer.parsedUrl.path,
         'serviceItemId': feature.layer.sourceJSON.serviceItemId
       }
       let response = await fetch('/json', {
@@ -644,7 +647,7 @@ require([
         body: JSON.stringify(queryObject)
       });
       let text = await response.text();
-      //console.log(text);
+      console.log(text);
     }
 
     // Selects feature from feature layer after click event
@@ -662,6 +665,7 @@ require([
         .hitTest(screenPoint, { include: includeLayers })
         .then(function (response) {
           var returnedFeature = response.results[0].graphic;
+          console.log(returnedFeature);
           database(returnedFeature);
           //console.log(returnedFeature.geometry.rings);
           if (response.results.length > 0) {
