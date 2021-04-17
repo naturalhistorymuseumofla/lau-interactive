@@ -3,14 +3,18 @@
 
 $blur:blur(10px);
 $card-border-radius: 10px;
-$card-flex-gap: 3rem;
+$card-flex-gap: 6rem;
 $card-margin: 1.25rem;
 $card-width: 50rem;
+// Controls the min-height of each section (card__container) and 
+// the overall height of card__content
+$card-section-height: 47rem; 
 $card-margin-bottom: 1.5rem;
 $box-shadow: 0px 0px 3px 2px rgba(0, 0, 0, 0.1);
 $linear-gradient: linear-gradient(0deg, #42afe5, #3fdcff );
 $icon-background--inactive: rgb(225, 225, 225);
 $font-family: "Inter", "Segoe UI", sans-serif;
+
 
 #viewDiv {
   padding: 0;
@@ -65,7 +69,14 @@ body {
   background-color: rgba(255, 255, 255, 0.95);
   margin-bottom: $card-margin-bottom;
   box-shadow: $box-shadow;
-  
+  overflow: none;
+
+}
+
+.card__content { 
+  overflow-y: scroll;
+  height: $card-section-height;
+  overflow-x: hidden;
   
 }
 
@@ -74,7 +85,8 @@ body {
 }
 
 .card__title {
-  padding: 0px .25rem 0px .25rem
+  padding: 0px .25rem 0px .25rem;
+  position: sticky;
 }
 
 .card__container {
@@ -82,6 +94,7 @@ body {
   flex-direction: column;
   align-items: center;
   text-align: center;
+  min-height: $card-section-height;
 }
 
 .card__flex-item { 
@@ -94,7 +107,12 @@ body {
   align-items: center;
 }
 
+.card__title {
+  margin-bottom: 3rem;
+}
+
 .seperator {
+  margin-bottom: $card-flex-gap;
   width: 20rem;
   height: 1px;
   background-color: rgba(117, 117, 117, 0.2);
@@ -109,7 +127,7 @@ body {
   padding:$padding 0rem $padding 0rem;
   display:flex;
   justify-content: center;
-  margin-bottom: $card-flex-gap;
+  margin-bottom: 3rem;
   box-shadow: 0px 4px 3px -3px rgba(0, 0, 0, 0.1);
 }
 
@@ -153,7 +171,7 @@ body {
 }
 
 #collection {
-  display:none;
+  display:flex;
 }
 
 #location {

@@ -205,7 +205,7 @@ require([
     }
   });
 
-    
+  /*
   locationButton.addEventListener('click', () => {
     setFlex(collectionDiv, false);
     setFlex(locationDiv, true);
@@ -236,7 +236,8 @@ require([
       }
     }
   })
-
+  */
+ 
   /* ==========================================================
      Timescale functions
     ========================================================== */
@@ -751,7 +752,7 @@ require([
       const attachmentList = Object.values(attachments).map(
         (attachment) => attachment[0]
       );
-      document.getElementById('attachmentCount').innerText = attachmentList.length;
+      //document.getElementById('attachmentCount').innerText = attachmentList.length;
       if (attachmentList.length > 0) {
         setFlex(collectionInfoDiv, true);
         setFlex(collectionNullDiv, false);
