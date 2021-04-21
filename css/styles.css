@@ -47,18 +47,41 @@ body {
 }
 
 .card {
-  width: 50rem;
+  width: 52.5rem;
   border-radius: 10px;
   background-color: rgba(255, 255, 255, 0.95);
-  margin-bottom: 1.5rem;
   box-shadow: 0px 0px 3px 2px rgba(0, 0, 0, 0.1);
   overflow: none;
 }
 
 .card__content {
   overflow-y: scroll;
-  height: 47rem;
+  height: 48rem;
   overflow-x: hidden;
+  position: relative;
+  text-align: center;
+  margin: 0rem 1rem 1rem 1rem;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: none;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
 }
 
 .info-card__card {
@@ -74,8 +97,12 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-height: 48rem;
+}
+
+.photos--null {
   text-align: center;
-  min-height: 47rem;
+  justify-content: center;
 }
 
 .card__flex-item {
@@ -86,6 +113,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: center;
 }
 
 .card__title {
@@ -125,19 +153,32 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 5rem;
-  width: 5rem;
+  height: 5.5rem;
+  width: 5.5rem;
 }
 
 .button {
   height: 100%;
   width: 100%;
+  background-color: #efefef;
   border-radius: 50%;
   border-width: 0px;
 }
 
+.button__path {
+  height: 110%;
+  width: 110%;
+  fill: #474747;
+}
+
+.button__path--active {
+  fill: white;
+  stroke: none;
+  clip-rule: evenodd;
+}
+
 .button--active {
-  background: linear-gradient(0deg, #42afe5, #3fdcff);
+  background: linear-gradient(0deg, #26566A, #366e86);
   box-shadow: 0px 0px 3px 2px rgba(0, 0, 0, 0.1) !important;
 }
 
@@ -191,14 +232,14 @@ body {
 }
 
 .button__caption {
-  margin-top: 0.7rem;
+  margin-top: 0.5rem;
   font-size: 1rem;
 }
 
 h1 {
   font-weight: 800;
   color: #3c3c3c;
-  font-size: 2.5rem;
+  font-size: 2.75rem;
   margin: 0rem 0rem 0.5rem 0rem;
 }
 
@@ -207,27 +248,29 @@ h2 {
   font-variation-settings: "wght" 400;
   color: #3c3c3c;
   margin: 0px;
-  font-size: 1.9rem;
+  font-size: 2.2rem;
 }
 
 h3 {
   color: #3c3c3c;
   margin-top: 0rem;
-  font-size: 1.7rem;
+  font-size: 1.85rem;
   margin-bottom: 2rem;
 }
 
 h4 {
   color: #3c3c3c;
-  font-size: 1.6rem;
-  margin: 0px;
+  font-size: 1.7rem;
+  margin: 0rem;
+  line-height: 2.35rem;
   font-weight: 400;
 }
 
 p {
   color: #3c3c3c;
-  font-size: 1.425rem;
+  font-size: 1.6rem;
   margin: 0;
+  line-height: 2.85rem;
 }
 
 .instructions__container {
@@ -256,18 +299,50 @@ p {
   transition: top 359ms ease-in;
 }
 
+.slash {
+  stroke: #474747;
+  stroke-linecap: round;
+  stroke-width: 0.5rem;
+  content: "";
+  /*
+  position: absolute;
+  bottom: 0%;
+  left: 0%;
+
+  transform: rotateZ(45deg);
+
+  transform-origin: bottom left;
+  */
+  width: 2rem;
+  clip-rule: evenodd;
+}
+
+.slash__outline {
+  stroke: black;
+  stroke-width: 1.25rem;
+  stroke-linecap: round;
+  clip-rule: evenodd;
+}
+
+.null__icon {
+  height: 25rem;
+  width: 25rem;
+  border-radius: 50%;
+  margin: 0px;
+}
+
 .taxa__grid {
   display: inline-grid;
   width: 100%;
   flex-flow: row wrap;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   grid-column-gap: 0rem;
   grid-row-gap: 1.15rem;
   justify-items: center;
 }
 
 .taxa__cell {
-  width: 17.5rem;
+  width: 27.5rem;
   padding-left: 0.25rem;
   display: flex;
   align-items: center;
@@ -275,11 +350,10 @@ p {
 
 .taxa__icon {
   border-radius: 50%;
-  height: 1.75rem;
-  width: 1.75rem;
+  height: 7rem;
+  width: 7rem;
   box-shadow: 0px 0px 2px 1px rgba(24, 24, 24, 0.2);
   margin-right: 0.7rem;
-  background-color: rgba(255, 255, 255, 0.2);
 }
 
 .underwater__container {
@@ -293,8 +367,8 @@ p {
 
 .underwater__icon {
   border-radius: 50%;
-  height: 7rem;
-  width: 7rem;
+  height: 10rem;
+  width: 10rem;
   margin-right: 2rem;
   position: relative;
   box-shadow: 0px 0px 3px 2px rgba(24, 24, 24, 0.07);
@@ -302,7 +376,7 @@ p {
 }
 
 .underwater__svg {
-  width: 4.75rem;
+  width: 7rem;
   height: auto;
   position: absolute;
   top: 0;
@@ -310,6 +384,10 @@ p {
   left: 0%;
   right: 0%;
   margin: auto;
+}
+
+.underwater__svg > path {
+  fill: #26566A;
 }
 
 .splide__slide__container {
@@ -324,31 +402,30 @@ p {
 }
 
 .splide {
-  width: calc(50rem - 5rem);
-  margin-bottom: calc(6rem - 1rem);
+  width: calc(52.5rem - 5rem);
 }
 
 .splide__slide {
-  width: calc(50rem - 5rem);
-  height: 30rem;
+  width: calc(52.5rem - 5rem);
+  height: 35rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
 .splide__slide--imageContainer {
-  max-height: calc(30rem - 8rem);
-  max-width: calc(50rem - 5rem);
+  max-height: calc(35rem - 8rem);
+  max-width: calc(52.5rem - 5rem);
 }
 
 img {
-  max-height: 100%;
-  max-width: 100%;
+  max-height: calc(35rem - 15rem);
+  max-width: calc(52.5rem - 13rem);
 }
 
 .splide__pagination {
-  position: absolute !important;
-  bottom: -5% !important;
+  margin-top: 1rem;
+  padding: 0;
 }
 
 .splide__pagination__page {
@@ -357,7 +434,7 @@ img {
 }
 
 .splide__pagination__page.is-active {
-  background: linear-gradient(0deg, #42afe5, #3fdcff) !important;
+  background: linear-gradient(0deg, #26566A, #366e86) !important;
 }
 
 .timescale__container {
@@ -365,12 +442,12 @@ img {
   display: flex;
   flex-direction: row;
   width: 37rem;
-  margin-top: 0.75rem;
+  margin-top: 1.25rem;
 }
 
 .indicator {
   position: absolute;
-  bottom: 120%;
+  bottom: 135%;
   right: 2%;
   width: 5rem;
   display: flex;
@@ -381,7 +458,7 @@ img {
 
 .indicator__line {
   width: 100%;
-  height: 5px;
+  height: 7px;
   border-radius: 20px;
   background-color: grey;
   transition: width 1s ease-out;
@@ -439,18 +516,17 @@ img {
 }
 
 .timescale-legend {
-  display: flex;
-  flex-direction: row;
-  margin-top: 4.25rem;
-  justify-content: center;
-  align-content: center;
+  display: inline-grid;
   width: 100%;
+  flex-flow: row wrap;
+  grid-template-columns: 1.1fr 0.9fr;
+  grid-column-gap: 0rem;
+  margin-top: 5.75rem;
+  justify-items: left;
 }
 
 .timescale-legend__text {
-  margin-top: 0px;
   display: inline;
-  margin-bottom: 0px;
 }
 
 .timescale-legend__item {
@@ -460,7 +536,7 @@ img {
   justify-content: center;
   flex-grow: 1;
   margin-right: 0.75rem;
-  margin-top: 1.5rem;
+  padding-left: 4rem;
 }
 
 .timescale-legend > :last-child {
@@ -468,11 +544,11 @@ img {
 }
 
 .timescale-legend__indicator {
-  min-width: 1.25rem;
-  min-height: 1.25rem;
-  width: 1.25rem;
-  height: 1.25rem;
-  margin-right: 0.5rem;
+  min-width: 1.35rem;
+  min-height: 1.35rem;
+  width: 1.35rem;
+  height: 1.35rem;
+  margin-right: 0.85rem;
   border-radius: 0.2rem;
 }
 
@@ -498,6 +574,7 @@ img {
   box-sizing: border-box;
   padding: 2rem;
   justify-content: space-around;
+  width: 30rem;
 }
 
 .legend__circle {
@@ -535,20 +612,22 @@ img {
 
 .widget {
   font-family: "Inter", "Segoe UI", sans-serif;
-  height: 5.75rem;
-  width: 5.75rem;
-  min-width: 45px;
-  min-height: 45px;
   font-size: 1.35rem;
   opacity: 0;
-  border-radius: 4px;
-  background-color: rgba(255, 255, 255, 0.9);
-  box-shadow: 0px 0px 3px 2px rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0);
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   pointer-events: all;
   border-width: 0px;
+}
+
+.widget__container {
+  height: 5.5rem;
+  width: 5.5rem;
+  min-width: 45px;
+  min-height: 45px;
   margin-bottom: 15px;
 }
 
@@ -559,6 +638,11 @@ img {
 .widget__svg {
   pointer-events: none;
   filter: drop-shadow(0px 0px 0.5px rgba(0, 0, 0, 0.3));
+}
+
+.widget__label {
+  font-weight: 500;
+  text-shadow: -1px 1px 0 rgba(255, 255, 255, 0), 1px 1px 0 white, 1px -1px 0 white, -1px -1px 0 white;
 }
 
 #drawWidget {
@@ -574,18 +658,32 @@ img {
   top: -10%;
 }
 
+#resetWidget {
+  margin-bottom: 0.25rem;
+  background: linear-gradient(0deg, #26566A, #366e86);
+  border-radius: 100%;
+  border-width: 0px;
+  height: 5.5rem;
+  width: 5.5rem;
+}
+
+.reset-widget {
+  margin-bottom: 15px;
+}
+
 .reset-widget__svg {
-  height: 3.25rem;
-  width: 3.25rem;
+  height: 5.5rem;
+  width: 5.5rem;
   min-width: 25px;
   min-height: 25px;
-  position: absolute;
-  top: 10%;
+  top: 0%;
 }
 
 .zoom {
   border-radius: 50%;
   position: relative;
+  background: linear-gradient(0deg, #26566A, #366e86);
+  box-shadow: 0px 0px 3px 2px rgba(0, 0, 0, 0.1);
 }
 
 #zoomIn::before {
@@ -599,8 +697,8 @@ img {
   margin: auto;
   border-radius: 1.5px;
   height: 42%;
-  width: 3.5px;
-  background-image: linear-gradient(0deg, #42afe5, #3fdcff);
+  width: 4px;
+  background: white;
 }
 
 #zoomIn::after {
@@ -613,9 +711,9 @@ img {
   bottom: 0;
   margin: auto;
   border-radius: 1.5px;
-  height: 3.5px;
+  height: 4px;
   width: 42%;
-  background: linear-gradient(to right, #42afe5, #3fdcff);
+  background: white;
 }
 
 #zoomOut::before {
@@ -628,9 +726,9 @@ img {
   bottom: 0;
   margin: auto;
   border-radius: 1.5px;
-  height: 3.5px;
+  height: 4px;
   width: 42%;
-  background: linear-gradient(to right, #42afe5, #3fdcff);
+  background: white;
 }
 
 .draw-widget__animation {
@@ -652,12 +750,6 @@ img {
     stroke-dashoffset: 0;
   }
 }
-.widget__label {
-  position: absolute;
-  bottom: 2%;
-  color: #3c3c3c;
-}
-
 .cursor-animation {
   stroke-dasharray: 75;
   stroke-dashoffset: 100;
@@ -765,7 +857,7 @@ img {
 .switch {
   position: relative;
   display: inline-block;
-  width: 5.75rem;
+  width: 5.5rem;
   height: 2.5rem;
   margin-bottom: 0.7rem;
 }
@@ -799,7 +891,7 @@ img {
 }
 
 input:checked + .slider {
-  background-image: linear-gradient(0deg, #42afe5, #3fdcff);
+  background-image: linear-gradient(0deg, #26566A, #366e86);
 }
 
 input:focus + .slider {
@@ -856,7 +948,7 @@ input:checked + .slider:before {
 }
 
 @supports ((-webkit-backdrop-filter: none) or (backdrop-filter: none)) {
-  .widget {
+  .zoom {
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     background-color: rgba(255, 255, 255, 0.45);
@@ -870,7 +962,7 @@ input:checked + .slider:before {
 }
 @media only screen and (max-height: 850px) {
   html {
-    font-size: calc(.2vmin + 6px);
+    font-size: calc(.2vmin + 7px);
   }
 
   .widget {
@@ -879,7 +971,7 @@ input:checked + .slider:before {
 }
 @media only screen and (max-height: 700px) {
   html {
-    font-size: calc(.2vmin + 4.5px);
+    font-size: calc(.2vmin + 6px);
   }
 
   .widget {

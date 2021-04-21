@@ -23,33 +23,47 @@
           <nav class="card__menu">
 
             <li class="button__outer-container">
-              <a href="#collection">
-                <div class="button__inner-container">
-                  <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0" y="0" viewBox="0 0 126 126" xml:space="preserve">
+              <div class="button__inner-container">
+                <a href="#photos" ripple="ripple" class="button button--active hvr-grow-shadow menu__button" id="collectionButton">
+                  <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 126 126" xml:space="preserve">
+                    <style>
+                      .st0{fill:#26566A;} .button__path{fill-rule:evenodd;clip-rule:evenodd;}
+                    </style>
+                    <path class="button__path button__path--active" d="M78.43 32.14H47.57c-8.52 0-15.43 6.91-15.43 15.43v24.65l8.47-8.47c1-1 2.63-1 3.64 0l8.47 8.47L74.04 50.9c1-1 2.63-1 3.64 0l16.18 16.18V47.57c0-8.52-6.91-15.43-15.43-15.43zM47.57 27C36.21 27 27 36.21 27 47.57v30.86C27 89.79 36.21 99 47.57 99h30.86C89.79 99 99 89.79 99 78.43V47.57C99 36.21 89.79 27 78.43 27H47.57zm7.72 20.57c0 4.26-3.45 7.71-7.71 7.71s-7.71-3.45-7.71-7.71 3.45-7.71 7.71-7.71c4.25 0 7.71 3.45 7.71 7.71z"/>
+                  </svg>
+                </a>
+              </div>
+
+              <div class="button__caption button__caption--active" id="collectionButtonCaption"><p>Photos</p></div>
+            </li>
+
+            <li class="button__outer-container">
+              <div class="button__inner-container">
+                <a href="#time" ripple="ripple" class="button hvr-grow-shadow menu__button" id="collectionButton">
+                  <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 126 126" xml:space="preserve">
                     <style>
                       .st0{fill:#26566A;} .st1{fill:#FFFFFF;}
                     </style>
-                    <circle class="st0" cx="63" cy="63" r="63"/>
-                    <path class="st1" d="M45.62 71.48a8.404 8.404 0 01-6.66 2.4c-1.78-.16-3.52-.32-5.09-.47-3.51-.32-6.59 2.28-6.85 5.78-.25 3.3 2.13 6.23 5.44 6.68 1.16.16 2.02 1.16 1.98 2.33l-.23 7.22a3.47 3.47 0 003.58 3.57l9.84-.27a3.475 3.475 0 003.38-3.19l.75-9.41a8.265 8.265 0 012.42-5.21l.86-.84 25.37-25.56a8.404 8.404 0 016.66-2.4c1.78.16 3.52.32 5.09.47 3.51.32 6.59-2.28 6.85-5.78.25-3.3-2.13-6.23-5.44-6.68a2.281 2.281 0 01-1.98-2.33l.23-7.22A3.47 3.47 0 0088.24 27l-9.84.27a3.483 3.483 0 00-3.38 3.19l-.75 9.41a8.265 8.265 0 01-2.42 5.21L45.51 71.6"/>
+                    <path class="button__path" d="M40.49 32.59c0 1.84-.01 3.63.01 5.43 0 .43.05.87.13 1.29.57 2.79 3.12 4.75 5.97 4.63 2.83-.12 5.19-2.29 5.54-5.1.05-.36.06-.73.06-1.1.01-1.7 0-3.41 0-5.14h21.59v.46c0 1.67-.01 3.33 0 5 .01 3.1 2.29 5.57 5.4 5.87 2.88.28 5.58-1.76 6.19-4.7.08-.4.11-.81.12-1.21.01-1.64.01-3.28.01-4.92v-.48c.07-.02.11-.05.16-.05 2.34.01 4.67-.07 7 .05 3.51.17 6.28 3.14 6.37 6.65 0 .14.01.29.01.43v52.2c0 3.25-1.91 5.93-4.89 6.8-.62.18-1.29.29-1.93.29-19.49.01-38.97.01-58.46.01-3.68 0-6.7-2.97-6.82-6.67v-.28-52.51c0-3.2 2.05-5.92 5.1-6.73.58-.15 1.19-.23 1.79-.24 2.11-.03 4.22-.01 6.34-.01.08 0 .17.02.31.03zm-8.04 19.54V89.9c0 2.19 1.46 3.65 3.65 3.65 17.91 0 35.82-.01 53.73.02 2.18 0 3.75-1.62 3.74-3.75-.04-12.41-.02-24.82-.02-37.24v-.44c-20.37-.01-40.71-.01-61.1-.01z"/>
+                    <path class="button__path" d="M43.64 33.86c0-1.39-.01-2.78 0-4.17.02-1.22.81-2.26 1.94-2.58 1.16-.33 2.41.1 3.01 1.14.25.43.43.98.43 1.48.04 2.77.03 5.53.02 8.3 0 1.53-1.18 2.71-2.68 2.72-1.5.01-2.7-1.15-2.72-2.68-.02-1.4 0-2.81 0-4.21zM76.95 33.87v-4.05c0-1.61 1.16-2.81 2.71-2.81 1.54 0 2.69 1.21 2.69 2.82 0 2.74.01 5.48 0 8.22 0 1.36-1.02 2.51-2.31 2.67-1.38.17-2.62-.63-2.98-1.95-.07-.27-.1-.57-.11-.85-.01-1.35 0-2.7 0-4.05zM47.65 80.36v6.13h-8.28v-6.13h8.28zM52.38 80.34h8.24v6.15h-8.24v-6.15zM73.63 80.36v6.12h-8.26v-6.12h8.26zM78.36 80.34h8.25v6.14h-8.25v-6.14zM73.63 69.76v6.13h-8.26v-6.13h8.26zM60.64 69.76v6.13h-8.26v-6.13h8.26zM86.63 69.76v6.13h-8.26v-6.13h8.26zM47.66 69.77v6.12h-8.28v-6.12h8.28zM47.64 65.29h-8.26v-6.12h8.26v6.12zM60.64 59.16v6.12h-8.25v-6.12h8.25zM65.37 59.16h8.26v6.12h-8.26v-6.12zM86.62 59.16v6.12h-8.27v-6.12h8.27z"/>
                   </svg>
-                  <button ripple="ripple" class="button hvr-grow-shadow menu__button" id="collectionButton"></button>
-                </div>
-              </a>
-              <div class="button__caption" id="collectionButtonCaption"><p>Collection</p></div>
+                </a>
+              </div>
+              <div class="button__caption" id="collectionButtonCaption"><p>Time</p></div>
             </li>
             
             <li class="button__outer-container">
-              <a href="#location">
-                <div class="button__inner-container">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="button__svg feather feather-map-pin" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" >
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle>
+              <div class="button__inner-container">   
+                <a  href="#location" ripple="ripple" class="button hvr-grow-shadow menu__button" id="locationButton">
+                  <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0" y="0" viewBox="0 0 126 126" xml:space="preserve">
+                    <style>
+                      .button__icon{} .st1{fill:#FFFFFF;}
+                    </style>
+                    <path class="button__path" d="M45.62 71.48a8.404 8.404 0 01-6.66 2.4c-1.78-.16-3.52-.32-5.09-.47-3.51-.32-6.59 2.28-6.85 5.78-.25 3.3 2.13 6.23 5.44 6.68 1.16.16 2.02 1.16 1.98 2.33l-.23 7.22a3.47 3.47 0 003.58 3.57l9.84-.27a3.475 3.475 0 003.38-3.19l.75-9.41a8.265 8.265 0 012.42-5.21l.86-.84 25.37-25.56a8.404 8.404 0 016.66-2.4c1.78.16 3.52.32 5.09.47 3.51.32 6.59-2.28 6.85-5.78.25-3.3-2.13-6.23-5.44-6.68a2.281 2.281 0 01-1.98-2.33l.23-7.22A3.47 3.47 0 0088.24 27l-9.84.27a3.483 3.483 0 00-3.38 3.19l-.75 9.41a8.265 8.265 0 01-2.42 5.21L45.51 71.6"/>
                   </svg>
-                  
-                  <button ripple="ripple" class="button button--active hvr-grow-shadow menu__button" id="locationButton"></button>
-                </div>
-              </a>
-      
-              <div class="button__caption button__caption--active" id="locationButtonCaption"><p>Location</p></div>
+                </a>
+              </div>
+              <div class="button__caption" id="locationButtonCaption"><p>Fossils</p></div>
             </li>
 
           </nav>
@@ -59,8 +73,8 @@
           </div>
           <div class="card__content">
 
-            <div  id="collection" class="card__container">
-              <div class="collection--info">
+            <div id="photos" class="card__container">
+              <div class="photos--info">
                 <div id="sliderDiv" class="card__flex-item">
                   <h3 class="card__header">Swipe to see local fossils!</h3>
                   <div class="splide">
@@ -74,8 +88,21 @@
                 <div class="seperator card__flex-item"></div>
                 -->
               </div>
-              <div class="collection--null">
-                <div class="card__flex-item">
+              <div class="photos--null card__flex-item">
+                <div class="null__icon">
+                  <svg version="1.1" id="nullPhotoIcon" class="icon" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 126 126" xml:space="preserve">
+                    <style>
+                      .st0{fill:#26566A;} #clip{clip-rule:evenodd;} .st1{fill-rule:evenodd;clip-rule:evenodd;fill:#FFFFFF;}
+                    </style>
+                    <line class="slash" x1="20%" y1="20%" x2="80%" y2="80%" ></line>
+                    <mask id="mask">
+                      <rect x="0" y=0 width="100%" height="100%" fill="white"></rect>
+                      <line class="slash__outline" x1="20%" y1="20%" x2="80%" y2="80%"></line>
+                    </mask>
+                    <path class="button__path" mask="url(#mask)" d="M78.43 32.14H47.57c-8.52 0-15.43 6.91-15.43 15.43v24.65l8.47-8.47c1-1 2.63-1 3.64 0l8.47 8.47L74.04 50.9c1-1 2.63-1 3.64 0l16.18 16.18V47.57c0-8.52-6.91-15.43-15.43-15.43zM47.57 27C36.21 27 27 36.21 27 47.57v30.86C27 89.79 36.21 99 47.57 99h30.86C89.79 99 99 89.79 99 78.43V47.57C99 36.21 89.79 27 78.43 27H47.57zm7.72 20.57c0 4.26-3.45 7.71-7.71 7.71s-7.71-3.45-7.71-7.71 3.45-7.71 7.71-7.71c4.25 0 7.71 3.45 7.71 7.71z"/>
+                  </svg>
+                </div>
+                <div>
                   <h3>Try selecting a different area on the map!</h3>
                   <h4>The museum has not photographed fossils from this area, 
                     but is always photographing new fossils from around Southern California.</h4>
@@ -132,22 +159,20 @@
                   </div>
                 </div>
               </div>
-                          <div class="underwater__container card__flex-item">
-              <div class="underwater__icon">
-                <svg aria-hidden="true" class="underwater__svg" focusable="false" data-prefix="fas" data-icon="water" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
-                  <path fill="url(#linear-gradient)"class="button-svg__path" d="M562.1 383.9c-21.5-2.4-42.1-10.5-57.9-22.9-14.1-11.1-34.2-11.3-48.2 0-37.9 30.4-107.2 30.4-145.7-1.5-13.5-11.2-33-9.1-46.7 1.8-38 30.1-106.9 30-145.2-1.7-13.5-11.2-33.3-8.9-47.1 2-15.5 12.2-36 20.1-57.7 22.4-7.9.8-13.6 7.8-13.6 15.7v32.2c0 9.1 7.6 16.8 16.7 16 28.8-2.5 56.1-11.4 79.4-25.9 56.5 34.6 137 34.1 192 0 56.5 34.6 137 34.1 192 0 23.3 14.2 50.9 23.3 79.1 25.8 9.1.8 16.7-6.9 16.7-16v-31.6c.1-8-5.7-15.4-13.8-16.3zm0-144c-21.5-2.4-42.1-10.5-57.9-22.9-14.1-11.1-34.2-11.3-48.2 0-37.9 30.4-107.2 30.4-145.7-1.5-13.5-11.2-33-9.1-46.7 1.8-38 30.1-106.9 30-145.2-1.7-13.5-11.2-33.3-8.9-47.1 2-15.5 12.2-36 20.1-57.7 22.4-7.9.8-13.6 7.8-13.6 15.7v32.2c0 9.1 7.6 16.8 16.7 16 28.8-2.5 56.1-11.4 79.4-25.9 56.5 34.6 137 34.1 192 0 56.5 34.6 137 34.1 192 0 23.3 14.2 50.9 23.3 79.1 25.8 9.1.8 16.7-6.9 16.7-16v-31.6c.1-8-5.7-15.4-13.8-16.3zm0-144C540.6 93.4 520 85.4 504.2 73 490.1 61.9 470 61.7 456 73c-37.9 30.4-107.2 30.4-145.7-1.5-13.5-11.2-33-9.1-46.7 1.8-38 30.1-106.9 30-145.2-1.7-13.5-11.2-33.3-8.9-47.1 2-15.5 12.2-36 20.1-57.7 22.4-7.9.8-13.6 7.8-13.6 15.7v32.2c0 9.1 7.6 16.8 16.7 16 28.8-2.5 56.1-11.4 79.4-25.9 56.5 34.6 137 34.1 192 0 56.5 34.6 137 34.1 192 0 23.3 14.2 50.9 23.3 79.1 25.8 9.1.8 16.7-6.9 16.7-16v-31.6c.1-8-5.7-15.4-13.8-16.3z"></path>
-                </svg>
-              </div>
-              <div class="underwater-text__container">
-                <h4><div class="featureName">San Bernadino County</div>
-                  was last underwater</br>
-                  <strong id="yearsUnderwater">12,000 years ago</strong></h4>
+              <div class="seperator card__flex-item"></div>
+              <div class="underwater__container card__flex-item">
+                <div class="underwater__icon">
+                  <svg class="underwater__svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
+                    <path class="button-svg__path" d="M562 384c-21-3-42-11-58-23a39 39 0 00-48 0c-38 30-107 30-146-1-13-12-33-10-46 1-38 30-107 30-146-1-13-12-33-9-47 2-15 12-36 20-57 22-8 1-14 8-14 16v32c0 9 8 17 17 16 29-3 56-12 79-26 57 35 137 34 192 0 57 35 137 34 192 0 23 14 51 23 79 26 9 1 17-7 17-16v-32c0-8-6-15-14-16zm0-144c-21-3-42-11-58-23a39 39 0 00-48 0c-38 30-107 30-146-2-13-11-33-9-46 2-38 30-107 30-146-1-13-12-33-9-47 2-15 12-36 20-57 22-8 1-14 8-14 16v32c0 9 8 17 17 16 29-3 56-12 79-26 57 35 137 34 192 0 57 35 137 34 192 0 23 14 51 23 79 26 9 1 17-7 17-16v-32c0-8-6-15-14-16zm0-144c-21-3-42-11-58-23a39 39 0 00-48 0c-38 30-107 30-146-1-13-12-33-10-46 1-38 30-107 30-146-1-13-12-33-9-47 2-15 12-36 20-57 22-8 1-14 8-14 16v32c0 9 8 17 17 16 29-3 56-11 79-26 57 35 137 34 192 0 57 35 137 34 192 0 23 14 51 23 79 26 9 1 17-7 17-16v-32c0-8-6-15-14-16z"/>
+                  </svg>
+                </div>
+                <div class="underwater-text__container">
+                  <h4><div class="featureName">San Bernadino County</div>
+                    was last underwater</br>
+                    <strong id="yearsUnderwater">12,000 years ago</strong></h4>
+                </div>
               </div>
             </div>
-            </div>
-            <!--
-            <div class="seperator card__flex-item"></div>
-            -->
             <div id="location" class="card__container">
 
               <div class="taxa card__flex-item taxa--info">
@@ -156,6 +181,16 @@
                 </div>
               </div>
               <div class="taxa card__flex-item taxa--null">
+                <div class="null__icon">
+                  <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0" y="0" viewBox="0 0 126 126" xml:space="preserve">
+                  <line class="slash" x1="20%" y1="20%" x2="80%" y2="80%"></line>
+                  <mask id="mask">
+                    <rect x="0" y=0 width="100%" height="100%" fill="white"></rect>
+                    <line class="slash__outline" x1="20%" y1="20%" x2="80%" y2="80%"></line>
+                  </mask>
+                    <path class="button__path" mask="url(#mask)" d="M45.62 71.48a8.404 8.404 0 01-6.66 2.4c-1.78-.16-3.52-.32-5.09-.47-3.51-.32-6.59 2.28-6.85 5.78-.25 3.3 2.13 6.23 5.44 6.68 1.16.16 2.02 1.16 1.98 2.33l-.23 7.22a3.47 3.47 0 003.58 3.57l9.84-.27a3.475 3.475 0 003.38-3.19l.75-9.41a8.265 8.265 0 012.42-5.21l.86-.84 25.37-25.56a8.404 8.404 0 016.66-2.4c1.78.16 3.52.32 5.09.47 3.51.32 6.59-2.28 6.85-5.78.25-3.3-2.13-6.23-5.44-6.68a2.281 2.281 0 01-1.98-2.33l.23-7.22A3.47 3.47 0 0088.24 27l-9.84.27a3.483 3.483 0 00-3.38 3.19l-.75 9.41a8.265 8.265 0 01-2.42 5.21L45.51 71.6"/>
+                  </svg>
+                </div>
                 <h3>Try selecting a different area on the map!</h3>
                 <h4>The museum currently does not have information on the kinds of fossils
                   found here, but is always learning about fossils from around Southern California.</h4>
@@ -168,6 +203,30 @@
           </div>
 
         </div>
+        <div class="ui-container ui-top-left" id="noInfoCard">
+          <div class="card card__container">
+            <div class="card__menu">
+              <h1>No fossil sites found in <br> <span class="featureName"></span></h1>
+            </div>
+            <div class="card__flex-item">
+              <div class="null__icon">
+                <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0" y="0" viewBox="0 0 126 126" xml:space="preserve">
+                <line class="slash" x1="20%" y1="20%" x2="80%" y2="80%"></line>
+                <mask id="mask">
+                  <rect x="0" y=0 width="100%" height="100%" fill="white"></rect>
+                  <line class="slash__outline" x1="20%" y1="20%" x2="80%" y2="80%"></line>
+                </mask>
+                  <path class="button__path" mask="url(#mask)" d="M45.62 71.48a8.404 8.404 0 01-6.66 2.4c-1.78-.16-3.52-.32-5.09-.47-3.51-.32-6.59 2.28-6.85 5.78-.25 3.3 2.13 6.23 5.44 6.68 1.16.16 2.02 1.16 1.98 2.33l-.23 7.22a3.47 3.47 0 003.58 3.57l9.84-.27a3.475 3.475 0 003.38-3.19l.75-9.41a8.265 8.265 0 012.42-5.21l.86-.84 25.37-25.56a8.404 8.404 0 016.66-2.4c1.78.16 3.52.32 5.09.47 3.51.32 6.59-2.28 6.85-5.78.25-3.3-2.13-6.23-5.44-6.68a2.281 2.281 0 01-1.98-2.33l.23-7.22A3.47 3.47 0 0088.24 27l-9.84.27a3.483 3.483 0 00-3.38 3.19l-.75 9.41a8.265 8.265 0 01-2.42 5.21L45.51 71.6"/>
+                </svg>
+              </div>
+              <h3>Try selecting a different area on the map!</h3>
+              <h4>The museum has not collected fossils from this area, but is always collecting new fossils from around Southern California. </h4>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ui-container ui-bottom-left">
         <div class="card legend">
           <div class="legend__flex-item locality-indicator">
             <div class="legend__circle legend__circle--locality"></div>
@@ -179,49 +238,24 @@
           </div> 
         </div>
       </div>
-      <div class="ui-container ui-top-left" id="noInfoCard">
-        <div class="card card__container">
-          <div class="card__menu">
-            <h1>No fossil sites found in <br> <span class="featureName"></span></h1>
-          </div>
-          <div class="card__flex-item">
-            <h3>Try selecting a different area on the map!</h3>
-            <h4>The museum has not collected fossils from this area, but is always collecting new fossils from around Southern California. </h4>
-          </div>
-          
-        </div>
-      </div>
-      <div class="ui-container ui-top-right">
-        <button id="resetWidget" ripple = "ripple" class="widget reset-widget" title="Return map to original extent">
-          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 126 126" xml:space="preserve"
-            id="resetSvg" class= "widget__svg reset-widget__svg reset-widget__animation hvr-grow-shadow">
-            <style>
-              .st0{fill:#26566A;} .st1{fill:#FFFFFF;}
-            </style>
-            <circle class="st0" cx="63" cy="63" r="63"/>
-            <path class="st1" d="M99.74 61.94c-.56-19.54-17.33-35.69-36.82-35.69-.29 0-.58 0-.87.01a36.727 36.727 0 00-26.41 12.29l-4.71-4.67a2.68 2.68 0 00-2.98-.58c-1.05.44-1.7 1.41-1.7 2.55v17.16c0 1.54 1.21 2.75 2.75 2.75h17.16c1.15 0 2.13-.66 2.55-1.71a2.69 2.69 0 00-.62-2.97l-5.72-5.75c5.25-6.09 12.73-9.57 20.62-9.57 8.16 0 15.83 3.63 21.04 9.97 5.2 6.32 7.26 14.62 5.65 22.77-2.11 10.8-10.83 19.36-21.71 21.28-14.31 2.56-27.77-6.08-31.34-20.11a4.749 4.749 0 00-4.56-3.42c-1.5 0-2.89.68-3.81 1.87-.89 1.15-1.2 2.6-.84 3.98a36.653 36.653 0 0035.56 27.64c10.01 0 19.37-3.95 26.35-11.12 6.99-7.17 10.68-16.65 10.41-26.68z"/>
-          </svg>
-          <!--
-                      <svg id="resetSvg" class= "widget__svg reset-widget__svg reset-widget__animation" viewBox="0 0 43.18 48">
-            <defs>
-              <linearGradient id="linear-gradient" x1="28.61" y1="50.09" x2="28.39" y2="6.89" gradientUnits="userSpaceOnUse">
-                <stop offset="0" stop-color="#42afe5"/>
-                <stop offset="1" stop-color="#3fdcff"/>
-              </linearGradient>
-              <linearGradient id="linear-gradient-2" x1="29.16" y1="47.4" x2="28.94" y2="4.21" xlink:href="#linear-gradient"/>
-            </defs>
-            <path class="reset-widget__path" 
-                  d="M 47.52, 22 
-                      a 19.91, 19.91, 0, 0, 1, 1.07, 6.63 
-                      A 20.09, 20.09, 0, 1, 1, 21, 9.9, 23.19, 23.19, 0, 0, 1, 32.49, 8.61
-                      a 16.55, 16.55, 0, 0, 1, 7.45, 3" 
-                  transform="translate(-6.91 -2.65)"/>
-            <polygon class="reset-widget__arrowhead" points="23.81 12.36 23.49 10.59 32.23 9.04 30.05 0.44 31.8 0 34.45 10.48 23.81 12.36" transform="translate(1, 0.2)"/>
-          </svg> 
-          -->
 
-          <div class="widget__label">Reset</div>
-        </button>
+      <div class="ui-container ui-top-right">
+        <div class="widget reset-widget">
+          <button class="widget hvr-grow-shadow" id="resetWidget" ripple = "ripple"  title="Return map to original extent">
+            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 126 126" xml:space="preserve"
+              id="resetSvg" class= "widget__svg reset-widget__svg reset-widget__animation hvr-grow-shadow">
+              <style>
+                .st0{fill:#26566A;} .st1{fill:#FFFFFF;}
+              </style>
+              <path class="st1" d="M99.74 61.94c-.56-19.54-17.33-35.69-36.82-35.69-.29 0-.58 0-.87.01a36.727 36.727 0 00-26.41 12.29l-4.71-4.67a2.68 2.68 0 00-2.98-.58c-1.05.44-1.7 1.41-1.7 2.55v17.16c0 1.54 1.21 2.75 2.75 2.75h17.16c1.15 0 2.13-.66 2.55-1.71a2.69 2.69 0 00-.62-2.97l-5.72-5.75c5.25-6.09 12.73-9.57 20.62-9.57 8.16 0 15.83 3.63 21.04 9.97 5.2 6.32 7.26 14.62 5.65 22.77-2.11 10.8-10.83 19.36-21.71 21.28-14.31 2.56-27.77-6.08-31.34-20.11a4.749 4.749 0 00-4.56-3.42c-1.5 0-2.89.68-3.81 1.87-.89 1.15-1.2 2.6-.84 3.98a36.653 36.653 0 0035.56 27.64c10.01 0 19.37-3.95 26.35-11.12 6.99-7.17 10.68-16.65 10.41-26.68z"/>
+            </svg>
+
+          </button>
+            
+          <p class="widget__label">Reset</p>
+
+        </div>
+
         
         <button id="drawWidget" ripple = "ripple" class="widget draw-widget hvr-grow-shadow" title="Select features by polygon">
           <svg viewBox="0 0 40 40" class="draw-widget__svg widget_svg" 
@@ -264,12 +298,12 @@
       </div>
       <div class="ui-container ui-bottom-right">
         <button id="zoomIn" 
-        class="zoom widget hvr-grow-shadow"
+        class="zoom widget widget__container hvr-grow-shadow"
         ripple = "ripple"
         title="Zoom in">
       </button>
         <button id="zoomOut" 
-        class="zoom widget hvr-grow-shadow"
+        class="zoom widget widget widget__container hvr-grow-shadow"
         ripple = "ripple"
         title="Zoom out">
         </button>
@@ -279,5 +313,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@latest/dist/js/splide.min.js"></script>
     <script src ="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
     <script type="module" src="js/app.js"></script>
+    <script type="module" src="js/scrollBox.js"></script>
   </body>
 </html>

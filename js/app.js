@@ -64,7 +64,7 @@ require([
   const locationButton = document.getElementById('locationButton');
   const locationDiv = document.getElementById('location');
   const collectionButton = document.getElementById('collectionButton');
-  const collectionDiv = document.getElementById('collection');
+  const collectionDiv = document.getElementById('photos');
   const collectionCaption = document.getElementById('collectionButtonCaption');
   const locationCaption = document.getElementById('locationButtonCaption');
   const photoLegend = document.getElementsByClassName('photo-indicator')[0];
@@ -73,8 +73,8 @@ require([
   const timescaleBar = document.getElementById('indicator');
   const infoCardDiv = document.getElementById('infoCard');
   const noInfoCardDiv = document.getElementById('noInfoCard');
-  const collectionInfoDiv = document.getElementsByClassName('collection--info')[0];
-  const collectionNullDiv = document.getElementsByClassName('collection--null')[0];
+  const collectionInfoDiv = document.getElementsByClassName('photos--info')[0];
+  const collectionNullDiv = document.getElementsByClassName('photos--null')[0];
   const taxaInfoDiv = document.getElementsByClassName('taxa--info')[0];
   const taxaNullDiv = document.getElementsByClassName('taxa--null')[0];
   const uiTopLeftCollection = document.getElementsByClassName('ui-top-left');
@@ -560,14 +560,91 @@ require([
     } else if (taxonName === "Ammonoids, nautiloids") {
       taxonName = "Nautiloids";
     }
-    var cell = document.createElement("div");
-    var taxaIcon = document.createElement("div");
-    var taxonDiv = document.createElement("p");
-    cell.classList.add('taxa__cell');
-    taxaIcon.classList.add('taxa__icon');
-    taxonDiv.innerHTML = `${taxonNumber.toString()} ${taxonName}`;
-    cell.append(taxaIcon, taxonDiv);
-    taxaGrid.append(cell);
+
+    const taxa = {
+      'Clams, oysters': {
+        'fileName': 'clam',
+        'category': 'invertebrate'
+      },
+      'Snails': {
+        'fileName': 'snail',
+        'category': 'invertebrate' 
+      },
+      'Sea urchins': {
+        'fileName':'urchin',
+        'category': 'invertebrate'
+      },
+      'Worms': {
+        'fileName': 'worm',
+        'category': 'invertebrate'
+      },
+      'Crustaceans': {
+        'fileName': 'crab',
+        'category': 'invertebrate'
+      },
+      'Nautiloids': {
+        'fileName': 'ammonoid',
+        'category': 'invertebrate'
+      },
+      'Trilobites': {
+        'fileName': 'trilobite',
+        'category': 'invertebrate'
+      },
+      'Corals': {
+        'fileName': 'coral',
+        'category': 'invertebrate'
+      },
+      'Barnacles': {
+        'fileName': 'barnacle',
+        'category': 'invertebrate'
+      },
+      'Scaphopods': {
+        'fileName': 'scaphopod',
+        'category': 'invertebrate'
+      },
+      'Shrimps': {
+        'fileName': 'shrimp',
+        'category': 'invertebrate'
+      },
+      'Sharks, rays': {
+        'fileName': 'shark',
+        'category': 'vertebrate'
+      },
+      'Fish': {
+        'fileName': 'fish',
+        'category': 'vertebrate'
+      },
+      'Birds': {
+        'fileName': 'bird',
+        'category': 'vertebrate'
+      },
+      'Whales, dolphins': {
+        'fileName': 'whale',
+        'category': 'vertebrate'
+      },
+      'Microfossils': {
+        'fileName': 'magnifying-glass',
+        'category': 'invertebrate'
+      },
+      'Walruses, seals': {
+        'fileName': 'walrus',
+        'category': 'vertebrate'
+      },
+    }
+    var cell = document.createElement(`div`);
+    var taxaIcon = document.createElement(`img`);
+    if (taxa[taxonName]) {
+      const fileName = taxa[taxonName]['fileName'];
+      const category = taxa[taxonName]['category'];
+      taxaIcon.src = `/images/${fileName}.svg`;
+      var taxonDiv = document.createElement("p");
+      cell.classList.add('taxa__cell');
+      taxaIcon.classList.add('taxa__icon');
+      taxonDiv.innerHTML = `${taxonNumber.toString()} ${taxonName}`;
+      cell.append(taxaIcon, taxonDiv);
+      taxaGrid.append(cell);
+    } 
+
   }
 
   // Displays info cards after intersecting localities have been queried
@@ -798,7 +875,8 @@ require([
 
         });
       } else {
-        collectionNullDiv.style.display = 'block';
+        //collectionNullDiv.style.display = 'block';
+        setFlex(collectionNullDiv, true);
         setFlex(collectionInfoDiv, false);
         setFlex(photoLegend, false);
       }
