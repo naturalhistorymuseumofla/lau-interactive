@@ -110,7 +110,7 @@
               </div>
             </div>
             <div id="time" class="card__container">
-              <div id="timeDiv" class="timescale card__flex-item">
+              <div id="timeDiv" class="timescale">
                 <h3>Fossil age</h3>
                 <div id="timeText" class="card-header__container--2">
                   <h1 id="timeText" class="card__header"></h1>
@@ -177,7 +177,17 @@
 
               <div class="taxa card__flex-item taxa--info">
                 <h3>225 fossils found</h3>
-                <div class="taxa__grid">
+                <div class="taxa__grid taxa__container-grid">
+                  <div class="invert__container">
+                    <button class="accordion hvr-grow-shadow"><b>&#x25BE; Invertebrates</b></button>
+                    <div class="invert__top-list taxa__list taxa__grid"></div>
+                    <div class="invert__bottom-list taxa__list taxa__bottom-list taxa__grid"></div>
+                  </div>
+                  <div class="vert__container">
+                    <button class="accordion hvr-grow-shadow"><b>&#x25BE; Vertebrates</b></button>
+                    <div class="vert__top-list taxa__list taxa__grid"></div>
+                    <div class="vert__bottom-list taxa__list taxa__bottom-list taxa__grid"></div>
+                  </div>
                 </div>
               </div>
               <div class="taxa card__flex-item taxa--null">
@@ -249,14 +259,10 @@
               </style>
               <path class="st1" d="M99.74 61.94c-.56-19.54-17.33-35.69-36.82-35.69-.29 0-.58 0-.87.01a36.727 36.727 0 00-26.41 12.29l-4.71-4.67a2.68 2.68 0 00-2.98-.58c-1.05.44-1.7 1.41-1.7 2.55v17.16c0 1.54 1.21 2.75 2.75 2.75h17.16c1.15 0 2.13-.66 2.55-1.71a2.69 2.69 0 00-.62-2.97l-5.72-5.75c5.25-6.09 12.73-9.57 20.62-9.57 8.16 0 15.83 3.63 21.04 9.97 5.2 6.32 7.26 14.62 5.65 22.77-2.11 10.8-10.83 19.36-21.71 21.28-14.31 2.56-27.77-6.08-31.34-20.11a4.749 4.749 0 00-4.56-3.42c-1.5 0-2.89.68-3.81 1.87-.89 1.15-1.2 2.6-.84 3.98a36.653 36.653 0 0035.56 27.64c10.01 0 19.37-3.95 26.35-11.12 6.99-7.17 10.68-16.65 10.41-26.68z"/>
             </svg>
-
-          </button>
-            
+          </button> 
           <p class="widget__label">Reset</p>
-
         </div>
 
-        
         <button id="drawWidget" ripple = "ripple" class="widget draw-widget hvr-grow-shadow" title="Select features by polygon">
           <svg viewBox="0 0 40 40" class="draw-widget__svg widget_svg" 
             <defs>
@@ -286,13 +292,21 @@
           </svg>
           <div class="absolute-position widget__label">Draw</div>
         </button>
+
+        <div class="reformat">
+          <button class="reformat__button widget hvr-grow-shadow ">&#9632;</button>
+          <p class="widget__label">Reformat</p>
+        </div>
+
         <div class="switch__container">
           <label class="switch" >
             <input type="checkbox" id="languageSwitch">
             <span class="slider hvr-grow-shadow round"></span>
           </label>
-          <p id="languageLabel">English</p>
+          <p class="widget__label" id="languageLabel">English</p>
         </div>
+
+
   
   
       </div>
@@ -309,7 +323,7 @@
         </button>
       </div>
     </div>
-    <script src="https://js.arcgis.com/4.17/"></script>
+    <script src="https://js.arcgis.com/4.19/"></script>
     <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@latest/dist/js/splide.min.js"></script>
     <script src ="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
     <script type="module" src="js/app.js"></script>

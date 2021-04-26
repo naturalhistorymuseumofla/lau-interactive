@@ -1,4 +1,23 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;550;600;700;800&display=swap");
+button {
+  border-width: 0px;
+  font-family: "Inter", "Segoe UI", sans-serif;
+}
+
+.reformat {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.reformat__button {
+  background: linear-gradient(0deg, #3a838a, #4aa8ab);
+  width: 5.5rem;
+  height: 5.5rem;
+  border-radius: 50%;
+}
+
 #viewDiv {
   padding: 0;
   margin: 0;
@@ -108,7 +127,7 @@ body {
 .card__flex-item {
   margin-bottom: 6rem;
   box-sizing: border-box;
-  padding: 0rem 6rem 0rem 6rem;
+  padding: 0rem 3rem 0rem 3rem;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -121,7 +140,7 @@ body {
 }
 
 .seperator {
-  margin-bottom: 6rem;
+  margin-bottom: 3rem;
   width: 20rem;
   height: 1px;
   background-color: rgba(117, 117, 117, 0.2);
@@ -162,7 +181,6 @@ body {
   width: 100%;
   background-color: #efefef;
   border-radius: 50%;
-  border-width: 0px;
 }
 
 .button__path {
@@ -178,7 +196,7 @@ body {
 }
 
 .button--active {
-  background: linear-gradient(0deg, #26566A, #366e86);
+  background: linear-gradient(0deg, #3a838a, #4aa8ab);
   box-shadow: 0px 0px 3px 2px rgba(0, 0, 0, 0.1) !important;
 }
 
@@ -268,7 +286,7 @@ h4 {
 
 p {
   color: #3c3c3c;
-  font-size: 1.6rem;
+  font-size: 1.55rem;
   margin: 0;
   line-height: 2.85rem;
 }
@@ -336,13 +354,21 @@ p {
   width: 100%;
   flex-flow: row wrap;
   grid-template-columns: 1fr;
-  grid-column-gap: 0rem;
+  grid-column-gap: 2rem;
   grid-row-gap: 1.15rem;
   justify-items: center;
 }
 
+.taxa__container-grid {
+  grid-template-columns: 1fr 1fr;
+}
+
+.taxa__list {
+  margin-bottom: 1.15rem;
+}
+
 .taxa__cell {
-  width: 27.5rem;
+  width: 100%;
   padding-left: 0.25rem;
   display: flex;
   align-items: center;
@@ -350,10 +376,27 @@ p {
 
 .taxa__icon {
   border-radius: 50%;
-  height: 7rem;
-  width: 7rem;
+  height: 4.5rem;
+  width: 4.5rem;
   box-shadow: 0px 0px 2px 1px rgba(24, 24, 24, 0.2);
   margin-right: 0.7rem;
+}
+
+.accordion {
+  width: 100%;
+  height: 4rem;
+  border-radius: 0.75rem;
+  background: linear-gradient(0deg, #3a838a, #4aa8ab);
+  color: white;
+  font-size: 1.65rem;
+  outline: none;
+  margin: 3rem 0rem 3rem 0rem;
+}
+
+.taxa__bottom-list {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.5s ease-out;
 }
 
 .underwater__container {
@@ -434,7 +477,7 @@ img {
 }
 
 .splide__pagination__page.is-active {
-  background: linear-gradient(0deg, #26566A, #366e86) !important;
+  background: linear-gradient(0deg, #3a838a, #4aa8ab) !important;
 }
 
 .timescale__container {
@@ -462,6 +505,10 @@ img {
   border-radius: 20px;
   background-color: grey;
   transition: width 1s ease-out;
+}
+
+.timescale {
+  margin-bottom: 3rem;
 }
 
 .timescale__bar {
@@ -572,9 +619,9 @@ img {
   display: flex;
   flex-direction: row;
   box-sizing: border-box;
-  padding: 2rem;
+  padding: 2rem 4rem 2rem 4rem;
   justify-content: space-around;
-  width: 30rem;
+  width: auto;
 }
 
 .legend__circle {
@@ -641,8 +688,9 @@ img {
 }
 
 .widget__label {
-  font-weight: 500;
-  text-shadow: -1px 1px 0 rgba(255, 255, 255, 0), 1px 1px 0 white, 1px -1px 0 white, -1px -1px 0 white;
+  font-weight: 600;
+  text-shadow: -1px 1px 0 white, 1px 1px 0 white, 1px -1px 0 white, -1px -1px 0 white, -1px 0px 0 white, 0px 1px 0 white, 1px 0px 0 white, 0px 1px 0 white;
+  -webkit-font-smoothing: antialiased;
 }
 
 #drawWidget {
@@ -660,7 +708,7 @@ img {
 
 #resetWidget {
   margin-bottom: 0.25rem;
-  background: linear-gradient(0deg, #26566A, #366e86);
+  background: linear-gradient(0deg, #3a838a, #4aa8ab);
   border-radius: 100%;
   border-width: 0px;
   height: 5.5rem;
@@ -682,7 +730,7 @@ img {
 .zoom {
   border-radius: 50%;
   position: relative;
-  background: linear-gradient(0deg, #26566A, #366e86);
+  background: linear-gradient(0deg, #3a838a, #4aa8ab);
   box-shadow: 0px 0px 3px 2px rgba(0, 0, 0, 0.1);
 }
 
@@ -877,6 +925,7 @@ img {
   bottom: 0;
   background-color: #ccc;
   transition: 0.4s;
+  box-shadow: 0px 0px 1px 0.15rem rgba(255, 255, 255, 0.75);
 }
 
 .slider:before {
@@ -891,7 +940,7 @@ img {
 }
 
 input:checked + .slider {
-  background-image: linear-gradient(0deg, #26566A, #366e86);
+  background-image: linear-gradient(0deg, #3a838a, #4aa8ab);
 }
 
 input:focus + .slider {

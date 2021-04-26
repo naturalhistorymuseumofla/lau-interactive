@@ -57,18 +57,13 @@ require([
   const zoomInDiv = document.getElementById("zoomIn");
   const zoomOutDiv = document.getElementById("zoomOut");
   const featureCountDiv = document.getElementById("excavationNumber");
-  const invertCountDiv = document.getElementById("invertCount");
-  const vertCountDiv = document.getElementById("vertCount");
   const drawSvg = document.getElementById("drawPath");
   const resetSvg = document.getElementById("resetWidget");
   const locationButton = document.getElementById('locationButton');
-  const locationDiv = document.getElementById('location');
-  const collectionButton = document.getElementById('collectionButton');
-  const collectionDiv = document.getElementById('photos');
-  const collectionCaption = document.getElementById('collectionButtonCaption');
-  const locationCaption = document.getElementById('locationButtonCaption');
-  const photoLegend = document.getElementsByClassName('photo-indicator')[0];
-  const taxaGrid = document.getElementsByClassName('taxa__grid')[0];
+  const vertBottomList = document.getElementsByClassName('vert__bottom-list')[0];
+  const invertBottomList = document.getElementsByClassName('invert__bottom-list')[0];
+  const vertTopList = document.getElementsByClassName('vert__top-list')[0];
+  const invertTopList = document.getElementsByClassName('invert__top-list')[0];
   const timescaleDiv = document.getElementsByClassName('timescale__container')[0];
   const timescaleBar = document.getElementById('indicator');
   const infoCardDiv = document.getElementById('infoCard');
@@ -550,11 +545,12 @@ require([
       })
     }
     return combinedTaxaObject
-    }  
+  }  
 
   
   // Formats each call in taxa grid with a taxon
   function formatTaxaCell(taxonName, taxonNumber) {
+    // Create exceptions for naming
     if (taxonName === "Clams, oysters, ect.") {
       taxonName = "Clams, oysters";
     } else if (taxonName === "Ammonoids, nautiloids") {
@@ -631,6 +627,7 @@ require([
         'category': 'vertebrate'
       },
     }
+
     var cell = document.createElement(`div`);
     var taxaIcon = document.createElement(`img`);
     if (taxa[taxonName]) {
@@ -642,14 +639,22 @@ require([
       taxaIcon.classList.add('taxa__icon');
       taxonDiv.innerHTML = `${taxonNumber.toString()} ${taxonName}`;
       cell.append(taxaIcon, taxonDiv);
-      taxaGrid.append(cell);
+      if (category === "invertebrate") {
+        (invertTopList.childElementCount === 3) ? invertBottomList.append(cell) :
+        invertTopList.append(cell);
+      } else if (category === "vertebrate") {
+        (vertTopList.childElementCount === 3) ? vertBottomList.append(cell) :
+        vertTopList.append(cell);
+      }
     } 
-
   }
 
   // Displays info cards after intersecting localities have been queried
   function populateInfoCards(returnedLocalities, polygonName) {
-    taxaGrid.innerHTML="";
+    const taxaLists = document.getElementsByClassName('taxa__list');
+    for (let list of taxaLists) {
+      list.innerHTML = '';
+    }
     // Get counts of Invert/Vert localities based on Category field of 'attributes' property of selected locality records
     const objectIds = returnedLocalities.map(
       (loc) => loc["attributes"]["OBJECTID"]
@@ -1238,3 +1243,67 @@ for (let arrow of splideArrows) {
   arrow.classList.add('hvr-grow-shadow--arrow');
 }
 
+
+// Add Event listener to "more" button
+const moreButtons = document.getElementsByClassName('accordion');
+for (let button of moreButtons) {
+  button.addEventListener('click', () => {
+    let parentContainer = button.parentElement.lastElementChild;
+    //let result = parentContainer.lastElementChild.classList.toggle('taxa__bottom-list--active');
+    let textNode = button.firstElementChild;
+    var text = textNode.textContent;
+    if (parentContainer.style.maxHeight) {
+      parentContainer.style.maxHeight = null;
+      const newText = '\u25BE' + text.slice(1); 
+      textNode.textContent = newText;
+    } else {
+      const newText = '\u25B4' + text.slice(1);
+      textNode.textContent = newText;
+      parentContainer.style.maxHeight = parentContainer.scrollHeight + "px";
+      const position = button.parentElement.offsetTop;
+      ($('.card__content')).animate({
+        scrollTop: position
+      }, 400);
+
+    }
+  }) 
+}
+
+// Add Event listner to "Reformat" button
+const reformat = document.getElementsByClassName('reformat__button')[0];
+reformat.addEventListener('click', ()=> {
+  const taxa__container = document.getElementsByClassName('taxa__grid')[0];
+  let result = taxa__container.classList.toggle('taxa__container-grid');
+  // If we're going from 1 cols to 2 cols
+  if (result) {
+    const taxaCells = document.getElementsByClassName('taxa__cell');
+    for (let cell of taxaCells) {
+      cell.style.width = '';
+    }
+    const accordions = document.getElementsByClassName('accordion');
+    for (let accordion of accordions) {
+      accordion.style.width = '';
+    }
+    const taxaIcons = document.getElementsByClassName('taxa__icon');
+    for (let icon of taxaIcons) {
+      icon.style.width = '';
+      icon.style.height = '';
+      icon.style.marginRight = '';
+    }
+  } else {
+    const taxaCells = document.getElementsByClassName('taxa__cell');
+    for (let cell of taxaCells) {
+      cell.style.width = '27.5rem';
+    }
+    const accordions = document.getElementsByClassName('accordion');
+    for (let accordion of accordions) {
+      accordion.style.width = '27rem';
+    }
+    const taxaIcons = document.getElementsByClassName('taxa__icon');
+    for (let icon of taxaIcons) {
+      icon.style.width = '7.5rem';
+      icon.style.height = '7.5rem';
+      icon.style.marginRight = '1rem';
+    }
+  }
+})
