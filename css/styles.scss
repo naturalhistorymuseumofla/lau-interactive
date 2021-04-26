@@ -24,19 +24,7 @@ button {
   font-family: $font-family;
 }
 
-.reformat {
-  margin-bottom:15px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
 
-.reformat__button {
-  background:$linear-gradient;
-  width: $widget-size;
-  height: $widget-size;
-  border-radius: 50%;
-}
 
 #viewDiv {
   padding: 0;
@@ -263,6 +251,7 @@ body {
   box-shadow: 1px 1px 5px -1px rgba(0, 0, 0, 0.5);
   -webkit-transform: scale(1.1);
   transform: scale(1.1);
+  z-index: 100;
   
 
 }
@@ -416,6 +405,7 @@ $taxa-row-gap: 1.15rem;
   justify-items: center;
 }
 
+
 .taxa__container-grid {
   grid-template-columns: 1fr 1fr;
 }
@@ -441,15 +431,61 @@ $taxa-row-gap: 1.15rem;
   //background-color: rgba(255, 255, 255, 0.2);
 }
 
+.reformat {
+  margin-bottom:15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.reformat__button {
+  background:$linear-gradient;
+  width: $widget-size;
+  height: $widget-size;
+  border-radius: 50%;
+}
+
+.dropdown {
+  margin-top: 15px;
+  display: inline-flex;
+  flex-direction: column;
+
+}
+
+.dropdown__button {
+  width: 100%;
+
+}
+
+.dropdown__content {
+  display: none;
+  flex-direction: column;
+  background: $icon-background--inactive;
+}
+
+.dropdown:hover .dropdown__content {
+  display:inline-flex;
+}
+
+.dropdown__content > * {
+  display:block;
+  height: 4.5rem;
+}
+
 .accordion {
+  box-shadow: 0px 0px 2px 2px rgba(0, 0, 0, 0.075);
   width: 100%;
   height: 4rem;
   border-radius: 0.75rem;
-  background:$linear-gradient;
-  color: white;
+  color:rgb(60, 60, 60);
   font-size: 1.65rem;
   outline: none;
   margin: $seperator-gap 0rem $seperator-gap 0rem;
+}
+
+.accordion--active {
+  background:$linear-gradient;
+  color: white;
 }
 
 .taxa__bottom-list {

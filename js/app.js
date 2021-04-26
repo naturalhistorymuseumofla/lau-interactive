@@ -640,10 +640,10 @@ require([
       taxonDiv.innerHTML = `${taxonNumber.toString()} ${taxonName}`;
       cell.append(taxaIcon, taxonDiv);
       if (category === "invertebrate") {
-        (invertTopList.childElementCount === 3) ? invertBottomList.append(cell) :
+        (invertTopList.childElementCount === 4) ? invertBottomList.append(cell) :
         invertTopList.append(cell);
       } else if (category === "vertebrate") {
-        (vertTopList.childElementCount === 3) ? vertBottomList.append(cell) :
+        (vertTopList.childElementCount === 4) ? vertBottomList.append(cell) :
         vertTopList.append(cell);
       }
     } 
@@ -1024,7 +1024,7 @@ require([
         symbol: {
           type: "simple-marker",
           size: 6,
-          color: [20, 204, 180, 0.5],
+          color: [20, 204, 180, 0.15],
           outline: {
             width: 0,
             color: [247, 247, 247, 0.5],
@@ -1200,7 +1200,7 @@ require([
         regionsLayer,
         countiesLayer,
         clientFeatureLayer,
-        vectorLocalitiesLayer
+        localitiesLayer
       ]);
   
       // Make widgets visible to map view
@@ -1248,6 +1248,7 @@ for (let arrow of splideArrows) {
 const moreButtons = document.getElementsByClassName('accordion');
 for (let button of moreButtons) {
   button.addEventListener('click', () => {
+    button.classList.toggle('accordion--active');
     let parentContainer = button.parentElement.lastElementChild;
     //let result = parentContainer.lastElementChild.classList.toggle('taxa__bottom-list--active');
     let textNode = button.firstElementChild;
@@ -1291,9 +1292,10 @@ reformat.addEventListener('click', ()=> {
       icon.style.marginRight = '';
     }
   } else {
+
     const taxaCells = document.getElementsByClassName('taxa__cell');
     for (let cell of taxaCells) {
-      cell.style.width = '27.5rem';
+      cell.style.width = '27rem';
     }
     const accordions = document.getElementsByClassName('accordion');
     for (let accordion of accordions) {
