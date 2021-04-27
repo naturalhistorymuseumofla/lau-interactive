@@ -126,7 +126,7 @@ body {
 }
 
 .seperator {
-  margin-bottom: 3rem;
+  margin-bottom: 4.5rem;
   width: 20rem;
   height: 1px;
   background-color: rgba(117, 117, 117, 0.2);
@@ -258,12 +258,20 @@ h2 {
 
 h3 {
   color: #3c3c3c;
-  margin-top: 0rem;
+  margin-top: 1rem;
   font-size: 1.85rem;
   margin-bottom: 2rem;
 }
 
 h4 {
+  color: #3c3c3c;
+  font-size: 1.7rem;
+  margin-top: 1rem;
+  line-height: 2.35rem;
+  font-weight: 600;
+}
+
+h5 {
   color: #3c3c3c;
   font-size: 1.7rem;
   margin: 0rem;
@@ -341,8 +349,8 @@ p {
   width: 100%;
   flex-flow: row wrap;
   grid-template-columns: 1fr;
-  grid-column-gap: 2rem;
-  grid-row-gap: 1.15rem;
+  grid-column-gap: 2.15rem;
+  grid-row-gap: 1.5rem;
   justify-items: center;
 }
 
@@ -351,77 +359,37 @@ p {
 }
 
 .taxa__list {
-  margin-bottom: 1.15rem;
+  margin-bottom: 1.5rem;
 }
 
 .taxa__cell {
   width: 100%;
-  padding-left: 0.25rem;
+  padding-left: 0.4rem;
   display: flex;
   align-items: center;
+  text-align: left;
+}
+
+.taxa__cell > p {
+  line-height: 2rem;
 }
 
 .taxa__icon {
   border-radius: 50%;
-  height: 4.5rem;
-  width: 4.5rem;
+  height: 5rem;
+  width: 5rem;
   box-shadow: 0px 0px 2px 1px rgba(24, 24, 24, 0.2);
+  margin-left: 1rem;
   margin-right: 0.7rem;
 }
 
-.reformat {
-  margin-bottom: 15px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.reformat__button {
-  background: linear-gradient(0deg, #3a838a, #4aa8ab);
-  width: 5.5rem;
-  height: 5.5rem;
-  border-radius: 50%;
-}
-
-.dropdown {
-  margin-top: 15px;
-  display: inline-flex;
-  flex-direction: column;
-}
-
-.dropdown__button {
-  width: 100%;
-}
-
-.dropdown__content {
-  display: none;
-  flex-direction: column;
-  background: #e1e1e1;
-}
-
-.dropdown:hover .dropdown__content {
-  display: inline-flex;
-}
-
-.dropdown__content > * {
-  display: block;
-  height: 4.5rem;
-}
-
-.accordion {
-  box-shadow: 0px 0px 2px 2px rgba(0, 0, 0, 0.075);
-  width: 100%;
-  height: 4rem;
-  border-radius: 0.75rem;
-  color: #3c3c3c;
-  font-size: 1.65rem;
-  outline: none;
-  margin: 3rem 0rem 3rem 0rem;
-}
-
-.accordion--active {
+.more {
+  width: 8rem;
+  height: 3rem;
+  border-radius: 2rem;
   background: linear-gradient(0deg, #3a838a, #4aa8ab);
   color: white;
+  font-weight: 550;
 }
 
 .taxa__bottom-list {
@@ -515,8 +483,8 @@ img {
   position: relative;
   display: flex;
   flex-direction: row;
-  width: 37rem;
-  margin-top: 1.25rem;
+  width: 39rem;
+  margin-top: 3rem;
 }
 
 .indicator {
@@ -539,7 +507,7 @@ img {
 }
 
 .timescale {
-  margin-bottom: 3rem;
+  margin-bottom: 4.5rem;
 }
 
 .timescale__bar {
@@ -574,7 +542,7 @@ img {
   text-align: left;
   width: 100%;
   bottom: -180%;
-  font-size: 1.15rem;
+  font-size: 1.2rem;
 }
 
 .cretaceous__age {
@@ -622,10 +590,10 @@ img {
 }
 
 .timescale-legend__indicator {
-  min-width: 1.35rem;
-  min-height: 1.35rem;
-  width: 1.35rem;
-  height: 1.35rem;
+  min-width: 1.5rem;
+  min-height: 1.5rem;
+  width: 1.5rem;
+  height: 1.5rem;
   margin-right: 0.85rem;
   border-radius: 0.2rem;
 }

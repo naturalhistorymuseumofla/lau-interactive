@@ -4,7 +4,7 @@
 $blur:blur(10px);
 $card-border-radius: 10px;
 $card-flex-gap: 6rem;
-$seperator-gap: 3rem;
+$seperator-gap: 4.5rem;
 $card-margin: 1.25rem;
 $card-width: 52.5rem;
 // Controls the min-height of each section (card__container) and 
@@ -306,12 +306,21 @@ h2 {
 
 h3 {
   color: $font-color;
-  margin-top: 0rem;
+  margin-top: 1rem;
   font-size: 1.85rem;
   margin-bottom:2rem;
 }
 
 h4 {
+  color: $font-color;
+  font-size: 1.7rem;
+  margin-top: 1rem;
+  line-height: 2.35rem;
+  font-weight: 600;
+
+}
+
+h5 {
   color: $font-color;
   font-size: 1.7rem;
   margin: 0rem;
@@ -393,14 +402,14 @@ p {
 
 
 $taxa-col-width: 15rem;
-$taxa-row-gap: 1.15rem;
+$taxa-row-gap: 1.5rem;
 
 .taxa__grid {
   display:inline-grid;
   width: 100%;
   flex-flow: row wrap;
   grid-template-columns: 1fr;
-  grid-column-gap: 2rem;
+  grid-column-gap: 2.15rem;
   grid-row-gap: $taxa-row-gap;
   justify-items: center;
 }
@@ -416,77 +425,35 @@ $taxa-row-gap: 1.15rem;
 
 .taxa__cell {
   width: 100%;
-  padding-left:0.25rem;
+  padding-left:0.4rem;
   display:flex;
   align-items: center;
+  text-align: left;
+}
+
+.taxa__cell > p {
+  line-height: 2rem;
 }
 
 .taxa__icon {
-  $radius: 4.5rem;
+  $radius: 5rem;
   border-radius: 50%;
   height: $radius;
   width: $radius;
   box-shadow: 0px 0px 2px 1px rgba(24, 24, 24, .2);
+  margin-left: 1rem;
   margin-right: 0.7rem;
-  //background-color: rgba(255, 255, 255, 0.2);
 }
 
-.reformat {
-  margin-bottom:15px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.reformat__button {
-  background:$linear-gradient;
-  width: $widget-size;
-  height: $widget-size;
-  border-radius: 50%;
-}
-
-.dropdown {
-  margin-top: 15px;
-  display: inline-flex;
-  flex-direction: column;
-
-}
-
-.dropdown__button {
-  width: 100%;
-
-}
-
-.dropdown__content {
-  display: none;
-  flex-direction: column;
-  background: $icon-background--inactive;
-}
-
-.dropdown:hover .dropdown__content {
-  display:inline-flex;
-}
-
-.dropdown__content > * {
-  display:block;
-  height: 4.5rem;
-}
-
-.accordion {
-  box-shadow: 0px 0px 2px 2px rgba(0, 0, 0, 0.075);
-  width: 100%;
-  height: 4rem;
-  border-radius: 0.75rem;
-  color:rgb(60, 60, 60);
-  font-size: 1.65rem;
-  outline: none;
-  margin: $seperator-gap 0rem $seperator-gap 0rem;
-}
-
-.accordion--active {
-  background:$linear-gradient;
+.more {
+  width: 8rem;
+  height: 3rem;
+  border-radius: 2rem;
+  background: $linear-gradient;
   color: white;
+  font-weight: 550;
 }
+
 
 .taxa__bottom-list {
   overflow: hidden;
@@ -593,8 +560,8 @@ img {
   position: relative;
   display: flex;
   flex-direction: row;
-  width: 37rem;
-  margin-top: 1.25rem;
+  width: 39rem;
+  margin-top: 3rem;
 }
 
 .indicator {
@@ -652,7 +619,7 @@ img {
   text-align: left;
   width: 100%;
   bottom: -180%;
-  font-size: 1.15rem; 
+  font-size: 1.2rem; 
 }
 
 .cretaceous__age {
@@ -700,7 +667,7 @@ img {
 }
 
 .timescale-legend__indicator {
-  $radius: 1.35rem;
+  $radius: 1.5rem;
   min-width: $radius;
   min-height: $radius;
   width: $radius;

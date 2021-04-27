@@ -76,7 +76,76 @@ require([
   const instructionsContainer = document.getElementsByClassName('instructions__container')[0];
   const instructionsDiv = document.getElementsByClassName('instructions')[0];
 
-
+  const taxa = {
+    'Clams, oysters': {
+      'fileName': 'clam',
+      'category': 'invertebrate'
+    },
+    'Snails': {
+      'fileName': 'snail',
+      'category': 'invertebrate' 
+    },
+    'Sea urchins': {
+      'fileName':'urchin',
+      'category': 'invertebrate'
+    },
+    'Worms': {
+      'fileName': 'worm',
+      'category': 'invertebrate'
+    },
+    'Crustaceans': {
+      'fileName': 'crab',
+      'category': 'invertebrate'
+    },
+    'Nautiloids': {
+      'fileName': 'ammonoid',
+      'category': 'invertebrate'
+    },
+    'Trilobites': {
+      'fileName': 'trilobite',
+      'category': 'invertebrate'
+    },
+    'Corals': {
+      'fileName': 'coral',
+      'category': 'invertebrate'
+    },
+    'Barnacles': {
+      'fileName': 'barnacle',
+      'category': 'invertebrate'
+    },
+    'Scaphopods': {
+      'fileName': 'scaphopod',
+      'category': 'invertebrate'
+    },
+    'Shrimps': {
+      'fileName': 'shrimp',
+      'category': 'invertebrate'
+    },
+    'Sharks, rays': {
+      'fileName': 'shark',
+      'category': 'vertebrate'
+    },
+    'Fish': {
+      'fileName': 'fish',
+      'category': 'vertebrate'
+    },
+    'Birds': {
+      'fileName': 'bird',
+      'category': 'vertebrate'
+    },
+    'Whales, dolphins': {
+      'fileName': 'whale',
+      'category': 'vertebrate'
+    },
+    'Microfossils': {
+      'fileName': 'magnifying-glass',
+      'category': 'invertebrate'
+    },
+    'Walruses, seals': {
+      'fileName': 'walrus',
+      'category': 'vertebrate'
+    },
+  }
       
 
 /* ==========================================================
@@ -397,7 +466,7 @@ require([
 
   // Toggles hidden property
   function setDisplay(element, boolean) {
-    element.style.display = boolean ? 'block' : 'none';
+    element.style.display = boolean ? 'inline-block' : 'none';
   }
 
 
@@ -544,6 +613,8 @@ require([
 
       })
     }
+    // Remove "More" buttons if there are not more than 4 groups
+
     return combinedTaxaObject
   }  
 
@@ -557,77 +628,6 @@ require([
       taxonName = "Nautiloids";
     }
 
-    const taxa = {
-      'Clams, oysters': {
-        'fileName': 'clam',
-        'category': 'invertebrate'
-      },
-      'Snails': {
-        'fileName': 'snail',
-        'category': 'invertebrate' 
-      },
-      'Sea urchins': {
-        'fileName':'urchin',
-        'category': 'invertebrate'
-      },
-      'Worms': {
-        'fileName': 'worm',
-        'category': 'invertebrate'
-      },
-      'Crustaceans': {
-        'fileName': 'crab',
-        'category': 'invertebrate'
-      },
-      'Nautiloids': {
-        'fileName': 'ammonoid',
-        'category': 'invertebrate'
-      },
-      'Trilobites': {
-        'fileName': 'trilobite',
-        'category': 'invertebrate'
-      },
-      'Corals': {
-        'fileName': 'coral',
-        'category': 'invertebrate'
-      },
-      'Barnacles': {
-        'fileName': 'barnacle',
-        'category': 'invertebrate'
-      },
-      'Scaphopods': {
-        'fileName': 'scaphopod',
-        'category': 'invertebrate'
-      },
-      'Shrimps': {
-        'fileName': 'shrimp',
-        'category': 'invertebrate'
-      },
-      'Sharks, rays': {
-        'fileName': 'shark',
-        'category': 'vertebrate'
-      },
-      'Fish': {
-        'fileName': 'fish',
-        'category': 'vertebrate'
-      },
-      'Birds': {
-        'fileName': 'bird',
-        'category': 'vertebrate'
-      },
-      'Whales, dolphins': {
-        'fileName': 'whale',
-        'category': 'vertebrate'
-      },
-      'Microfossils': {
-        'fileName': 'magnifying-glass',
-        'category': 'invertebrate'
-      },
-      'Walruses, seals': {
-        'fileName': 'walrus',
-        'category': 'vertebrate'
-      },
-    }
-
     var cell = document.createElement(`div`);
     var taxaIcon = document.createElement(`img`);
     if (taxa[taxonName]) {
@@ -637,7 +637,7 @@ require([
       var taxonDiv = document.createElement("p");
       cell.classList.add('taxa__cell');
       taxaIcon.classList.add('taxa__icon');
-      taxonDiv.innerHTML = `${taxonNumber.toString()} ${taxonName}`;
+      taxonDiv.innerHTML = `${taxonNumber.toString()}<br>${taxonName}`;
       cell.append(taxaIcon, taxonDiv);
       if (category === "invertebrate") {
         (invertTopList.childElementCount === 4) ? invertBottomList.append(cell) :
@@ -647,6 +647,14 @@ require([
         vertTopList.append(cell);
       }
     } 
+  }
+
+  function displayMoreButton(button) {
+    if (button.previousElementSibling.childElementCount > 0) {
+      setDisplay(button, true);
+    } else {
+      setDisplay(button, false);
+    }
   }
 
   // Displays info cards after intersecting localities have been queried
@@ -681,6 +689,11 @@ require([
         const formattedTaxa = formatTaxa(taxa);
         for (const taxon in formattedTaxa) {
           formatTaxaCell(taxon, formattedTaxa[taxon]);
+        }
+        // Display or hide more buttons based on number of taxa
+        const moreButtons = document.getElementsByClassName('more');
+        for (let button of moreButtons) {
+          displayMoreButton(button);
         }
       } else {
         setFlex(taxaInfoDiv, false);
@@ -896,11 +909,13 @@ require([
       returnGeometry: true,
     };
     localityLayerView.queryFeatures(highlightQuery).then(function (attachment) {
+      
       var visibleAttachmentGeometry = {
         type: "point", // autocasts as new Point()
         longitude: attachment.features[0].geometry.longitude,
         latitude: attachment.features[0].geometry.latitude,
       };
+      
       // Create graphic around record currntly being displayed in Splide carousel
       const selectedGraphic = new Graphic({
         geometry: visibleAttachmentGeometry,
@@ -1243,7 +1258,27 @@ for (let arrow of splideArrows) {
   arrow.classList.add('hvr-grow-shadow--arrow');
 }
 
-
+//Add Event listener to "more" buttons
+const moreButtons = document.getElementsByClassName('more');
+for (let button of moreButtons) {
+  button.addEventListener('click', () => {
+    let bottomList = button.previousElementSibling;
+    let ifExpanded = button.classList.toggle('button--active');
+    if (ifExpanded) {
+      button.innerHTML = '- Less';
+      bottomList.style.maxHeight = bottomList.scrollHeight + 'px';
+      const position = button.parentElement.offsetTop;
+      ($('.card__content')).animate({
+        scrollTop: position
+      }, 400);
+    } else {
+      button.innerHTML = '+ More';
+      bottomList.style.maxHeight = null;
+      
+    }
+  })
+}
+/*
 // Add Event listener to "more" button
 const moreButtons = document.getElementsByClassName('accordion');
 for (let button of moreButtons) {
@@ -1269,7 +1304,8 @@ for (let button of moreButtons) {
     }
   }) 
 }
-
+*/
+/*
 // Add Event listner to "Reformat" button
 const reformat = document.getElementsByClassName('reformat__button')[0];
 reformat.addEventListener('click', ()=> {
@@ -1309,3 +1345,4 @@ reformat.addEventListener('click', ()=> {
     }
   }
 })
+*/
