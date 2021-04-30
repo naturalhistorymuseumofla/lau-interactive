@@ -92,9 +92,9 @@ require([
     // Used to query feature service based on returned feature layer 
     // attribute name
     var regionsObject = {
-      Neighborhoods: neighborhoodsLayer,
-      Regions: regionsLayer,
-      Counties: countiesLayer,
+      neighborhood: neighborhoodsLayer,
+      region: regionsLayer,
+      county: countiesLayer,
     };
 
     // Refresh map after period of inactivity
@@ -632,16 +632,10 @@ require([
     async function database(feature) {
       const oidField = feature.layer.objectIdField
       const queryObject = {
-        'globalId' : feature.attributes.globalid,
-        'oid': feature.attributes[oidField],
-        'regionType': feature.attributes.region_type,
+        'region': feature.attributes.region_type,
         'name': feature.attributes.name,
-        'region_type': feature.attributes.region_type,
-        //'geometry': feature.geometry,
-        //'layer_url': feature.layer.parsedUrl.path,
-        'serviceItemId': feature.layer.sourceJSON.serviceItemId
       }
-      let response = await fetch('/json', {
+      let response = await fetch('/query', {
         method: 'POST',
         headers: {'Content-Type': 'application/json;charset=utf-8'},
         body: JSON.stringify(queryObject)
@@ -1107,7 +1101,7 @@ require([
           maxScale: countiesMaxScale,
           labelingInfo: [countiesLabelClass],
           renderer: polygonFeatureRenderer,
-          title: `Counties`,
+          title: `county`,
           outFields: [`*`],
         });
     
@@ -1118,7 +1112,7 @@ require([
           maxScale: regionsMaxScale,
           labelingInfo: [regionsLabelClass],
           renderer: polygonFeatureRenderer,
-          title: `Regions`,
+          title: `region`,
           outFields: [`*`],
         });
     
@@ -1128,7 +1122,7 @@ require([
           minScale: neighborhoodsMinScale,
           labelingInfo: [regionsLabelClass],
           renderer: polygonFeatureRenderer,
-          title: `Neighborhoods`,
+          title: `neighborhood`,
           outFields: [`*`],
         });
     

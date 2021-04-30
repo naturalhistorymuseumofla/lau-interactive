@@ -1,26 +1,14 @@
 from flask import Flask, render_template, request
 from arcgis.gis import GIS
-from arcgis.geometry.filters import intersects
+import data.mongo_connect as mongo_connect
+from data.query import Query
 import shapely
 import requests
 import urllib.parse
 from datetime import datetime
-'''
-from mongoengine import Document, EmbeddedDocument
-from mongoengine import connect
-from mongoengine.fields import (
-    DateTimeField,
-    URLField,
-    StringField,
-    ObjectIdField,
-    IntField,
-    DictField,
-    ListField,
-    FloatField,
-    EmbeddedDocumentListField
-)
-'''
+
 app = Flask(__name__)
+
 
 '''
 db = connect(db="lau-test")
@@ -44,13 +32,32 @@ class LocalityQuery(Document):
     photos = EmbeddedDocumentListField(FossilPhotos)
 '''
 
-gis = GIS('https://nhmlac.maps.arcgis.com/', 'dmarkbreiter_NHMLAC', 'j5BDj%k3@BaG')
-localities = gis.content.get('2b5d6edf8da849859c4f17a89ca63f6e')
-localitiesLayer = localities.layers[0]
+gis = GIS()
+localities = gis.content.get('2ee7d9319663454996af081d337f9a4b')
+localities_layer = localities.layers[0]
+localities_fs = localities_layer.query()
+localities_sdf = localities_fs.sdf
+
 
 counties = gis.content.get('b9b1d3b98101472da80c1bbbd1231e9b').layers[0]
 regions = gis.content.get('c55c024180224f8990c94c3960c9fea3').layers[0]
 neighborhoods = gis.content.get('a6a65c4af91448bc8e1d674c6fb7e51d').layers[0]
+
+
+@app.route("/query", methods=["GET", "POST"])
+def query():
+    if request.method == 'POST':
+        feature = request.json
+        feature_name = feature['name']
+        feature_region = feature['region']
+        feature_query = Query.objects(name=feature_name, region=feature_region)[0]
+        response = {
+            'number_of_sites': feature_query.number_of_sites,
+            'number_of_specimens': feature_query.number_of_specimens,
+            'taxa': feature_query.taxa
+        }
+        return response
+
 
 
 @app.route("/")
@@ -105,5 +112,9 @@ def salvador():
 
 
 if __name__ == "__main__":
+    mongo_connect.global_init()
     files = ['./static/css/styles.css', './static/js/app.js']
     app.run(debug=True, extra_files=files)
+
+
+
