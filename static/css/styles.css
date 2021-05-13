@@ -1017,9 +1017,14 @@ input:checked + .slider:before {
     font-size: 1.5rem;
   }
 }
-@media only screen and (max-height: 700px) {
+@media only screen and (max-height: 650px) {
   html {
-    font-size: calc(.2vmin + 6px);
+    font-size: calc(.3vmin + 5px);
+  }
+
+@media only screen and (max-height: 500px) {
+  html {
+    font-size: calc(.5vmin + 2.75px);
   }
 
   .widget {

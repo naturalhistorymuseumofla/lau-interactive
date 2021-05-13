@@ -2,6 +2,7 @@ import mongoengine
 from data.attachment import Attachment
 import json
 from bson.json_util import dumps
+from random import sample
 
 # Class for queries collection that stores all queries of a polygon region
 # intersection with localities layer
@@ -18,13 +19,17 @@ class Query(mongoengine.Document):
         'collection': 'queries'
     }
     def export(self):
+        photos = [x.to_mongo().to_dict() for x in self.photos]
+        if len(photos) > 7:
+            photos = sample(photos, 7)
         response_dict = {
+            'name': self.name,
             'number_of_sites': self.number_of_sites,
             'number_of_specimens': self.number_of_specimens,
             'taxa': self.taxa,
-            'photos': [x.to_mongo().to_dict() for x in self.photos]
+            'photos': photos,
         }
         return dumps(response_dict)
 
     def parse_json(self):
-        return json.loads(json_util.dumps(self))
+        return json.loads(dumps(self))
