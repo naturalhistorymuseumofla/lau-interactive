@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 @app.route("/query", methods=["GET", "POST"])
 def query():
-    if request.method == 'GET':
+    if request.method == 'POST':
         feature = request.json
         feature_name = feature['name']
         feature_region = feature['region']

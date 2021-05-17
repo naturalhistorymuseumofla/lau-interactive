@@ -138,7 +138,7 @@ require([
         'name': feature.attributes.name,
       }
       let response = await fetch('/query', {
-        method: 'GET',
+        method: 'POST',
         headers: {'Content-Type': 'application/json;charset=utf-8'},
         body: JSON.stringify(queryObject)
       });
