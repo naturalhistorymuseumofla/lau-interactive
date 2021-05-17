@@ -1,40 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="80110b40-11bc-4ba2-b490-f798780d0fea" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/data/download.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/query.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/query.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/update.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/update.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/ammonoid.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/barnacle.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/bird.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/chiton.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/clam.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/coral.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/crab.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/desktop.ini" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/diatom.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/dolphin.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/fish.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/foraminifera.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/magnifying-glass.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/ray.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/scaphopod.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/seal.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/shark.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/shrimp.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/snail.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/trilobite.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/urchin.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/walrus.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/whale.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/worm.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/css/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/styles.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/js/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/app.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
-    </list>
+    <list default="true" id="80110b40-11bc-4ba2-b490-f798780d0fea" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -134,6 +101,7 @@
       </list>
     </recent_temporary>
   </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
