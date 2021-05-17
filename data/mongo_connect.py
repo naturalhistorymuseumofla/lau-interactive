@@ -8,5 +8,5 @@ DB_URI = os.getenv('DB_URI')
 
 
 def global_init():
-    connect(alias='lau-prototype', host=DB_URI)
+    connect(alias='laumap', host=DB_URI)
     #mongoengine.register_connection(alias='lau-prototype', name='lau-prototype')

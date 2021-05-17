@@ -16,7 +16,7 @@ class Query(mongoengine.Document):
     taxa = mongoengine.DictField()
     photos = mongoengine.ListField(mongoengine.ReferenceField(Attachment, dbref=True))
     meta = {
-        'db_alias': 'lau-prototype',
+        'db_alias': 'laumap',
         'collection': 'queries'
     }
     def export(self):

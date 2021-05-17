@@ -17,6 +17,6 @@ class Attachment(mongoengine.Document):
     neighborhood = mongoengine.StringField()
     url = mongoengine.URLField()
     meta = {
-        'db_alias': 'lau-prototype',
+        'db_alias': 'laumap',
         'collection': 'attachments'
     }
