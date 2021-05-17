@@ -7,9 +7,9 @@ from datetime import datetime
 app = Flask(__name__)
 
 
-@app.route("/query/", methods=["GET", "POST"])
+@app.route("/query", methods=["GET", "POST"])
 def query():
-    if request.method == 'POST':
+    if request.method == 'GET':
         feature = request.json
         feature_name = feature['name']
         feature_region = feature['region']
