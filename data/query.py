@@ -3,6 +3,7 @@ from data.attachment import Attachment
 import json
 from bson.json_util import dumps
 from random import sample
+import data.mongo_connect as mongo_connect
 
 # Class for queries collection that stores all queries of a polygon region
 # intersection with localities layer
@@ -33,3 +34,7 @@ class Query(mongoengine.Document):
 
     def parse_json(self):
         return json.loads(dumps(self))
+
+
+if __name__ == "__main__":
+    mongo_connect.global_init()
