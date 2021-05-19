@@ -2,7 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="80110b40-11bc-4ba2-b490-f798780d0fea" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/data/database.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/attachment.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/attachment.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/data/mongo_connect.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/mongo_connect.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/query.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/query.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/update.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/update.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -146,6 +151,11 @@
           <url>file://$PROJECT_DIR$/data/update.py</url>
           <line>21</line>
           <option name="timeStamp" value="9" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/data/update.py</url>
+          <line>2</line>
+          <option name="timeStamp" value="10" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

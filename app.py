@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request
-import data.mongo_connect as mongo_connect
-from data.query import Query
+from data.database import global_init
+from data.database import Query
 from data.update import update
 from datetime import datetime
 
@@ -27,7 +27,7 @@ def home():
 
 
 if __name__ == "__main__":
-    mongo_connect.global_init()
+    global_init()
     update()
     files = ['./static/css/styles.css', './static/js/app.js']
     app.run(debug=True, extra_files=files)

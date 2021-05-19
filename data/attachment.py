@@ -1,5 +1,7 @@
 import mongoengine
+from data.mongo_connect import global_init
 
+global_init()
 
 # Class for queries collection that stores all queries of a polygon region
 # intersection with localities layer

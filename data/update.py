@@ -1,10 +1,10 @@
 # Updates mongoDB collections with new data from hosted feature layers used in the
 # LAU map interactive.
-from data.mongo_connect import global_init
+from data.database import global_init
 from arcgis.gis import GIS
 from collections import Counter
-from data.query import Query
-from data.attachment import Attachment
+from data.database import Query
+from data.database import Attachment
 from datetime import datetime
 import json
 import pandas as pd
