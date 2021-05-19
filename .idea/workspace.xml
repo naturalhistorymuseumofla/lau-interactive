@@ -2,9 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="80110b40-11bc-4ba2-b490-f798780d0fea" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/lau-interactive.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/lau-interactive.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/mongo_connect.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/mongo_connect.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/query.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/query.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,7 +42,7 @@
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="$USER_HOME$/opt/miniconda3/envs/lauWebApp/bin/python" />
+      <option name="SDK_HOME" value="$USER_HOME$/.conda/envs/lau/bin/python" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
@@ -97,6 +98,11 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <list>
+      <item itemvalue="Python.app" />
+      <item itemvalue="Python.download" />
+      <item itemvalue="Python.update" />
+    </list>
     <recent_temporary>
       <list>
         <item itemvalue="Python.app" />
@@ -105,7 +111,7 @@
       </list>
     </recent_temporary>
   </component>
-  <component name="SpellCheckerSettings" BundledDictionaries="0" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" Dictionaries="0" CorrectionsLimit="5" DefaultDictionary="application-level" UseSingleDictionary="true" />
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -130,28 +136,6 @@
       </map>
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
-  </component>
-  <component name="WindowStateProjectService">
-    <state x="414" y="67" key="#app" timestamp="1621438079154">
-      <screen x="0" y="0" width="1440" height="900" />
-    </state>
-    <state x="414" y="67" key="#app/0.0.1440.900@0.0.1440.900" timestamp="1621438079154" />
-    <state width="1419" height="295" key="GridCell.Tab.0.bottom" timestamp="1621438079232">
-      <screen x="0" y="0" width="1440" height="900" />
-    </state>
-    <state width="1419" height="295" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1621438079232" />
-    <state width="1419" height="295" key="GridCell.Tab.0.center" timestamp="1621438079226">
-      <screen x="0" y="0" width="1440" height="900" />
-    </state>
-    <state width="1419" height="295" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1621438079226" />
-    <state width="1419" height="295" key="GridCell.Tab.0.left" timestamp="1621438079221">
-      <screen x="0" y="0" width="1440" height="900" />
-    </state>
-    <state width="1419" height="295" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1621438079221" />
-    <state width="1419" height="295" key="GridCell.Tab.0.right" timestamp="1621438079228">
-      <screen x="0" y="0" width="1440" height="900" />
-    </state>
-    <state width="1419" height="295" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1621438079228" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
