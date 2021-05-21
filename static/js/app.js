@@ -398,7 +398,11 @@ require([
         newSlide.appendChild(div).appendChild(img);
         newSlide.appendChild(captions);
       })
-      newSplide();
+      const splide = newSplide();
+      // Splide event listener for changes in active slide
+      splide.on("active", slide => {
+        console.log(slide.slide.classList[1]);
+      })
       displayDiv(sliderDiv);
     }
 
@@ -431,6 +435,7 @@ require([
       splide = new Splide('.splide', {
         lazyLoad: true,
       }).mount();
+      return splide;
     }
 
     // Reformats html to remove photos/captions from splide slider div
@@ -444,11 +449,6 @@ require([
         splidePagination.remove();
       }
     }
-
-    // Splide event listener for changes in active slide
-    splide.on("active", slide => {
-      console.log(slide.slide.classList[1]);
-    })
 
     // Creates a point graphic at active splide slide so that viewer
     // can see where the fossil in each photo was found
