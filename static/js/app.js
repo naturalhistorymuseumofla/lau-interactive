@@ -1083,6 +1083,17 @@ require([
     }, 750)
 
   })
+
+  document.addEventListener('touchstart', () => {
+    const instructionsDiv = document.getElementsByClassName('instructions')[0];
+    const instructionsContainer = document.getElementsByClassName('instructions__container')[0];
+    instructionsDiv.style.top = '150%';
+    instructionsContainer.style.opacity = 0;
+    setTimeout(()=> {
+      instructionsContainer.style.display = 'None';
+    }, 750)
+
+  })
   
 
 })
