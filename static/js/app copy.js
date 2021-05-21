@@ -961,6 +961,10 @@ require([
 
         // Create new Splide image slider and set container div to visible
         newSplide();
+        // Splide event listener for changes in active slide
+        splide.on("active", slide => {
+          console.log(slide.slide.classList[1]);
+        })
         displayDiv(sliderDiv);
 
         // Create graphic at initial Splide slide

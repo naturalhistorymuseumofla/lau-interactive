@@ -1005,7 +1005,7 @@ require([
   
     // Stops loading animation and makes map view visible after 
     // localityLayerView has finished loading
-    
+    /*
     setTimeout(()=> {
       localitiesLayer.when(function() {
         const instructionsDiv = document.getElementsByClassName('instructions')[0];
@@ -1017,7 +1017,7 @@ require([
         console.log('error: ', error);
       });
     }, 2000)
-    
+    */
 
     const returnObject = {
       'map': map,
