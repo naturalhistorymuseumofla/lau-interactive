@@ -7,6 +7,7 @@ from datetime import datetime
 app = Flask(__name__)
 
 
+
 @app.route("/query", methods=["GET", "POST"])
 def query():
     if request.method == 'POST':

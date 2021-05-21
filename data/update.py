@@ -82,7 +82,7 @@ def iterate_over_regions(region_type, sdf):
         if region_name is not None:
             returned_rows = filter_df(sdf, region_type, region_name)
             region_taxa = process_taxa(returned_rows.taxa.to_list())
-            returned_photos = Attachment.objects(region_type == region_name)
+            returned_photos = Attachment.objects(__raw__={region_type: region_name})
             # Create new query document in Query collection
             query = Query()
             # By using the same id as existing record, query.save() will
@@ -96,7 +96,9 @@ def iterate_over_regions(region_type, sdf):
             query.taxa = region_taxa
             query.number_of_specimens = sum(region_taxa.values())
             # Get list of specimen IDs from photos sdf based on their region name value
-            query.photos = [x.specimen_id for x in returned_photos]
+            query.photos = [x.id for x in returned_photos]
+            query.start_date = max(returned_rows['start_date'].to_list())
+            query.end_date = min(returned_rows['end_date'].to_list())
             query.save()
             print(f'Sucessfully saved {region_name} to db!')
 

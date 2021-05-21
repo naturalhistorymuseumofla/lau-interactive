@@ -20,7 +20,7 @@ $font-family: "Inter", "Segoe UI", sans-serif;
 $widget-size: 5.5rem;
 
 button {
-  border-width: 0px;
+  border-width: 0rem;
   font-family: $font-family;
 }
 
@@ -32,6 +32,7 @@ button {
   height: 100%;
   width: 100%;
   position: absolute;
+  opacity:1;
 }
 
 html {
@@ -171,6 +172,7 @@ body {
   justify-content: center;
   margin-bottom: 3rem;
   box-shadow: 0px 4px 3px -3px rgba(0, 0, 0, 0.1);
+  text-align: center;
 }
 
 .button__outer-container {
@@ -342,6 +344,9 @@ p {
   width: 100vw;
   position:absolute;
   z-index: 10000;
+  backdrop-filter: blur(10px);
+  opacity: 1;
+  transition: opacity 0.75s;
 }
 
 .instructions {
@@ -359,8 +364,8 @@ p {
   box-sizing: border-box;
   padding: 0rem $card-flex-gap 0rem $card-flex-gap;
   line-height:3rem;
-  opacity: 0;
-  transition: top 359ms ease-in;
+  transition: top 0.4s ease-in;
+  opacity:0;
 }
 
 .slash {
@@ -1106,7 +1111,7 @@ input:checked + .slider:before {
 }
 
 #viewDiv {
-  opacity:0;
+  opacity:1;
   transition: opacity 1000ms;
 }
 

@@ -445,6 +445,42 @@ require([
       }
     }
 
+    // Splide event listener for changes in active slide
+    splide.on("active", slide => {
+      console.log(slide.slide.classList[1]);
+    })
+
+    // Creates a point graphic at active splide slide so that viewer
+    // can see where the fossil in each photo was found
+    function createPhotoPointGraphic(coordinates) {
+      var visibleAttachmentGeometry = {
+        type: "point", // autocasts as new Point()
+        longitude: coordinates[0], // Coordinates from monogDB list long first
+        latitude: coordinates[1]
+      };
+      
+      // Create graphic around record currntly being displayed in Splide carousel
+      const selectedPhotoGraphic = new Graphic({
+        geometry: visibleAttachmentGeometry,
+        symbol: {
+          type: "simple-marker",
+          style: "circle",
+          color: "orange",
+          size: "12px", // pixels
+          outline: {
+            // autocasts as new SimpleLineSymbol()
+            color: [255, 255, 0],
+            width: 2, // points
+          },
+        },
+      });
+      map.selectedPhotoGraphicsLayer.removeAll();
+      map.selectedPhotoGraphicsLayer.add(selectedPhotoGraphic);
+      if (locationButton.classList.contains('button--active')) {
+        //view.graphics.items[0].visible = false;
+      }   
+    }
+
     /* ==========================================================
      Intersecting features functions
     ========================================================== */
@@ -498,6 +534,7 @@ require([
       applyEditsToClientFeatureLayer(edits);
     }
 
+    
     // Removes all features from clientFeatureLayer, resetting it
     function removeFeatures() {
       map.clientFeatureLayer.queryFeatures().then(function (results) {
@@ -538,7 +575,8 @@ require([
     ========================================================== */
 
     // Add event listeners to custom widgets
-    resetSvg.addEventListener("click", resetButtonClickHandler);
+    document.getElementById('resetWidget')
+    .addEventListener("click", resetButtonClickHandler);
 
     // Click events for zoom widgets
     zoomInDiv.addEventListener("click", () => {
@@ -555,14 +593,16 @@ require([
 
     // Event handler for reset widget
     function resetButtonClickHandler() {
-      sketchViewModel.cancel();
       map.view.goTo({ center: [-118.248638, 34.06266], zoom: 8 });
+      /*
       if (highlight) {
         highlight.remove();
       }
       if (polygonHighlight) {
         polygonHighlight.remove();
       }
+      */
+      displayIntersectingAreas('')
       removeFeatures();
       clearGraphics();
       clearWidgets();
@@ -586,20 +626,20 @@ require([
     }
   
   
+    // Clears all info card panels in ui-top-left containers
     function clearWidgets() {
-      for (let container of uiTopLeftCollection) {
-        container.style.left="-100%";
+      const uiTopLeft = document.getElementsByClassName('ui-top-left');
+      for (let container of uiTopLeft) {
+        container.style.left="-100%"
       }
     }
   
-    /*
+    // Clears all map graphics (outlines)
     function clearGraphics() {
-      sketchGraphicsLayer.removeAll();
-      selectedFeatureGraphicLayer.removeAll();
-      view.graphics.removeAll();
+      map.view.graphics.removeAll();
+      map.areaGraphics.graphics.removeAll();
     }
-    */
-  
+    
   
     // Toggles visibility
     function setVisible(selector, boolean) {
@@ -671,6 +711,9 @@ require([
 
     const intersectingFeatureGraphicLayer = new GraphicsLayer();
     map.add(intersectingFeatureGraphicLayer);
+
+    const selectedPhotoGraphicsLayer = new GraphicsLayer();
+    map.add(selectedPhotoGraphicsLayer);
 
     /*
     sketchGraphicsLayer = new GraphicsLayer();
@@ -858,8 +901,6 @@ require([
     });
 
     // Define feature layers and add to map
-
-
     const localitiesLayer = new GeoJSONLayer({
       url: '/static/layers/lauLocalities.geojson',
       renderer: localitiesRenderer,
@@ -871,18 +912,17 @@ require([
       labelingInfo: [countiesLabelClass],
       renderer: polygonFeatureRenderer,
       title: 'county',
-      outFields: ['*'],
+      outFields: ['name', 'OBJECTID_1', 'OBJECTID', 'region_type'],
     });
 
-    const regionsLayer = new FeatureLayer({
-      url:
-        'https://services7.arcgis.com/zT20oMv4ojQGbhWr/arcgis/rest/services/SoCal_Regions_(v2)_View/FeatureServer',
+    const regionsLayer = new GeoJSONLayer({
+      url: '/static/layers/lauRegions.geojson',
       minScale: countiesMaxScale,
       maxScale: regionsMaxScale,
       labelingInfo: [regionsLabelClass],
       renderer: polygonFeatureRenderer,
       title: 'region',
-      outFields: ['*'],
+      outFields: ['name', 'OBJECTID', 'region_type', 'parent_region'],
     });
 
     const neighborhoodsLayer = new GeoJSONLayer({
@@ -891,7 +931,7 @@ require([
       labelingInfo: [regionsLabelClass],
       renderer: polygonFeatureRenderer,
       title: 'neighborhood',
-      outFields: ['*'],
+      outFields: ['name', 'OBJECTID', 'region_type', 'parent_region'],
     });
 
     
@@ -905,19 +945,6 @@ require([
     });
     
 
-    /*
-    const areasLayer = new FeatureLayer({
-      portalItem : {
-        id: '40b3507b1ed4443b87807e7d2be4afd2',
-      },
-      renderer: polygonFeatureRenderer,
-      labelingInfo: [areasLabelClass],
-      title: 'area',
-      outFields: ['*'],
-    })
-    */
-
-
     const layers = [
       neighborhoodsLayer,
       regionsLayer,
@@ -925,7 +952,6 @@ require([
       clientFeatureLayer,
       areasLayer,
       localitiesLayer,
-
     ]
 
     map.addMany(layers);
@@ -979,17 +1005,19 @@ require([
   
     // Stops loading animation and makes map view visible after 
     // localityLayerView has finished loading
-    /*
+    
     setTimeout(()=> {
-      localityLayerView.when(function() {
-        setVisible('#loading', false);
-        document.getElementById('viewDiv').style.opacity = '1';
-        instructionsDiv.style.opacity = '1';          
+      localitiesLayer.when(function() {
+        const instructionsDiv = document.getElementsByClassName('instructions')[0];
+        const instructionsContainer = document.getElementsByClassName('instructions__container')[0];
+        //document.getElementById('viewDiv').style.opacity = '1';
+        instructionsDiv.style.opacity = '1';     
+        instructionsContainer.style.opacity = 1;     
       }).catch(function(error){
         console.log('error: ', error);
       });
     }, 2000)
-    */
+    
 
     const returnObject = {
       'map': map,
@@ -1004,6 +1032,7 @@ require([
       'regionsLayer': regionsLayer,
       'neighborhoodsLayer': neighborhoodsLayer,
       'intersectingGraphicsLayer' : intersectingFeatureGraphicLayer,
+      'selectedPhotoGraphicsLayer': selectedPhotoGraphicsLayer,
       'clientFeatureLayer': clientFeatureLayer,
       'areasLayer': areasLayer
     };
@@ -1013,11 +1042,47 @@ require([
 
 
   function displayMoreButton(button) {
-    if (button.previousElementSibling.childElementCount > 0) {
-      setDisplay(button, true);
-    } else {
-      setDisplay(button, false);
+    let bottomLists = document.getElementsByClassName('taxa__bottom-list');
+    let isPopulated = false;
+    for (let list of bottomLists){
+      list.childElementCount > 0 ? isPopulated = true: isPopulated = false;
     }
+    isPopulated ? setDisplay(button, true) : setDisplay(button, false);
   }
+
+    //Add Event listener to "more" buttons
+  const moreButton = document.getElementsByClassName('more')[0];
+  moreButton.addEventListener('click', () => {
+
+    let bottomLists = document.getElementsByClassName('taxa__bottom-list');
+    let ifExpanded = moreButton.classList.toggle('button--active');
+    if (ifExpanded) {
+      moreButton.innerHTML = '- Less';
+      for (let list of bottomLists) {
+        list.style.maxHeight = list.scrollHeight + 'px';
+      }
+      const position = moreButton.parentElement.offsetTop;
+      ($('.card__content')).animate({
+        scrollTop: position
+      }, 400);
+    } else {
+      moreButton.innerHTML = '+ More';
+      for (let list of bottomLists) {
+        list.style.maxHeight = null;
+      }
+    }
+  })
+
+  document.addEventListener('click', () => {
+    const instructionsDiv = document.getElementsByClassName('instructions')[0];
+    const instructionsContainer = document.getElementsByClassName('instructions__container')[0];
+    instructionsDiv.style.top = '150%';
+    instructionsContainer.style.opacity = 0;
+    setTimeout(()=> {
+      instructionsContainer.style.display = 'None';
+    }, 750)
+
+  })
+  
 
 })

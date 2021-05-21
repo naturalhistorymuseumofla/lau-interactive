@@ -4,7 +4,7 @@ from data.mongo_connect import global_init
 import pandas as pd
 from arcgis.gis import GIS
 from collections import Counter
-from data.attachment import Attachment
+from data.database import Attachment
 from datetime import datetime
 
 

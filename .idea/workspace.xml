@@ -2,12 +2,26 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="80110b40-11bc-4ba2-b490-f798780d0fea" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/data/database.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/lau-interactive.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/lau-interactive.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/attachment.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/attachment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/mongo_connect.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/mongo_connect.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/query.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/query.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/attachment.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/database.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/query.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/data/update.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/update.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/update_attachments.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/update_attachments.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/css/styles.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/css/styles.css.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/css/styles.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/styles.min.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/css/styles.scss" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/styles.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/js/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/app.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/layers/lauAreas.geojson" beforeDir="false" afterPath="$PROJECT_DIR$/static/layers/lauAreas.geojson" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/layers/lauAreas.geojson.gz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/layers/lauCounties.geojson" beforeDir="false" afterPath="$PROJECT_DIR$/static/layers/lauCounties.geojson" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/layers/lauLocalities.geojson" beforeDir="false" afterPath="$PROJECT_DIR$/static/layers/lauLocalities.geojson" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/layers/lauNeighborhoods.geojson" beforeDir="false" afterPath="$PROJECT_DIR$/static/layers/lauNeighborhoods.geojson" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,6 +38,14 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
+  </component>
   <component name="ProjectId" id="1rDmeFR9RjGoUeaag6iIegzSVW5" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -35,6 +57,11 @@
     <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="HTML" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/static/css" />
+    </key>
   </component>
   <component name="RunManager" selected="Python.app">
     <configuration name="app" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
@@ -146,11 +173,6 @@
           <url>file://$PROJECT_DIR$/data/download.py</url>
           <line>27</line>
           <option name="timeStamp" value="5" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/data/update.py</url>
-          <line>21</line>
-          <option name="timeStamp" value="9" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/data/update.py</url>
