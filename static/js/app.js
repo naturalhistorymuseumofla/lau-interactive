@@ -151,39 +151,40 @@ require([
     }
 
     function selectFeaturesFromClick(screenPoint) {
-      // clearGraphics();
+      clearGraphics();
     
       var includeLayers = [
         map.countiesLayer,
         map.regionsLayer,
         map.neighborhoodsLayer,
-        map.clientFeatureLayer,
         map.areasLayer
       ]
       
       // hitTest returns feature that intersects with tap/click
       // i.e. screenPoint
-      map.view.hitTest(screenPoint, {include: includeLayers})
-        .then(feature => {
+      map.view.hitTest( screenPoint, {include: includeLayers})
+      .then(feature => {
+
+        // Test if any map features were clicked/returned
+        if (feature.results[0]) {
           var returnedFeature = feature.results[0].graphic;
           zoomToFeature(returnedFeature);
-          
-          addAreaHighlight(returnedFeature.geometry)
-          if (feature.results.length > 0) {
-            // Get query object from database
-            getQuery(returnedFeature).then(data => {
-              // If response has data, use it to populate info cards
-              if (data) {
-                populateInfoCards(data);
-              } else {
-                populateNullCards(returnedFeature.attributes.name)
-              }
-            })
-          } else {
-            //resetButtonClickHandler
-          }
-          displayIntersectingAreas(returnedFeature.attributes)
-        })
+          addAreaHighlight(returnedFeature.geometry);
+          // Get query object from database
+          getQuery(returnedFeature).then(data => {
+            // If response has data, use it to populate info cards
+            if (data) {
+              populateInfoCards(data);
+            } else {
+              populateNullCards(returnedFeature.attributes.name)
+            }
+          });
+          displayIntersectingAreas(returnedFeature.attributes);
+        // If nothing returned, reset map
+        } else {
+          resetButtonClickHandler();
+        }
+      })
     }
 
     function populateNullCards(featureName) {
@@ -205,6 +206,7 @@ require([
       const excavationDiv = document.getElementById('excavationNumber');
       const photosDiv = document.getElementsByClassName('photos--info')[0];
       const photosNullDiv = document.getElementsByClassName('photos--null')[0];
+      const photoLegend = document.getElementsByClassName('photo-indicator')[0];
 
       // Display appropriate divs
       hideDiv(noInfoCardDiv);
@@ -246,11 +248,11 @@ require([
         populateSplide(stats.photos);
         setFlex(photosDiv, true);
         setFlex(photosNullDiv, false);
-        //setFlex(photoLegend, true);
+        setFlex(photoLegend, true);
       } else {
         setFlex(photosNullDiv, true);
         setFlex(photosDiv, false);
-        //setFlex(photoLegend, false);
+        setFlex(photoLegend, false);
       }
     }
 
@@ -380,6 +382,7 @@ require([
 
       // Adds photos and captions to splide carousel
     function populateSplide(photos) {
+      // Display photo indicator to legend
       resetSplide();
       photos.forEach((photo) => {
         // Create divs for Splide
@@ -399,9 +402,15 @@ require([
         newSlide.appendChild(captions);
       })
       const splide = newSplide();
+      // Create point graphic for initial slide
+      createPhotoPointGraphic(photos[0].point.coordinates);
       // Splide event listener for changes in active slide
-      splide.on("active", slide => {
-        console.log(slide.slide.classList[1]);
+      splide.on("visible", slide => {
+        // Create point graphic when slide is advanced by getting index
+        // of current slide and getting coordinates from photos array
+        const slideArray = Array.from(slide.slide.parentElement.children);
+        const slideIndex = slideArray.indexOf(slide.slide);
+        createPhotoPointGraphic(photos[slideIndex].point.coordinates);
       })
       displayDiv(sliderDiv);
     }
@@ -476,9 +485,6 @@ require([
       });
       map.selectedPhotoGraphicsLayer.removeAll();
       map.selectedPhotoGraphicsLayer.add(selectedPhotoGraphic);
-      if (locationButton.classList.contains('button--active')) {
-        //view.graphics.items[0].visible = false;
-      }   
     }
 
     /* ==========================================================
@@ -638,6 +644,7 @@ require([
     function clearGraphics() {
       map.view.graphics.removeAll();
       map.areaGraphics.graphics.removeAll();
+      map.selectedPhotoGraphicsLayer.removeAll();
     }
     
   
@@ -703,38 +710,6 @@ require([
         components: [],
       },
     });
-
-    // Create new GraphicLayers
-    
-    const selectedFeatureGraphicLayer = new GraphicsLayer();
-    map.add(selectedFeatureGraphicLayer);
-
-    const intersectingFeatureGraphicLayer = new GraphicsLayer();
-    map.add(intersectingFeatureGraphicLayer);
-
-    const selectedPhotoGraphicsLayer = new GraphicsLayer();
-    map.add(selectedPhotoGraphicsLayer);
-
-    /*
-    sketchGraphicsLayer = new GraphicsLayer();
-    map.add(sketchGraphicsLayer);
-
-    // Create the new sketch view model and sets its layer
-    sketchViewModel = new SketchViewModel({
-      view: view,
-      layer: sketchGraphicsLayer,
-      updateOnGraphicClick: false,
-      polygonSymbol: {
-        type: 'simple-fill',
-        color: [0, 185, 235, 0.2],
-        size: '1px',
-        outline: {
-          color: [0, 185, 235, 0.5],
-          width: '3px',
-        },
-      },
-    });
-    */
 
     const zoomViewModel = new ZoomViewModel({
       view: view,
@@ -943,15 +918,46 @@ require([
       title: 'area',
       outFields: ['*'],
     });
-    
 
+
+    // Create new GraphicLayers
+    const selectedFeatureGraphicLayer = new GraphicsLayer();
+    const intersectingFeatureGraphicLayer = new GraphicsLayer();
+    const selectedPhotoGraphicsLayer = new GraphicsLayer();
+
+    /*
+    sketchGraphicsLayer = new GraphicsLayer();
+    map.add(sketchGraphicsLayer);
+
+    // Create the new sketch view model and sets its layer
+    sketchViewModel = new SketchViewModel({
+      view: view,
+      layer: sketchGraphicsLayer,
+      updateOnGraphicClick: false,
+      polygonSymbol: {
+        type: 'simple-fill',
+        color: [0, 185, 235, 0.2],
+        size: '1px',
+        outline: {
+          color: [0, 185, 235, 0.5],
+          width: '3px',
+        },
+      },
+    });
+    */
+    
     const layers = [
+
+      intersectingFeatureGraphicLayer,
       neighborhoodsLayer,
       regionsLayer,
       countiesLayer,
       clientFeatureLayer,
+      
       areasLayer,
+      selectedFeatureGraphicLayer,
       localitiesLayer,
+      selectedPhotoGraphicsLayer
     ]
 
     map.addMany(layers);
