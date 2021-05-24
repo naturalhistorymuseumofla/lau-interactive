@@ -29,6 +29,8 @@ require([
   var countiesView;
   var regionsView;
   var areasView;
+  let localitiesView;
+  let highlight;
 
   
   /* ==========================================================
@@ -211,6 +213,10 @@ require([
       // Display appropriate divs
       hideDiv(noInfoCardDiv);
       displayDiv(infoCardDiv);
+
+      // Highlight locality selected in query
+      (highlight) ? highlight.remove() : highlight;
+      highlight = localitiesView.highlight(stats.oids);
 
       // Set feature name to all title divs
       for (let div of document.getElementsByClassName('featureName')) {
@@ -1010,13 +1016,10 @@ require([
       areasView.visible=false;
     })
 
-    /*
-    view.when(layers.map((layer) => {
-      view.whenLayerView(layer).then((layerView) =>{
-        return
-      })
-    }))
-    */
+    view.whenLayerView(localitiesLayer).then(layerView =>{
+      localitiesView = layerView;
+    })
+
 
     // Make widgets visible to map view
     for (let widget of document.getElementsByClassName('widget')) {
@@ -1049,7 +1052,7 @@ require([
       'map': map,
       'view': view,
       'zoomViewModel': zoomViewModel,
-      //'localitiesView': localitiesView,
+      'localitiesView': localitiesView,
       'neighborhoodsView': neighborhoodsView,
       'regionsView': regionsView,
       'countiesView': countiesView,

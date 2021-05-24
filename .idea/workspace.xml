@@ -47,7 +47,7 @@
       <recent name="$PROJECT_DIR$/static/css" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.app">
+  <component name="RunManager" selected="Python.update">
     <configuration name="app" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="lau-interactive" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -118,8 +118,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.app" />
         <item itemvalue="Python.update" />
+        <item itemvalue="Python.app" />
         <item itemvalue="Python.download" />
       </list>
     </recent_temporary>

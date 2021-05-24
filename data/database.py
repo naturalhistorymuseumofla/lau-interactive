@@ -51,6 +51,7 @@ class Query(mongoengine.Document):
     photos = mongoengine.ListField(mongoengine.ReferenceField(Attachment, dbref=True))
     start_date = mongoengine.FloatField()
     end_date = mongoengine.FloatField()
+    oids = mongoengine.ListField()
     meta = {
         'db_alias': 'laumap',
         'collection': 'queries'
@@ -67,7 +68,8 @@ class Query(mongoengine.Document):
             'taxa': self.taxa,
             'photos': photos,
             'startDate':self.start_date,
-            'endDate': self.end_date
+            'endDate': self.end_date,
+            'oids': self.oids,
         }
         return dumps(response_dict)
 

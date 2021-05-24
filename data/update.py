@@ -104,6 +104,7 @@ def iterate_over_regions(region_type, sdf):
             query.photos = [x.id for x in returned_photos]
             query.start_date = max(returned_rows['start_date'].to_list())
             query.end_date = min(returned_rows['end_date'].to_list())
+            query.oids = returned_rows['ObjectId'].to_list()
             query.save()
             print(f'Sucessfully saved {region_name} to db!')
 
@@ -131,3 +132,4 @@ def update():
     update_attachments(photos)
     update_localities(localities)
 
+update()
