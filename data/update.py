@@ -8,11 +8,16 @@ from data.database import Attachment
 from datetime import datetime
 import json
 import pandas as pd
+import os
+from dotenv import load_dotenv
 
 
 # Return fearture layer item from ArcGIS Online
 def get_portal_object(id):
-    gis = GIS()
+    load_dotenv()
+    GIS_USR = os.getenv('GIS_USR')
+    GIS_PSWD = os.getenv('GIS_PSWD')
+    gis = GIS('https://nhmlac.maps.arcgis.com/', GIS_USR, GIS_PSWD)
     agol_object = gis.content.get(id)
     return agol_object
 
@@ -32,13 +37,13 @@ def update_attachments(photos):
             if Attachment.objects(specimen_id=row.specimenID):
                 attachment.id = Attachment.objects(specimen_id=row.specimenID)[0].id
             attachment.specimen_id = row.specimenID
+            attachment.display_id = row.specimenID.replace('_', ' ').replace('-', '.')
             attachment.modified = datetime.now()
             attachment.locality = row.locality
             attachment.taxon = row.taxon
             attachment.age = row.age
             attachment.description = row.description
             attachment.point = [row.longitude, row.latitude]
-            attachment.geometry = row.SHAPE
             attachment.county = row.county
             attachment.region = row.region
             attachment.neighborhood = row.neighborhood
@@ -121,11 +126,8 @@ def process_taxa(taxa_list):
 
 def update():
     global_init()
-    localities = get_portal_object('2ee7d9319663454996af081d337f9a4b')
+    localities = get_portal_object('a3700e0e2c974434b3db0d426436a085')
     photos = get_portal_object('54cf1a9a79524a0d9af4952b0f05ef3f')
     update_attachments(photos)
     update_localities(localities)
-
-
-
 

@@ -22,13 +22,13 @@ global_init()
 # intersection with localities layer
 class Attachment(mongoengine.Document):
     specimen_id = mongoengine.StringField(required=True, unique=True)
+    display_id = mongoengine.StringField(required=True)
     modified = mongoengine.DateTimeField(required=True)
     locality = mongoengine.StringField()
     taxon = mongoengine.StringField()
     age = mongoengine.StringField()
     description = mongoengine.StringField()
     point = mongoengine.PointField(required=True)
-    geometry = mongoengine.DictField()
     county = mongoengine.StringField()
     region = mongoengine.StringField()
     neighborhood = mongoengine.StringField()
@@ -66,8 +66,8 @@ class Query(mongoengine.Document):
             'number_of_specimens': self.number_of_specimens,
             'taxa': self.taxa,
             'photos': photos,
-            #'startDate': self.start_date,
-            #'endDate': self.end_date,
+            'startDate':self.start_date,
+            'endDate': self.end_date
         }
         return dumps(response_dict)
 

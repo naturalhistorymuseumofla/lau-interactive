@@ -254,6 +254,9 @@ require([
         setFlex(photosDiv, false);
         setFlex(photoLegend, false);
       }
+
+      // Handle timescale
+      moveTimescale(stats.startDate, stats.endDate);
     }
 
     function addAreaHighlight(geometry) {
@@ -429,7 +432,7 @@ require([
       taxonCaption.innerHTML = photo.taxon;
       ageCaption.innerHTML = photo.age;
       descriptionCaption.innerHTML = photo.description;
-      const catNumberCaption = document.createTextNode(` (${photo.specimen_id})`);
+      const catNumberCaption = document.createTextNode(` (${photo.display_id})`);
       captionsDiv.classList.add('splide__captions');
 
       // Append caption divs to parent divs
@@ -485,6 +488,23 @@ require([
       });
       map.selectedPhotoGraphicsLayer.removeAll();
       map.selectedPhotoGraphicsLayer.add(selectedPhotoGraphic);
+    }
+
+
+    /* ==========================================================
+     Timescale functions
+    ========================================================== */
+    // Moves timescale indicator div based on age range array
+    function moveTimescale(startDate, endDate) {
+      const timescaleBar = document.getElementById('indicator'); 
+      const timescaleDiv = document.getElementsByClassName('timescale__container')[0]; 
+      const totalAge = 100;
+      startDate = (startDate) > 100 ? 100 : startDate
+      const fossilAgeRange = startDate - endDate;
+      timescaleBar.style.right = `${(endDate/totalAge)*100}%`;    
+      const timescaleWidth = timescaleDiv.clientWidth;
+      const timeRatio = timescaleWidth/totalAge;
+      timescaleBar.style.width = `${timeRatio*fossilAgeRange}px`;
     }
 
     /* ==========================================================
@@ -1079,18 +1099,9 @@ require([
     }
   })
 
+
+
   document.addEventListener('click', () => {
-    const instructionsDiv = document.getElementsByClassName('instructions')[0];
-    const instructionsContainer = document.getElementsByClassName('instructions__container')[0];
-    instructionsDiv.style.top = '150%';
-    instructionsContainer.style.opacity = 0;
-    setTimeout(()=> {
-      instructionsContainer.style.display = 'None';
-    }, 750)
-
-  })
-
-  document.addEventListener('touchstart', () => {
     const instructionsDiv = document.getElementsByClassName('instructions')[0];
     const instructionsContainer = document.getElementsByClassName('instructions__container')[0];
     instructionsDiv.style.top = '150%';

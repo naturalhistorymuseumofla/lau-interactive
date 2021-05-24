@@ -344,7 +344,7 @@ p {
   width: 100vw;
   position:absolute;
   z-index: 10000;
-  backdrop-filter: blur(10px);
+  background-color: rgba(38, 86, 106, 0.25);
   opacity: 1;
   transition: opacity 0.75s;
 }
@@ -365,7 +365,7 @@ p {
   padding: 0rem $card-flex-gap 0rem $card-flex-gap;
   line-height:3rem;
   transition: top 0.4s ease-in;
-  opacity:0;
+
 }
 
 .slash {
