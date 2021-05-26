@@ -25,27 +25,30 @@ require([
 
   const zoomInDiv = document.getElementById("zoomIn");
   const zoomOutDiv = document.getElementById("zoomOut");
-  var neighborhoodsView;
-  var countiesView;
-  var regionsView;
-  var areasView;
-  let localitiesView;
-  let highlight;
 
-  
   /* ==========================================================
     Initialize map
   ========================================================== */
 
+
   var map = setUpMap();
 
-
    // Refresh map after period of inactivity
-   var resetMapSetInterval = setInterval(resetButtonClickHandler, 90000);
-   document.onclick = clearInterval(resetMapSetInterval);
+  var resetMapSetInterval = setInterval(resetButtonClickHandler, 30000);
+  map.view.on('pointer-down', (event)=>{
+    clearInterval(resetMapSetInterval);
+    resetMapSetInterval = setInterval(resetButtonClickHandler, 30000);
+  });
+  map.view.on('mouse-scroll', (event)=>{
+    clearInterval(resetMapSetInterval);
+    resetMapSetInterval = setInterval(resetButtonClickHandler, 30000);
+  });
+
+   //document.onclick = clearInterval(resetMapSetInterval);
  
  
    map.view.when(() => {
+     map.view.extent.expand(1.75);
      setNavigationBounds();
    });
  
@@ -155,13 +158,13 @@ require([
     function selectFeaturesFromClick(screenPoint) {
       clearGraphics();
     
-      var includeLayers = [
+      const includeLayers = [
         map.countiesLayer,
         map.regionsLayer,
         map.neighborhoodsLayer,
         map.areasLayer
       ]
-      
+  
       // hitTest returns feature that intersects with tap/click
       // i.e. screenPoint
       map.view.hitTest( screenPoint, {include: includeLayers})
@@ -190,10 +193,15 @@ require([
     }
 
     function populateNullCards(featureName) {
-      const infoCardDiv = document.getElementById('infoCard');
-      const noInfoCardDiv = document.getElementById('noInfoCard');
-      hideDiv(infoCard);
-      displayDiv(noInfoCardDiv);
+      const infoCard = document.getElementById('infoCard');
+      if (infoCard.style.display != 'none') {
+        hideDiv(infoCard);
+        setTimeout(()=> {
+          displayDiv('#noInfoCard');
+        }, 250)
+      } else {
+        displayDiv('#noInfoCard');
+      }
 
       for (let div of document.getElementsByClassName('featureName')) {
         div.innerText = featureName;
@@ -201,8 +209,6 @@ require([
 
     }
     function populateInfoCards(stats) {
-      const infoCardDiv = document.getElementById('infoCard');
-      const noInfoCardDiv = document.getElementById('noInfoCard');
       const taxaInfoDiv = document.getElementsByClassName('taxa--info')[0];
       const taxaNullDiv = document.getElementsByClassName('taxa--null')[0];
       const excavationDiv = document.getElementById('excavationNumber');
@@ -210,13 +216,13 @@ require([
       const photosNullDiv = document.getElementsByClassName('photos--null')[0];
       const photoLegend = document.getElementsByClassName('photo-indicator')[0];
 
-      // Display appropriate divs
-      hideDiv(noInfoCardDiv);
-      displayDiv(infoCardDiv);
+      // Hide appropriate divs
+      hideDiv('#noInfoCard');
+
 
       // Highlight locality selected in query
-      (highlight) ? highlight.remove() : highlight;
-      highlight = localitiesView.highlight(stats.oids);
+      (map.highlight) ? map.highlight.remove() : map.highlight;
+      map.highlight = map.localitiesView.highlight(stats.oids);
 
       // Set feature name to all title divs
       for (let div of document.getElementsByClassName('featureName')) {
@@ -237,7 +243,7 @@ require([
         setFlex(taxaNullDiv, false);
         setFlex(taxaInfoDiv, true);
         const taxa = stats.taxa;
-        populateTaxaLists(taxa);
+        populateTaxa(taxa);
 
         // Display or hide more buttons based on number of taxa
         const moreButtons = document.getElementsByClassName('more');
@@ -254,15 +260,18 @@ require([
         populateSplide(stats.photos);
         setFlex(photosDiv, true);
         setFlex(photosNullDiv, false);
-        setFlex(photoLegend, true);
+        displayDiv(photoLegend);
       } else {
         setFlex(photosNullDiv, true);
         setFlex(photosDiv, false);
-        setFlex(photoLegend, false);
+        hideDiv(photoLegend);
       }
 
       // Handle timescale
       moveTimescale(stats.startDate, stats.endDate);
+
+      // Display div
+      displayDiv('#infoCard');
     }
 
     function addAreaHighlight(geometry) {
@@ -287,7 +296,7 @@ require([
      Taxa list functions
     ========================================================== */
 
-    function populateTaxaLists(taxa) {
+    function populateTaxa(taxa) {
       let taxaObj = {
         'Clams, oysters': {
           'fileName': 'clam',
@@ -358,13 +367,19 @@ require([
           'category': 'vertebrate'
         },
       }
+
+      let invertTopFrag = document.createDocumentFragment();
+      let invertBottomFrag = document.createDocumentFragment();
+      let vertTopFrag = document.createDocumentFragment();
+      let vertBottomFrag = document.createDocumentFragment();
+      const vertTopList = document.getElementsByClassName('vert__top-list')[0];
+      const invertTopList = document.getElementsByClassName('invert__top-list')[0];
+      const vertBottomList = document.getElementsByClassName('vert__bottom-list')[0];
+      const invertBottomList = document.getElementsByClassName('invert__bottom-list')[0];
       for (const taxon in taxa) {
-        const vertTopList = document.getElementsByClassName('vert__top-list')[0];
-        const invertTopList = document.getElementsByClassName('invert__top-list')[0];
-        const vertBottomList = document.getElementsByClassName('vert__bottom-list')[0];
-        const invertBottomList = document.getElementsByClassName('invert__bottom-list')[0];
-        var cell = document.createElement(`div`);
-        var taxaIcon = document.createElement(`img`);
+
+        let cell = document.createElement(`div`);
+        let taxaIcon = document.createElement(`img`);
         if (taxaObj[taxon]) {
           const fileName = taxaObj[taxon]['fileName'];
           const category = taxaObj[taxon]['category'];
@@ -375,14 +390,18 @@ require([
           taxonDiv.innerHTML = `${taxa[taxon].toString()}<br>${taxon}`;
           cell.append(taxaIcon, taxonDiv);
           if (category === "invertebrate") {
-            (invertTopList.childElementCount === 4) ? invertBottomList.append(cell) :
-            invertTopList.append(cell);
+            (invertTopFrag.childElementCount === 4) ? invertBottomFrag.append(cell) :
+            invertTopFrag.append(cell);
           } else if (category === "vertebrate") {
-            (vertTopList.childElementCount === 4) ? vertBottomList.append(cell) :
-            vertTopList.append(cell);
+            (vertTopFrag.childElementCount === 4) ? vertBottomFrag.append(cell) :
+            vertTopFrag.append(cell);
           }
-        } 
+        }
       }
+      invertTopList.append(invertTopFrag);
+      invertBottomList.append(invertBottomFrag);
+      vertTopList.append(vertTopFrag);
+      vertBottomList.append(vertBottomFrag);
     }
 
     /* ==========================================================
@@ -393,23 +412,23 @@ require([
     function populateSplide(photos) {
       // Display photo indicator to legend
       resetSplide();
+      const splideListFrag = document.createDocumentFragment();
+      const splideList = document.getElementsByClassName('splide__list')[0];
       photos.forEach((photo) => {
-        // Create divs for Splide
+        // Create divs for slide
         const img = document.createElement('img');
         const li = document.createElement('li');
-        const splideList = document.getElementsByClassName('splide__list')[0];
         const captions = formatCaptions(photo);
-
         // Format HTML for Splide carousel
         img.src = photo.url;
         li.classList.add('splide__slide');
-        const newSlide = splideList.appendChild(li);
+        const newSlide = splideListFrag.appendChild(li);
         const div = document.createElement('div');
         div.className = 'splide__slide--imageContainer';
-
         newSlide.appendChild(div).appendChild(img);
         newSlide.appendChild(captions);
-      })
+      });
+      splideList.append(splideListFrag);
       const splide = newSplide();
       // Create point graphic for initial slide
       createPhotoPointGraphic(photos[0].point.coordinates);
@@ -421,7 +440,7 @@ require([
         const slideIndex = slideArray.indexOf(slide.slide);
         createPhotoPointGraphic(photos[slideIndex].point.coordinates);
       })
-      displayDiv(sliderDiv);
+      setFlex(sliderDiv, true);
     }
 
 
@@ -520,8 +539,8 @@ require([
     function displayIntersectingAreas(feature) {
       //const featureUID = `${feature.region_type}_${feature.OBJECTID}`
       const featureName = feature.name
-      areasView.visible = true;
-      areasView.filter = {
+      map.areasView.visible = true;
+      map.areasView.filter = {
         where: "parent_region = '" + featureName + "'"
       }
     }
@@ -626,18 +645,11 @@ require([
     // Event handler for reset widget
     function resetButtonClickHandler() {
       map.view.goTo({ center: [-118.248638, 34.06266], zoom: 8 });
-      /*
-      if (highlight) {
-        highlight.remove();
-      }
-      if (polygonHighlight) {
-        polygonHighlight.remove();
-      }
-      */
       displayIntersectingAreas('')
       removeFeatures();
       clearGraphics();
       clearWidgets();
+      setFlex(document.getElementsByClassName('photo-indicator')[0], false);
     }
 
 
@@ -647,22 +659,37 @@ require([
     ========================================================== */
 
 
-    function hideDiv(div) {
-      div.style.left = "-125%";
+    function hideDiv(divName) {
+      const div = (typeof divName == 'object') ? divName : document.querySelector(divName);
+      div.classList.remove('card--active');
+      setTimeout(()=> {
+        setDisplay(div, false);
+      }, 250);
     }
   
   
-    function displayDiv(div) {
-      div.style.display = "flex";
-      div.style.left = "0";
+    function displayDiv(divName) {
+      const div = (typeof divName == 'object') ? divName : document.querySelector(divName);
+      setDisplay(div, true);
+      div.classList.remove('card--active');
+      div.classList.add('card--active');
+
+      /*
+      const contentCard = document.getElementsByClassName(`${cardName} content-card`)[0];
+      const animateCard = document.getElementsByClassName(`${cardName} animate-card`)[0];
+      animateCard.style.opacity = 1;
+      animateCard.style.left = "0%";
+      setFlex(contentCard, true);
+      animateCard.style.opacity = 0;
+      */
     }
   
   
     // Clears all info card panels in ui-top-left containers
     function clearWidgets() {
-      const uiTopLeft = document.getElementsByClassName('ui-top-left');
-      for (let container of uiTopLeft) {
-        container.style.left="-100%"
+      const cards = document.getElementsByClassName('content-card');
+      for (let card of cards) {  
+        hideDiv(card);
       }
     }
   
@@ -671,15 +698,9 @@ require([
       map.view.graphics.removeAll();
       map.areaGraphics.graphics.removeAll();
       map.selectedPhotoGraphicsLayer.removeAll();
+      (map.highlight) ? map.highlight.remove() : map.highlight;
     }
     
-  
-    // Toggles visibility
-    function setVisible(selector, boolean) {
-      document.querySelector(selector).style.visibility = boolean ? 'visible' : 'hidden';
-    }
-  
-  
     // Toggles hidden property
     function setFlex(element, boolean) {
       element.style.display = boolean ? 'flex' : 'none';
@@ -700,6 +721,7 @@ require([
 
 
   function setUpMap() {
+    
     // Create new Basemap
     var basemap = new Basemap({
       baseLayers: [
@@ -979,7 +1001,6 @@ require([
       regionsLayer,
       countiesLayer,
       clientFeatureLayer,
-      
       areasLayer,
       selectedFeatureGraphicLayer,
       localitiesLayer,
@@ -988,36 +1009,27 @@ require([
 
     map.addMany(layers);
 
-    /*
-    let [neighborhoodsView, 
-      regionsView, 
-      countiesView, 
-      localitiesView] = layers.map((layer) => {
-      return view.whenLayerView(layer).then((layerView) => {
-        return layerView
-      })
-    });
-    */
-
-    view.whenLayerView(countiesLayer).then(layerView => {
-      countiesView = layerView;
-    })
-
-    view.whenLayerView(regionsLayer).then(layerView => {
-      regionsView = layerView;
-    })
-
-    view.whenLayerView(neighborhoodsLayer).then(layerView => {
-      neighborhoodsView = layerView;
-    })
+    var returnObject = {
+      'map': map,
+      'view': view,
+      'zoomViewModel': zoomViewModel,
+      'areaGraphics': selectedFeatureGraphicLayer,
+      'countiesLayer': countiesLayer,
+      'regionsLayer': regionsLayer,
+      'neighborhoodsLayer': neighborhoodsLayer,
+      'intersectingGraphicsLayer' : intersectingFeatureGraphicLayer,
+      'selectedPhotoGraphicsLayer': selectedPhotoGraphicsLayer,
+      'clientFeatureLayer': clientFeatureLayer,
+      'areasLayer': areasLayer
+    };
 
     view.whenLayerView(areasLayer).then(layerView =>{
-      areasView = layerView;
-      areasView.visible=false;
+      returnObject.areasView = layerView;
+      returnObject.areasView.visible = false;
     })
 
     view.whenLayerView(localitiesLayer).then(layerView =>{
-      localitiesView = layerView;
+      returnObject.localitiesView = layerView;
     })
 
 
@@ -1048,24 +1060,6 @@ require([
     }, 2000)
     */
 
-    const returnObject = {
-      'map': map,
-      'view': view,
-      'zoomViewModel': zoomViewModel,
-      'localitiesView': localitiesView,
-      'neighborhoodsView': neighborhoodsView,
-      'regionsView': regionsView,
-      'countiesView': countiesView,
-      'areaGraphics': selectedFeatureGraphicLayer,
-      'countiesLayer': countiesLayer,
-      'regionsLayer': regionsLayer,
-      'neighborhoodsLayer': neighborhoodsLayer,
-      'intersectingGraphicsLayer' : intersectingFeatureGraphicLayer,
-      'selectedPhotoGraphicsLayer': selectedPhotoGraphicsLayer,
-      'clientFeatureLayer': clientFeatureLayer,
-      'areasLayer': areasLayer
-    };
-
     return returnObject
   }
 
@@ -1082,7 +1076,6 @@ require([
     //Add Event listener to "more" buttons
   const moreButton = document.getElementsByClassName('more')[0];
   moreButton.addEventListener('click', () => {
-
     let bottomLists = document.getElementsByClassName('taxa__bottom-list');
     let ifExpanded = moreButton.classList.toggle('button--active');
     if (ifExpanded) {
@@ -1107,12 +1100,12 @@ require([
   document.addEventListener('click', () => {
     const instructionsDiv = document.getElementsByClassName('instructions')[0];
     const instructionsContainer = document.getElementsByClassName('instructions__container')[0];
-    instructionsDiv.style.top = '150%';
+    instructionsDiv.style.opacity = 0;
     instructionsContainer.style.opacity = 0;
     setTimeout(()=> {
       instructionsContainer.style.display = 'None';
     }, 750)
-
+    map.view.focus();
   })
   
 

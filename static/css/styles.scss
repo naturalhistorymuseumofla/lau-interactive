@@ -11,19 +11,24 @@ $card-width: 52.5rem;
 // the overall height of card__content
 $card-section-height: 48rem; 
 $card-margin-bottom: 1.5rem;
-$box-shadow: 0px 0px 3px 2px rgba(0, 0, 0, 0.1);
+$box-shadow: 0px 0px 3px 2px rgba(0, 0, 0, 0.15);
 $lau-dark-blue: #26566A;
 $lau-dark-turqoise: #3a838a;
 $linear-gradient: linear-gradient(0deg, $lau-dark-turqoise, #4aa8ab );
 $icon-background--inactive: rgb(225, 225, 225);
 $font-family: "Inter", "Segoe UI", sans-serif;
 $widget-size: 5.5rem;
+$card-menu-height: 9rem;
+$info-card-height: calc($card-section-height + $card-menu-height);
 
 button {
   border-width: 0rem;
   font-family: $font-family;
 }
 
+.esri-view .esri-view-surface--inset-outline:focus::after {
+  outline: none !important;
+}
 
 
 #viewDiv {
@@ -48,15 +53,11 @@ body {
 
 .ui-container {   
   position:absolute;
-  display: flex;
-  flex-direction: column;
   margin: $card-margin-bottom;
 }
 
 .ui-top-left {
   top: 0;
-  left: -100%;
-  transition: left 650ms ease-out;
 }
 
 .ui-top-right {
@@ -80,7 +81,12 @@ body {
   background-color: rgba(255, 255, 255, 0.95);
   box-shadow: $box-shadow;
   overflow: none;
+  opacity:0;
+  transition: opacity 0.25s;
+}
 
+.card--active {
+  opacity: 1;
 }
 
 .card__content { 
@@ -90,7 +96,12 @@ body {
   position: relative;
   text-align: center; 
   margin: 0rem 1rem 1rem 1rem;
+}
 
+.animate-card {
+  height: $info-card-height;
+  opacity: 1;
+  transition: opacity 0.15s;
 }
 
 /* width */
@@ -114,10 +125,6 @@ body {
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 0, 0, 0.3);
-}
-
-.info-card__card {
-  transition: height 250ms;
 }
 
 .card__title {
@@ -165,7 +172,7 @@ body {
   $padding: 1.25rem;
   background-color: rgba(255, 255, 255, 0.95);
   border-radius: $card-border-radius $card-border-radius 0px 0px;
-  height:auto;
+  height:$card-menu-height;
   width:100%;
   padding:$padding 0rem $padding 0rem;
   display:flex;
@@ -239,15 +246,14 @@ body {
 .hvr-grow-shadow {
   display: inline-block;
   vertical-align: middle;
-  -webkit-transform: perspective(1px) translateZ(0);
-  transform: perspective(1px) translateZ(0);
+
   box-shadow: 0 0 1px rgba(0, 0, 0, 0);
   -webkit-transition-duration: 0.35s;
   transition-duration: 0.35s;
   -webkit-transition-property: box-shadow, transform;
   transition-property: box-shadow, transform;
-  
 }
+
 .hvr-grow-shadow:hover, .hvr-grow-shadow:active {
   outline: 0px;
   box-shadow: 1px 1px 5px -1px rgba(0, 0, 0, 0.5);
@@ -263,26 +269,6 @@ body {
 }
 
 /* Grow Shadow */
-.hvr-grow-shadow--arrow {
-  display: inline-block;
-  vertical-align: middle;
-  -webkit-transform: perspective(1px) translateZ(0);
-  transform: perspective(1px) translateZ(0);
-  box-shadow: 0 0 1px rgba(0, 0, 0, 0);
-  -webkit-transition-duration: 0.35s;
-  transition-duration: 0.35s;
-  -webkit-transition-property: box-shadow, transform;
-  transition-property: box-shadow, transform;
-}
-.hvr-grow-shadow--arrow:hover, .hvr-grow-shadow--arrow:active {
-  outline: 0px;
-  box-shadow: 1px 1px 5px -1px rgba(0, 0, 0, 0.5);
-  -webkit-transform: scale(1.01);
-  transform: scale(1.01);
-  -webkit-transform: translateY(1.01);
-  transform: translate(0px, -49%);
-}
-
 .button__caption {
   margin-top:0.5rem;
   font-size: 1rem
@@ -961,25 +947,6 @@ $plus-length: 42%;
   fill: url(#linear-gradient-2);
 }
 
-[ripple] {
-  position: relative;
-  overflow: hidden;
-}
-[ripple] .ripple--container {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-}
-[ripple] .ripple--container span {
-  transform: scale(0);
-  border-radius: 100%;
-  position: absolute;
-  opacity: 0.6;
-  background-color: #d1d1d1;
-  animation: ripple 1000ms;
-}
 @-moz-keyframes ripple {
   to {
     opacity: 0;
