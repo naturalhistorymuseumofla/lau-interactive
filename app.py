@@ -3,9 +3,18 @@ from data.database import global_init
 from data.database import Query
 from data.update import update
 from datetime import datetime
+from whitenoise import WhiteNoise
 
 app = Flask(__name__)
-
+app.wsgi_app = WhiteNoise(app.wsgi_app)
+my_static_folders = (
+    './static/css/',
+    './static/images/',
+    './static/js/',
+    './static/layers/'
+)
+for static in my_static_folders:
+    app.wsgi_app.add_files(static)
 
 
 @app.route("/query", methods=["GET", "POST"])

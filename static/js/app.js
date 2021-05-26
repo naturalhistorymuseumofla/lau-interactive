@@ -34,17 +34,26 @@ require([
   var map = setUpMap();
 
    // Refresh map after period of inactivity
-  var resetMapSetInterval = setInterval(resetButtonClickHandler, 30000);
+  var resetMapSetInterval = setInterval(resetMap, 30000);
   map.view.on('pointer-down', (event)=>{
     clearInterval(resetMapSetInterval);
-    resetMapSetInterval = setInterval(resetButtonClickHandler, 30000);
+    resetMapSetInterval = setInterval(resetMap, 30000);
   });
   map.view.on('mouse-scroll', (event)=>{
     clearInterval(resetMapSetInterval);
-    resetMapSetInterval = setInterval(resetButtonClickHandler, 30000);
+    resetMapSetInterval = setInterval(resetMap, 30000);
   });
 
    //document.onclick = clearInterval(resetMapSetInterval);
+   function resetMap() {
+     resetButtonClickHandler();
+     const instructionsDiv = document.getElementsByClassName('instructions')[0];
+     const instructionsContainer = document.getElementsByClassName('instructions__container')[0];
+     setDisplay(instructionsContainer, true);
+     setFlex(instructionsDiv, true);
+     instructionsDiv.style.opacity = 1;
+     instructionsContainer.style.opacity = 1;
+   }
  
  
    map.view.when(() => {
@@ -198,7 +207,7 @@ require([
         hideDiv(infoCard);
         setTimeout(()=> {
           displayDiv('#noInfoCard');
-        }, 250)
+        }, 550)
       } else {
         displayDiv('#noInfoCard');
       }
@@ -662,17 +671,17 @@ require([
     function hideDiv(divName) {
       const div = (typeof divName == 'object') ? divName : document.querySelector(divName);
       div.classList.remove('card--active');
-      setTimeout(()=> {
+      setTimeout(() => {
         setDisplay(div, false);
-      }, 250);
+      }, 550);
     }
-  
+   
   
     function displayDiv(divName) {
       const div = (typeof divName == 'object') ? divName : document.querySelector(divName);
       setDisplay(div, true);
-      div.classList.remove('card--active');
-      div.classList.add('card--active');
+      //div.classList.remove('card--active');
+      setTimeout(()=>{div.classList.add('card--active')}, 5);
 
       /*
       const contentCard = document.getElementsByClassName(`${cardName} content-card`)[0];
@@ -930,7 +939,7 @@ require([
     });
 
     const countiesLayer = new GeoJSONLayer({
-      url:'/static/layers/lauCounties.geojson',
+      url:'/static/layers/lauCountiesSimplified.geojson',
       maxScale: countiesMaxScale,
       labelingInfo: [countiesLabelClass],
       renderer: polygonFeatureRenderer,
@@ -939,7 +948,7 @@ require([
     });
 
     const regionsLayer = new GeoJSONLayer({
-      url: '/static/layers/lauRegions.geojson',
+      url: '/static/layers/lauRegionsSimplified.geojson',
       minScale: countiesMaxScale,
       maxScale: regionsMaxScale,
       labelingInfo: [regionsLabelClass],
@@ -949,7 +958,7 @@ require([
     });
 
     const neighborhoodsLayer = new GeoJSONLayer({
-      url: '/static/layers/lauNeighborhoods.geojson',
+      url: '/static/layers/lauNeighborhoodsSimplified.geojson',
       minScale: neighborhoodsMinScale,
       labelingInfo: [regionsLabelClass],
       renderer: polygonFeatureRenderer,
@@ -957,15 +966,15 @@ require([
       outFields: ['name', 'OBJECTID', 'region_type', 'parent_region'],
     });
 
-    
     const areasLayer = new GeoJSONLayer({
       url:
-        '/static/layers/lauAreas.geojson',
+        '/static/layers/lauAreasSimplified.geojson',
       renderer: polygonFeatureRenderer,
       labelingInfo: [areasLabelClass],
       title: 'area',
       outFields: ['*'],
     });
+  
 
 
     // Create new GraphicLayers

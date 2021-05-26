@@ -82,10 +82,12 @@ body {
   box-shadow: $box-shadow;
   overflow: none;
   opacity:0;
-  transition: opacity 0.25s;
+  transition: opacity 0.5s;
+  
 }
 
 .card--active {
+  
   opacity: 1;
 }
 
