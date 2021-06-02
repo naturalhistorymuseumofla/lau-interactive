@@ -14,12 +14,15 @@ $card-margin-bottom: 1.5rem;
 $box-shadow: 0px 0px 3px 2px rgba(0, 0, 0, 0.15);
 $lau-dark-blue: #26566A;
 $lau-dark-turqoise: #3a838a;
-$linear-gradient: linear-gradient(0deg, $lau-dark-turqoise, #4aa8ab );
+$lau-light-turqoise: #4aa8ab;
+$lau-light-blue: #7ecbc6;
+$linear-gradient: linear-gradient(0deg, $lau-dark-turqoise, $lau-light-turqoise);
 $icon-background--inactive: rgb(225, 225, 225);
 $font-family: "Inter", "Segoe UI", sans-serif;
 $widget-size: 5.5rem;
 $card-menu-height: 9rem;
 $info-card-height: calc($card-section-height + $card-menu-height);
+$menu-animation-length: 500ms;
 
 button {
   border-width: 0rem;
@@ -170,18 +173,25 @@ body {
   background-color: rgba(117, 117, 117, 0.2);
 }
 
-.card__menu {
+
+.menu__container {
   $padding: 1.25rem;
-  background-color: rgba(255, 255, 255, 0.95);
-  border-radius: $card-border-radius $card-border-radius 0px 0px;
-  height:$card-menu-height;
   width:100%;
-  padding:$padding 0rem $padding 0rem;
-  display:flex;
+  display: flex;
   justify-content: center;
+  background-color: rgba(255, 255, 255, 0.95);
   margin-bottom: 3rem;
   box-shadow: 0px 4px 3px -3px rgba(0, 0, 0, 0.1);
+  border-radius: $card-border-radius $card-border-radius 0px 0px;
+  height:$card-menu-height;
+  justify-content: center;
   text-align: center;
+  padding:$padding 0rem $padding 0rem;
+}
+
+.card__menu {
+  width:32.5rem;
+  display:flex;
 }
 
 .button__outer-container {
@@ -191,6 +201,9 @@ body {
   justify-content: center;
   $margin: 20px;
   margin: 0px $margin 0px $margin;
+  flex-grow:1;
+  transition-property: flex-grow, opacity;
+  transition-duration:$menu-animation-length;
 }
 
 .button__inner-container {
@@ -199,10 +212,19 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
   $radius: $widget-size;
   height: $radius;
-  width: $radius
+  width: $radius;
+  transition-property: flex-grow, opacity;
+  transition-duration:$menu-animation-length;
+}
+
+.button--removed {
+  flex-grow: 0.000001;
+  flex-basis:0;
+  width: 0;
+  opacity:0;
+  margin: 0;
 }
 
 .button {
@@ -384,13 +406,12 @@ p {
 
 
 .null__icon {
-  //background-color: #7ecbc6;
-  //background: $linear-gradient;
   height: 25rem;
   width: 25rem;
   border-radius: 50%;
   margin: 0px;
-
+  background: $icon-background--inactive;
+  margin-bottom: 2.25rem;
 }
 
 

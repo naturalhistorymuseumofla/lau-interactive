@@ -23,6 +23,7 @@ require([
 ) {
 
 
+
   const zoomInDiv = document.getElementById("zoomIn");
   const zoomOutDiv = document.getElementById("zoomOut");
 
@@ -35,11 +36,12 @@ require([
 
    // Refresh map after period of inactivity
   var resetMapSetInterval = setInterval(resetMap, 30000);
-  map.view.on('pointer-down', (event)=>{
+
+  document.addEventListener('click', function(){
     clearInterval(resetMapSetInterval);
     resetMapSetInterval = setInterval(resetMap, 30000);
   });
-  map.view.on('mouse-scroll', (event)=>{
+  document.addEventListener('touchstart', function(){
     clearInterval(resetMapSetInterval);
     resetMapSetInterval = setInterval(resetMap, 30000);
   });
@@ -66,37 +68,43 @@ require([
    function setNavigationBounds() {
      var view = map.view;
      var initialExtent = view.extent;
-     view.watch("stationary", function (event) {
-       if (!event) {
-         return;
-       }
-       // If the map has moved to the point where it's center is
-       // outside the initial boundaries, then move it back to the
-       // edge where it moved out
-       var currentCenter = view.extent.center;
-       if (!initialExtent.contains(currentCenter)) {
-         var newCenter = view.extent.center;
- 
- 
-         // check each side of the initial extent and if the
-         // current center is outside that extent,
-         // set the new center to be on the edge that it went out on
-         if (currentCenter.x < initialExtent.xmin) {
-           newCenter.x = initialExtent.xmin;
-         }
-         if (currentCenter.x > initialExtent.xmax) {
-           newCenter.x = initialExtent.xmax;
-         }
-         if (currentCenter.y < initialExtent.ymin) {
-           newCenter.y = initialExtent.ymin;
-         }
-         if (currentCenter.y > initialExtent.ymax) {
-           newCenter.y = initialExtent.ymax;
-         }
-         view.goTo(newCenter);
-       }
-     });
+
+     function navigationBoundsEventListener(event) {
+      if (!event) {
+        return;
+      }
+      // If the map has moved to the point where it's center is
+      // outside the initial boundaries, then move it back to the
+      // edge where it moved out
+      var currentCenter = view.extent.center;
+      if (!initialExtent.contains(currentCenter)) {
+        var newCenter = view.extent.center;
+
+
+        // check each side of the initial extent and if the
+        // current center is outside that extent,
+        // set the new center to be on the edge that it went out on
+        if (currentCenter.x < initialExtent.xmin) {
+          newCenter.x = initialExtent.xmin;
+        }
+        if (currentCenter.x > initialExtent.xmax) {
+          newCenter.x = initialExtent.xmax;
+        }
+        if (currentCenter.y < initialExtent.ymin) {
+          newCenter.y = initialExtent.ymin;
+        }
+        if (currentCenter.y > initialExtent.ymax) {
+          newCenter.y = initialExtent.ymax;
+        }
+        view.goTo(newCenter);
+      }
+    }
+    document.addEventListener('click', navigationBoundsEventListener);
+    document.addEventListener('touchstart', navigationBoundsEventListener);
+    view.watch("stationary", navigationBoundsEventListener);
    }
+
+
 
   /* ==========================================================
      Functions to query & select localities layer
@@ -221,9 +229,11 @@ require([
       const taxaInfoDiv = document.getElementsByClassName('taxa--info')[0];
       const taxaNullDiv = document.getElementsByClassName('taxa--null')[0];
       const excavationDiv = document.getElementById('excavationNumber');
-      const photosDiv = document.getElementsByClassName('photos--info')[0];
+      const photosDiv = document.getElementById('photos');
       const photosNullDiv = document.getElementsByClassName('photos--null')[0];
       const photoLegend = document.getElementsByClassName('photo-indicator')[0];
+      let photosButton = document.getElementsByClassName('photos__button');
+      const cardContentDiv = document.getElementsByClassName('card__content')[0];
 
       // Hide appropriate divs
       hideDiv('#noInfoCard');
@@ -266,12 +276,18 @@ require([
     
       // Handle photos
       if (stats.photos.length > 0) {
+        for (let button of photosButton) {
+          button.classList.remove('button--removed');
+        }
         populateSplide(stats.photos);
         setFlex(photosDiv, true);
         setFlex(photosNullDiv, false);
         displayDiv(photoLegend);
       } else {
-        setFlex(photosNullDiv, true);
+        for (let button of photosButton) {
+          button.classList.add('button--removed');
+        }
+        //setFlex(photosNullDiv, true);
         setFlex(photosDiv, false);
         hideDiv(photoLegend);
       }
@@ -279,19 +295,26 @@ require([
       // Handle timescale
       moveTimescale(stats.startDate, stats.endDate);
 
+
+
+
       // Display div
       displayDiv('#infoCard');
+      
+      // Scroll to top of card container div
+      ($('.card__content')).animate({scrollTop:10}, 50);
     }
 
+    
     function addAreaHighlight(geometry) {
       const selectedAreaGraphic = new Graphic({
         geometry: geometry,
         symbol: {
           type: "simple-fill",
-          color: [0, 185, 235, 0.2],
+          color: [126, 203, 198, 0.2],
           outline: {
             // autocasts as new SimpleLineSymbol()
-            color: [0, 185, 235, 1],
+            color: [126, 203, 198, 1],
             width: 4, // points
           },
         }
@@ -659,6 +682,7 @@ require([
       clearGraphics();
       clearWidgets();
       setFlex(document.getElementsByClassName('photo-indicator')[0], false);
+      map.view.focus();
     }
 
 
@@ -760,7 +784,7 @@ require([
         autoOpenEnabled: false,
       },
       highlightOptions: {
-        color: [0, 185, 235, 0.75],
+        color: [42, 208, 212, 0.75],
         fillOpacity: 0.4,
       },
       ui: {
@@ -1119,3 +1143,5 @@ require([
   
 
 })
+
+
