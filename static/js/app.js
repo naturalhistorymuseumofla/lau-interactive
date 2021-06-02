@@ -249,7 +249,7 @@ require([
       }
 
       // Set excavation site number 
-      excavationDiv.innerHTML = `${stats.number_of_sites} excavation sites`;
+      excavationDiv.innerHTML = `${(stats.number_of_sites).toLocaleString()} excavation sites`;
 
       // Reset taxa lists
       const taxaLists = document.getElementsByClassName('taxa__list');
@@ -262,6 +262,8 @@ require([
         setFlex(taxaNullDiv, false);
         setFlex(taxaInfoDiv, true);
         const taxa = stats.taxa;
+        const fossilsFound = Object.values(taxa).reduce((a, b) => a + b);
+        document.getElementById('fossilsFound').innerHTML = fossilsFound.toLocaleString();
         populateTaxa(taxa);
 
         // Display or hide more buttons based on number of taxa
@@ -419,7 +421,7 @@ require([
           var taxonDiv = document.createElement("p");
           cell.classList.add('taxa__cell');
           taxaIcon.classList.add('taxa__icon');
-          taxonDiv.innerHTML = `${taxa[taxon].toString()}<br>${taxon}`;
+          taxonDiv.innerHTML = `${taxa[taxon].toLocaleString()}<br>${taxon}`;
           cell.append(taxaIcon, taxonDiv);
           if (category === "invertebrate") {
             (invertTopFrag.childElementCount === 4) ? invertBottomFrag.append(cell) :
