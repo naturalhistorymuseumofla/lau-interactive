@@ -983,7 +983,7 @@ require([
 
     const neighborhoodsLayer = new GeoJSONLayer({
       url: '/static/layers/lauNeighborhoodsSimplified.geojson',
-      minScale: neighborhoodsMinScale,
+      minScale:regionsMaxScale,
       labelingInfo: [regionsLabelClass],
       renderer: polygonFeatureRenderer,
       title: 'neighborhood',
