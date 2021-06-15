@@ -57,6 +57,7 @@ body {
 .ui-container {   
   position:absolute;
   margin: $card-margin-bottom;
+  pointer-events: none !important;
 }
 
 .ui-top-left {
@@ -80,17 +81,19 @@ body {
 
 .card {
   width: $card-width;
+  max-width: 77vw;
   border-radius: $card-border-radius;
   background-color: rgba(255, 255, 255, 0.95);
   box-shadow: $box-shadow;
   overflow: none;
   opacity:0;
   transition: opacity 0.5s;
+  pointer-events: none;
   
 }
 
 .card--active {
-  
+  pointer-events: auto;
   opacity: 1;
 }
 
@@ -466,6 +469,7 @@ $taxa-row-gap: 1.5rem;
   background: $linear-gradient;
   color: white;
   font-weight: 550;
+  font-size: 1.5rem;
 }
 
 
@@ -575,6 +579,7 @@ img {
   display: flex;
   flex-direction: row;
   width: 39rem;
+  max-width: 60vw;
   margin-top: 3rem;
 }
 
@@ -599,6 +604,9 @@ img {
 
 .timescale {
   margin-bottom: $seperator-gap;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .timescale__bar {

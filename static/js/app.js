@@ -59,7 +59,7 @@ require([
  
  
    map.view.when(() => {
-     map.view.extent.expand(1.75);
+     map.view.extent.expand(0.99);
      setNavigationBounds();
    });
  
@@ -116,8 +116,8 @@ require([
       const geometryOffset = -(geometry.extent.width / 2);
       const goToOptions = {
         animate: true,
-        duration: 600,
-        ease: 'ease-in-out'
+        duration: 800,
+        ease: 'ease-in'
       }
   
   
@@ -294,15 +294,13 @@ require([
         hideDiv(photoLegend);
       }
 
+      // Display div
+      displayDiv('#infoCard');
+
       // Handle timescale
       moveTimescale(stats.startDate, stats.endDate);
 
 
-
-
-      // Display div
-      displayDiv('#infoCard');
-      
       // Scroll to top of card container div
       ($('.card__content')).animate({scrollTop:10}, 50);
     }
@@ -678,7 +676,7 @@ require([
 
     // Event handler for reset widget
     function resetButtonClickHandler() {
-      map.view.goTo({ center: [-118.248638, 34.06266], zoom: 8 });
+      map.view.goTo({ center: [-118.215, 34.225], scale: 700000 });
       displayIntersectingAreas('')
       removeFeatures();
       clearGraphics();
@@ -772,15 +770,28 @@ require([
       basemap: basemap,
     });
 
+    // Returns zoom number based on width and height of client window screen
+    function returnZoom() {
+      const width = window.screen.width;
+      const height = window.screen.height;
+      const pixelRatio = window.devicePixelRatio;
+      const resolution = height * width;
+      const zoom = (resolution < 800000) ? 7 : 8;
+      return zoom;
+    }
+
+    var zoom = returnZoom();
+
     var view = new MapView({
       container: 'viewDiv',
       map: map,
-      center: [-118.248638, 34.06266], // longitude, latitude ,
-      zoom: 8,
+      center: [-118.215, 34.225], // longitude, latitude ,
+      scale: 700000,
       constraints: {
-        snapToZoom: true,
+        snapToZoom: false,
         rotationEnabled: false,
-        minZoom: 7,
+        minZoom: zoom, // Maximum zoom "out"
+        maxZoom: 13, // Maximum zoom "in"
       },
       popup: {
         autoOpenEnabled: false,
@@ -841,9 +852,7 @@ require([
       type: 'heatmap',
       colorStops: [
         { color: 'rgba(63, 40, 102, 0)', ratio: 0 },
-
         { color: '#5d32a8', ratio: 0.332 },
-
         { color: '#a46fbf', ratio: 0.747 },
         { color: '#c29f80', ratio: 0.83 },
         { color: '#e0cf40', ratio: 0.913 },
@@ -919,9 +928,9 @@ require([
       },
     });
 
-    var countiesMaxScale = 1155581;
+    var countiesMaxScale = 690000;
     var regionsMaxScale = 288895;
-    var neighborhoodsMinScale = 144448;
+    //var neighborhoodsMinScale = 144448;
 
     const clientFeatureLayer = new FeatureLayer({
       title: 'Areas',
@@ -1030,7 +1039,6 @@ require([
     */
     
     const layers = [
-
       intersectingFeatureGraphicLayer,
       neighborhoodsLayer,
       regionsLayer,
