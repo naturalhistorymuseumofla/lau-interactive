@@ -101,15 +101,15 @@ require([
 
         const goToOptions = {
           animate: true,
-          duration: 500,
+          duration: 400,
           ease: 'ease-in'
         }
 
         view.goTo({ center: [-118.215, 34.225], scale: 700000 }, goToOptions);
       }
     }
-    //document.addEventListener('click', navigationBoundsEventListener);
-    //document.addEventListener('touchstart', navigationBoundsEventListener);
+    document.addEventListener('click', navigationBoundsEventListener);
+    document.addEventListener('touchstart', navigationBoundsEventListener);
     view.watch(["interacting", 'center'], navigationBoundsEventListener);
     //view.watch("extent", navigationBoundsEventListener);
    }
