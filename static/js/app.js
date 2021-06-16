@@ -59,7 +59,7 @@ require([
  
  
    map.view.when(() => {
-     map.view.extent.expand(0.99);
+     map.view.extent.expand(2.5);
      setNavigationBounds();
    });
  
@@ -78,6 +78,7 @@ require([
       // edge where it moved out
       var currentCenter = view.extent.center;
       if (!initialExtent.contains(currentCenter)) {
+        /*
         var newCenter = view.extent.center;
 
 
@@ -96,12 +97,21 @@ require([
         if (currentCenter.y > initialExtent.ymax) {
           newCenter.y = initialExtent.ymax;
         }
-        view.goTo(newCenter);
+        */
+
+        const goToOptions = {
+          animate: true,
+          duration: 500,
+          ease: 'ease-in'
+        }
+
+        view.goTo({ center: [-118.215, 34.225], scale: 700000 }, goToOptions);
       }
     }
-    document.addEventListener('click', navigationBoundsEventListener);
-    document.addEventListener('touchstart', navigationBoundsEventListener);
-    view.watch("stationary", navigationBoundsEventListener);
+    //document.addEventListener('click', navigationBoundsEventListener);
+    //document.addEventListener('touchstart', navigationBoundsEventListener);
+    view.watch(["interacting", 'center'], navigationBoundsEventListener);
+    //view.watch("extent", navigationBoundsEventListener);
    }
 
 
@@ -676,7 +686,12 @@ require([
 
     // Event handler for reset widget
     function resetButtonClickHandler() {
-      map.view.goTo({ center: [-118.215, 34.225], scale: 700000 });
+      const goToOptions = {
+        animate: true,
+        duration: 500,
+        ease: 'ease-in'
+      }
+      map.view.goTo({ center: [-118.215, 34.225], scale: 700000 }, goToOptions);
       displayIntersectingAreas('')
       removeFeatures();
       clearGraphics();
