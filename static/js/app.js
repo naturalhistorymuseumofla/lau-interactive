@@ -101,8 +101,8 @@ require([
 
         const goToOptions = {
           animate: true,
-          duration: 400,
-          ease: 'ease-in'
+          duration: 300,
+          ease: 'linear'
         }
 
         view.goTo({ center: [-118.215, 34.225], scale: 700000 }, goToOptions);
@@ -110,7 +110,7 @@ require([
     }
     //document.addEventListener('click', navigationBoundsEventListener);
     //document.addEventListener('touchstart', navigationBoundsEventListener);
-    view.watch(["interacting", 'center'], navigationBoundsEventListener);
+    view.watch(["interacting", 'center', 'stationary'], navigationBoundsEventListener);
     //view.watch("extent", navigationBoundsEventListener);
    }
 
@@ -855,10 +855,10 @@ require([
       symbol: {
         type: 'simple-marker',
         size: 6,
-        color: [20, 204, 180, 0.15],
+        color: [20, 204, 180, 0.25],
         outline: {
           width: 0,
-          color: [247, 247, 247, 0.5],
+          color: [247, 247, 247, 0.6],
         },
       },
     };
@@ -1153,9 +1153,7 @@ require([
     }
   })
 
-
-
-  document.addEventListener('click', () => {
+  function hideInstructionsDiv() {
     const instructionsDiv = document.getElementsByClassName('instructions')[0];
     const instructionsContainer = document.getElementsByClassName('instructions__container')[0];
     instructionsDiv.style.opacity = 0;
@@ -1164,8 +1162,20 @@ require([
       instructionsContainer.style.display = 'None';
     }, 750)
     map.view.focus();
-  })
+  }
+
   
+  window.addEventListener('wheel', event => {
+    const { ctrlKey } = event
+    if (ctrlKey) {
+       event.preventDefault();
+       return
+    }
+ }, { passive: false })
+ 
+
+  document.addEventListener('click', hideInstructionsDiv);
+  document.addEventListener('mousewheel', hideInstructionsDiv);
 
 })
 
