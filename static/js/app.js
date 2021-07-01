@@ -379,15 +379,15 @@ require([
   var map = setUpMap();
 
    // Refresh map after period of inactivity
-  //var resetMapSetInterval = setInterval(resetMap, 30000);
+  var resetMapSetInterval = setInterval(resetMap, 30000);
 
   document.addEventListener('click', function(){
-    //clearInterval(resetMapSetInterval);
-    //resetMapSetInterval = setInterval(resetMap, 30000);
+    clearInterval(resetMapSetInterval);
+    resetMapSetInterval = setInterval(resetMap, 30000);
   });
   document.addEventListener('touchstart', function(){
-    //clearInterval(resetMapSetInterval);
-    //resetMapSetInterval = setInterval(resetMap, 30000);
+    clearInterval(resetMapSetInterval);
+    resetMapSetInterval = setInterval(resetMap, 30000);
   });
 
    //document.onclick = clearInterval(resetMapSetInterval);
