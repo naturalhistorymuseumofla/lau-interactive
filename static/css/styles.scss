@@ -745,20 +745,95 @@ img {
   box-shadow: 0px 0px 0px 0.15rem rgba(247, 247, 247, 0.5);
 }
 
-.photo-indicator {
-  display: none;
-  margin-left: 2.15rem;
-}
-
 .legend__text {
   display: inline-block;
   margin:0rem;
 }
 
-.legend__circle--photo {
-  background-color:orange;
-  box-shadow: 0px 0px 0px 0.3rem yellow;
+.photo-indicator {
+  display:none;
 }
+
+
+/* Container */
+.photo-indicator__container{
+  position: relative;
+  width:1.75rem;
+  height:1.75rem;
+  margin-left: 2.15rem;
+  margin-right: 0.75rem;
+  display:inline-block;
+}
+
+/* Pulse Design */
+.photo-indicator__svg{
+  position: absolute;
+  width:100%;
+  height:100%;
+  top: 0px;
+  left: 0px;
+  display:block;
+  transform-origin: center;
+}
+
+.photo-indicator__circle {
+  cx: .875rem;
+  cy: .875rem;
+  r: .85rem;
+  fill: none;
+  opacity:0;
+  vector-effect:non-scaling-stroke;
+  stroke-location: inside;
+  stroke: orange;
+  stroke-width: .2rem;
+  transform-origin: center;
+  transform: scale(0.5);
+  animation: pulse 4.5s infinite;
+  -webkit-animation: pulse 4.5s infinite;
+  animation-timing-function: linear;
+}
+
+/* Pulse Animation */
+@keyframes pulse {
+    0%   { 
+      opacity: 1;
+      transform: scale(0.05);
+  }
+    100% { 
+      opacity: 0;
+      transform: scale(1);
+  }
+}
+
+/* Pulse Animation */
+@-webkit-keyframes pulse {
+  0% { 
+    opacity: 1;
+    -webkit-transform: scale(0.05);
+}
+  100% { 
+    opacity: 0;
+    -webkit-transform: scale(1);
+}
+}
+
+.photo-indicator__svg circle:nth-child(2){ 
+  animation-delay: 1.5s;
+  -webkit-animation-delay: 1.5s; 
+}
+.photo-indicator__svg circle:nth-child(3){
+  animation-delay: 3s; 
+  -webkit-animation-delay: 3s;
+}
+.photo-indicator__svg circle:nth-child(4){
+  animation-delay: 4.5s; 
+  -webkit-animation-delay: 4.5s;
+}
+.photo-indicator__svg circle.still{ 
+  animation: none; 
+  -webkit-animation: none;
+}
+
 
 .widget {
   font-family: $font-family;

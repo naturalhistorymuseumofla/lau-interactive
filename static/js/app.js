@@ -9,6 +9,11 @@ require([
   'esri/layers/VectorTileLayer',
   'esri/widgets/Zoom/ZoomViewModel',
   'esri/layers/support/LabelClass',
+  "esri/views/2d/layers/BaseLayerViewGL2D",
+  "esri/core/promiseUtils",
+  "esri/core/watchUtils",
+  "esri/geometry/support/webMercatorUtils",
+  "esri/layers/GroupLayer"
 ], function (
   Map,
   MapView,
@@ -20,9 +25,14 @@ require([
   VectorTileLayer,
   ZoomViewModel,
   LabelClass,
+  BaseLayerViewGL2D,
+  promiseUtils,
+  watchUtils,
+  webMercatorUtils,
+  GroupLayer
 ) {
 
-  /*
+  
   const CustomLayerView2D = BaseLayerViewGL2D.createSubclass({
     // Locations of the two vertex attributes that we use. They
     // will be bound to the shader program before linking.
@@ -70,7 +80,7 @@ require([
         attribute vec2 a_position;
         attribute vec2 a_offset;
         varying vec2 v_offset;
-        const float SIZE = 70.0;
+        const float SIZE = 75.0;
         void main(void) {
             gl_Position.xy = (u_display * (u_transform * vec3(a_position, 1.0) + vec3(a_offset * SIZE, 0.0))).xy;
             gl_Position.zw = vec2(0.0, 1.0);
@@ -82,9 +92,9 @@ require([
         uniform float u_current_time;
         varying vec2 v_offset;
         const float PI = 3.14159;
-        const float N_RINGS = 3.0;
-        const vec3 COLOR = vec3(0.23, 0.43, 0.70);
-        const float FREQ = 1.0;
+        const float N_RINGS = 2.0;
+        const vec3 COLOR = vec3(0.99, 0.65, 0.0);
+        const float FREQ = 0.4;
         void main(void) {
             float l = length(v_offset);
             float intensity = clamp(cos(l * PI), 0.0, 1.0) * clamp(cos(2.0 * PI * (l * 2.0 * N_RINGS - FREQ * u_current_time)), 0.0, 1.0);
@@ -340,7 +350,21 @@ require([
       this.indexBufferSize = indexData.length;
     }
   });
-  */
+
+  // Subclass the custom layer view from GraphicsLayer.
+  const AnimatedPointLayer = GraphicsLayer.createSubclass({
+    createLayerView: function(view) {
+      // We only support MapView, so we only need to return a
+      // custom layer view for the `2d` case.
+      if (view.type === "2d") {
+        return new CustomLayerView2D({
+          view: view,
+          layer: this
+        });
+      }
+    }
+  });
+  
 
 
 
@@ -355,15 +379,15 @@ require([
   var map = setUpMap();
 
    // Refresh map after period of inactivity
-  var resetMapSetInterval = setInterval(resetMap, 30000);
+  //var resetMapSetInterval = setInterval(resetMap, 30000);
 
   document.addEventListener('click', function(){
-    clearInterval(resetMapSetInterval);
-    resetMapSetInterval = setInterval(resetMap, 30000);
+    //clearInterval(resetMapSetInterval);
+    //resetMapSetInterval = setInterval(resetMap, 30000);
   });
   document.addEventListener('touchstart', function(){
-    clearInterval(resetMapSetInterval);
-    resetMapSetInterval = setInterval(resetMap, 30000);
+    //clearInterval(resetMapSetInterval);
+    //resetMapSetInterval = setInterval(resetMap, 30000);
   });
 
    //document.onclick = clearInterval(resetMapSetInterval);
@@ -421,7 +445,7 @@ require([
 
         const goToOptions = {
           animate: true,
-          duration: 300,
+          duration: 450,
           ease: 'linear'
         }
 
@@ -614,14 +638,14 @@ require([
         populateSplide(stats.photos);
         setFlex(photosDiv, true);
         setFlex(photosNullDiv, false);
-        displayDiv(photoLegend);
+        photoLegend.style.display='block';
       } else {
         for (let button of photosButton) {
           button.classList.add('button--removed');
         }
         //setFlex(photosNullDiv, true);
         setFlex(photosDiv, false);
-        hideDiv(photoLegend);
+        photoLegend.style.display='none';
       }
 
       // Display div
@@ -852,11 +876,11 @@ require([
     // Creates a point graphic at active splide slide so that viewer
     // can see where the fossil in each photo was found
     function createPhotoPointGraphic(coordinates) {
-      var visibleAttachmentGeometry = {
+      var visibleAttachmentGeometry = webMercatorUtils.geographicToWebMercator({
         type: "point", // autocasts as new Point()
         longitude: coordinates[0], // Coordinates from monogDB list long first
         latitude: coordinates[1]
-      };
+      });
       
       // Create graphic around record currntly being displayed in Splide carousel
       const selectedPhotoGraphic = new Graphic({
@@ -1090,6 +1114,7 @@ require([
 
   function setUpMap() {
     
+    
     // Create new Basemap
     var basemap = new Basemap({
       baseLayers: [
@@ -1100,6 +1125,14 @@ require([
         }),
       ],
     });
+    
+   /*
+   var basemap = new VectorTileLayer({
+    portalItem: {
+      id: 'c65f3f7dc5754366b4e515e73e2f7d8b', // Custom LAU Basemap
+    }
+   })
+   */
 
     var map = new Map({
       basemap: basemap,
@@ -1189,10 +1222,10 @@ require([
       symbol: {
         type: 'simple-marker',
         size: 6,
-        color: [20, 204, 180, 0.25],
+        color: [127,127,115, 0.5],
         outline: {
           width: 0,
-          color: [247, 247, 247, 0.6],
+          color: [127,127,115, 0.1],
         },
       },
     };
@@ -1361,11 +1394,11 @@ require([
   
 
 
+
     // Create new GraphicLayers
     const selectedFeatureGraphicLayer = new GraphicsLayer();
     const intersectingFeatureGraphicLayer = new GraphicsLayer();
-    const selectedPhotoGraphicsLayer = new GraphicsLayer();
-
+    const selectedPhotoGraphicsLayer = new AnimatedPointLayer();
     /*
     sketchGraphicsLayer = new GraphicsLayer();
     map.add(sketchGraphicsLayer);
@@ -1388,6 +1421,8 @@ require([
     */
     
     const layers = [
+      basemap,
+      //selectedFeatureGraphicLayer,
       intersectingFeatureGraphicLayer,
       neighborhoodsLayer,
       regionsLayer,
@@ -1396,7 +1431,8 @@ require([
       areasLayer,
       selectedFeatureGraphicLayer,
       localitiesLayer,
-      selectedPhotoGraphicsLayer
+      selectedPhotoGraphicsLayer,
+      //areaGraphicsGroupLayer,
     ]
 
     map.addMany(layers);
@@ -1404,9 +1440,11 @@ require([
     var returnObject = {
       'map': map,
       'view': view,
+      'basemap':basemap,
       'scale': scale,
       'zoomViewModel': zoomViewModel,
       'areaGraphics': selectedFeatureGraphicLayer,
+      //'areaGraphicsGroupLayer': areaGraphicsGroupLayer,
       'countiesLayer': countiesLayer,
       'regionsLayer': regionsLayer,
       'neighborhoodsLayer': neighborhoodsLayer,
