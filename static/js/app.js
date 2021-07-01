@@ -80,7 +80,7 @@ require([
         attribute vec2 a_position;
         attribute vec2 a_offset;
         varying vec2 v_offset;
-        const float SIZE = 75.0;
+        const float SIZE = 55.0;
         void main(void) {
             gl_Position.xy = (u_display * (u_transform * vec3(a_position, 1.0) + vec3(a_offset * SIZE, 0.0))).xy;
             gl_Position.zw = vec2(0.0, 1.0);
@@ -94,7 +94,7 @@ require([
         const float PI = 3.14159;
         const float N_RINGS = 2.0;
         const vec3 COLOR = vec3(0.99, 0.65, 0.0);
-        const float FREQ = 0.4;
+        const float FREQ = 0.35;
         void main(void) {
             float l = length(v_offset);
             float intensity = clamp(cos(l * PI), 0.0, 1.0) * clamp(cos(2.0 * PI * (l * 2.0 * N_RINGS - FREQ * u_current_time)), 0.0, 1.0);
@@ -638,14 +638,14 @@ require([
         populateSplide(stats.photos);
         setFlex(photosDiv, true);
         setFlex(photosNullDiv, false);
-        photoLegend.style.display='block';
+        setFlex(photoLegend, true);
       } else {
         for (let button of photosButton) {
           button.classList.add('button--removed');
         }
         //setFlex(photosNullDiv, true);
         setFlex(photosDiv, false);
-        photoLegend.style.display='none';
+        setFlex(photoLegend, false);
       }
 
       // Display div
@@ -1222,10 +1222,10 @@ require([
       symbol: {
         type: 'simple-marker',
         size: 6,
-        color: [127,127,115, 0.5],
+        color: [0, 96, 122, 0.5],
         outline: {
           width: 0,
-          color: [127,127,115, 0.1],
+          color: [0, 96, 122, 0.1],
         },
       },
     };
