@@ -7,6 +7,7 @@ require([
   'esri/Graphic',
   'esri/Basemap',
   'esri/layers/VectorTileLayer',
+  "esri/layers/TileLayer",
   'esri/widgets/Zoom/ZoomViewModel',
   'esri/layers/support/LabelClass',
   "esri/views/2d/layers/BaseLayerViewGL2D",
@@ -23,6 +24,7 @@ require([
   Graphic,
   Basemap,
   VectorTileLayer,
+  TileLayer,
   ZoomViewModel,
   LabelClass,
   BaseLayerViewGL2D,
@@ -403,7 +405,7 @@ require([
  
  
    map.view.when(() => {
-     map.view.extent.expand(2.5);
+     map.view.extent.expand(3);
      setNavigationBounds();
    });
  
@@ -479,7 +481,7 @@ require([
         map.view
           .goTo({
             center: [-118.735491, 34.222515],
-            zoom: 8
+            scale:1000000
           }, goToOptions)
           .catch(function (error) {
             if (error.name != 'AbortError') {
@@ -490,7 +492,6 @@ require([
         map.view
           .goTo({
             center: [-119.254898, 34.515522],
-            zoom: 8,
           }, goToOptions)
           .catch(function (error) {
             if (error.name != 'AbortError') {
@@ -665,7 +666,7 @@ require([
         geometry: geometry,
         symbol: {
           type: "simple-fill",
-          color: [126, 203, 198, 0.2],
+          color: [126, 203, 198, 0.15],
           outline: {
             // autocasts as new SimpleLineSymbol()
             color: [126, 203, 198, 1],
@@ -1123,11 +1124,16 @@ require([
     // Create new Basemap
     var basemap = new Basemap({
       baseLayers: [
+        new TileLayer({
+          url: 'https://services.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer',
+          opacity:0.25,
+        }),
         new VectorTileLayer({
           portalItem: {
             id: 'c65f3f7dc5754366b4e515e73e2f7d8b', // Custom LAU Basemap
           },
         }),
+
       ],
     });
     
@@ -1235,21 +1241,7 @@ require([
       },
     };
 
-    const heatmapRenderer = {
-      type: 'heatmap',
-      colorStops: [
-        { color: 'rgba(63, 40, 102, 0)', ratio: 0 },
-        { color: '#5d32a8', ratio: 0.332 },
-        { color: '#a46fbf', ratio: 0.747 },
-        { color: '#c29f80', ratio: 0.83 },
-        { color: '#e0cf40', ratio: 0.913 },
-        { color: '#ffff00', ratio: 1 }
-      ],
-      maxPixelIntensity: 25,
-      minPixelIntensity: 0
-    };
-    
-
+  
     const polygonFeatureRenderer = {
       type: 'simple',
       symbol: {
@@ -1397,11 +1389,10 @@ require([
       outFields: ['*'],
     });
   
-
-
-
     // Create new GraphicLayers
-    const selectedFeatureGraphicLayer = new GraphicsLayer();
+    const selectedFeatureGraphicLayer = new GraphicsLayer({
+      effect: "drop-shadow(0px, 4px, 2px rgba(63, 153, 149, 0.75))",
+    });
     const intersectingFeatureGraphicLayer = new GraphicsLayer();
     const selectedPhotoGraphicsLayer = new AnimatedPointLayer();
     /*
