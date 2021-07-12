@@ -1,5 +1,44 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;550;600;700;800&display=swap');
 
+@font-face {
+  font-family: Kievit;
+  font-weight: 400;
+  font-variant-numeric: lining-nums;
+  src: url("../KievitFonts/KievitOT-Regular.otf") format("opentype");
+}
+@font-face {
+  font-family: Kievit;
+  font-weight: 400;
+  font-style: italic;
+  font-variant-numeric: lining-nums;
+  src: url("../KievitFonts/KievitOT-Italic.otf") format("opentype");
+}
+@font-face {
+  font-family: Kievit;
+  font-weight: 700;
+  font-variant-numeric: lining-nums;
+  src: url("../KievitFonts/KievitOT-Bold.otf") format("opentype");
+}
+@font-face {
+  font-family: Kievit;
+  font-weight: 700;
+  font-style: italic;
+  font-variant-numeric: lining-nums;
+  src: url("../KievitFonts/KievitOT-BoldItalic.otf") format("opentype");
+}
+@font-face {
+  font-family: Kievit;
+  font-weight: 800;
+  font-variant-numeric: lining-nums;
+  src: url("../KievitFonts/KievitOT-ExtraBold.otf") format("opentype");
+}
+@font-face {
+  font-family: Kievit;
+  font-weight: 800;
+  font-style: italic;
+  font-variant-numeric: lining-nums;
+  src: url("../KievitFonts/KievitOT-ExtraBoldItalic.otf") format("opentype");
+}
 
 $blur:blur(10px);
 $card-border-radius: 10px;
@@ -18,15 +57,20 @@ $lau-light-turqoise: #4aa8ab;
 $lau-light-blue: #7ecbc6;
 $linear-gradient: linear-gradient(0deg, $lau-dark-turqoise, $lau-light-turqoise);
 $icon-background--inactive: rgb(225, 225, 225);
-$font-family: "Inter", "Segoe UI", sans-serif;
+$font-family: "Kievit","Inter", "Segoe UI", sans-serif;
 $widget-size: 5.5rem;
 $card-menu-height: 9rem;
 $info-card-height: calc($card-section-height + $card-menu-height);
 $menu-animation-length: 500ms;
 
+@mixin font {
+  font-family:$font-family;
+  font-variant-numeric: lining-nums;
+}
+
 button {
   border-width: 0rem;
-  font-family: $font-family;
+  @include font;
 }
 
 .esri-view .esri-view-surface--inset-outline:focus::after {
@@ -49,7 +93,7 @@ html {
 }
 
 body {
-  font-family: $font-family;
+  @include font;
   margin: 0;
   overflow: hidden;
 }
@@ -309,6 +353,7 @@ h1{
   color: $font-color;
   font-size: 2.75rem;
   margin:0rem 0rem .5rem 0rem;
+  font-variant-numeric: lining-nums;
 }
 
 h2 {
@@ -317,6 +362,7 @@ h2 {
   color: $font-color;
   margin:0px;
   font-size: 2.2rem;
+  font-variant-numeric: lining-nums;
 }
 
 h3 {
@@ -324,6 +370,7 @@ h3 {
   margin-top: 1rem;
   font-size: 1.85rem;
   margin-bottom:2rem;
+  font-variant-numeric: lining-nums;
 }
 
 h4 {
@@ -332,6 +379,7 @@ h4 {
   margin-top: 1rem;
   line-height: 2.35rem;
   font-weight: 600;
+  font-variant-numeric: lining-nums;
 
 }
 
@@ -341,6 +389,7 @@ h5 {
   margin: 0rem;
   line-height: 2.35rem;
   font-weight: 400;
+  font-variant-numeric: lining-nums;
 
 }
 
@@ -349,6 +398,7 @@ p {
   font-size: 1.55rem;
   margin: 0;
   line-height: 2.85rem;
+  font-variant-numeric: lining-nums;
 
 }
 
@@ -512,6 +562,11 @@ $taxa-row-gap: 1.5rem;
 
 .underwater__svg > path {
   fill:$lau-dark-blue;
+}
+
+.caption__taxon {
+  font-weight: 700;
+  font-style: italic;
 }
 
 $splide-width: calc(#{$card-width} - 5rem);
@@ -754,9 +809,8 @@ img {
   display:none;
 }
 
-
 /* Container */
-.photo-indicator__container{
+.photo-indicator__container {
   position: relative;
   width:2.15rem;
   height:2.15rem;
@@ -833,7 +887,7 @@ img {
 }
 
 .widget {
-  font-family: $font-family;
+  @include font;
   font-size: 1.35rem;
   opacity: 0;
   background-color:rgba(0,0,0,0);

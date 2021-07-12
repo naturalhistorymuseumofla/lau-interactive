@@ -683,6 +683,7 @@ require([
     ========================================================== */
 
     function populateTaxa(taxa) {
+      // Categories of taxonomic groups
       let taxaObj = {
         'Clams, oysters': {
           'fileName': 'clam',
@@ -753,7 +754,7 @@ require([
           'category': 'vertebrate'
         },
       }
-
+      // Create document fragments to insert taxa items
       let invertTopFrag = document.createDocumentFragment();
       let invertBottomFrag = document.createDocumentFragment();
       let vertTopFrag = document.createDocumentFragment();
@@ -762,8 +763,11 @@ require([
       const invertTopList = document.getElementsByClassName('invert__top-list')[0];
       const vertBottomList = document.getElementsByClassName('vert__bottom-list')[0];
       const invertBottomList = document.getElementsByClassName('invert__bottom-list')[0];
-      for (const taxon in taxa) {
-
+      // Sort taxa object and by using Object.entries to create an array of arrays
+      const sortedTaxaLists = Object.entries(taxa).sort((a,b) => b[1]-a[1])
+      for (const taxonList of sortedTaxaLists) {
+        let taxon, number;
+        [taxon, number] = taxonList;
         let cell = document.createElement(`div`);
         let taxaIcon = document.createElement(`img`);
         if (taxaObj[taxon]) {
@@ -773,7 +777,7 @@ require([
           var taxonDiv = document.createElement("p");
           cell.classList.add('taxa__cell');
           taxaIcon.classList.add('taxa__icon');
-          taxonDiv.innerHTML = `${taxa[taxon].toLocaleString()}<br>${taxon}`;
+          taxonDiv.innerHTML = `${number.toLocaleString()}<br>${taxon}`;
           cell.append(taxaIcon, taxonDiv);
           if (category === "invertebrate") {
             (invertTopFrag.childElementCount === 4) ? invertBottomFrag.append(cell) :
@@ -834,14 +838,15 @@ require([
     function formatCaptions(photo) {
       // Create captions divs 
       const specimenCaption = document.createElement('p');
-      const taxonCaption = document.createElement('b');
+      const taxonCaption = document.createElement('span');
+      taxonCaption.classList.add('caption__taxon')
       const ageCaption = document.createElement('p');
       const descriptionCaption = document.createElement('p');
       const captionsDiv = document.createElement('div');
 
       // Add photo info to divs
       taxonCaption.innerHTML = photo.taxon;
-      ageCaption.innerHTML = photo.age;
+      ageCaption.innerHTML = photo.age.replace(' - ', '-').toLowerCase(); // Fix this in the database
       descriptionCaption.innerHTML = photo.description;
       const catNumberCaption = document.createTextNode(` (${photo.display_id})`);
       captionsDiv.classList.add('splide__captions');
