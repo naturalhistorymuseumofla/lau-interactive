@@ -1126,7 +1126,7 @@ require([
       baseLayers: [
         new TileLayer({
           url: 'https://services.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer',
-          opacity:0.25,
+          opacity:0.3,
         }),
         new VectorTileLayer({
           portalItem: {
