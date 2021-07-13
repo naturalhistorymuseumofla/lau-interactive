@@ -1124,17 +1124,44 @@ require([
     // Create new Basemap
     var basemap = new Basemap({
       baseLayers: [
-        new TileLayer({
-          url: 'https://services.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer',
-          opacity:0.3,
-        }),
         new VectorTileLayer({
           portalItem: {
-            id: 'c65f3f7dc5754366b4e515e73e2f7d8b', // Custom LAU Basemap
-          },
-        }),
-
+            id: '9fcb87276abf4113ae6e464d27199090'
+          }
+        })
       ],
+    });
+
+    const waterColorOcean = new VectorTileLayer({
+      portalItem: {
+        id:'9fcb87276abf4113ae6e464d27199090'
+      }
+    })
+
+    const lauBaseMap = new VectorTileLayer({
+      portalItem: {
+        id: '5ab2d80a48e84f01b9566d2dfa24abb9', // Custom LAU Basemap
+      },
+    });
+
+    const hillshade =  new TileLayer({
+      url: 'https://services.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer',
+      opacity:0.27,
+    });
+
+    const boundariesLayer = new FeatureLayer({
+      portalItem: {
+        id: '1b0fd8d5a9ca4e62917769d553b8989e'
+      },
+      outFields: ['OBJECTID'],
+      blendMode: 'destination-in',
+
+    });
+
+
+    const baseGroupLayer = new GroupLayer({
+      layers:  [lauBaseMap, hillshade, boundariesLayer],
+
     });
     
    /*
@@ -1146,7 +1173,7 @@ require([
    */
 
     var map = new Map({
-      basemap: basemap,
+      //basemap: basemap,
     });
 
     // Returns zoom number based on width and height of client window screen
@@ -1417,7 +1444,8 @@ require([
     */
     
     const layers = [
-      basemap,
+      waterColorOcean,
+      baseGroupLayer,
       //selectedFeatureGraphicLayer,
       intersectingFeatureGraphicLayer,
       neighborhoodsLayer,
@@ -1429,6 +1457,7 @@ require([
       localitiesLayer,
       selectedPhotoGraphicsLayer,
       //areaGraphicsGroupLayer,
+
     ]
 
     map.addMany(layers);
