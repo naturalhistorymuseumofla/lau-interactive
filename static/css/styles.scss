@@ -56,7 +56,7 @@ $lau-dark-turqoise: #3a838a;
 $lau-light-turqoise: #4aa8ab;
 $lau-light-blue: #7ecbc6;
 $linear-gradient: linear-gradient(0deg, $lau-dark-turqoise, $lau-light-turqoise);
-$icon-background--inactive: rgb(225, 225, 225);
+$icon-background--inactive: rgb(31, 31, 31);
 $font-family: "Kievit","Inter", "Segoe UI", sans-serif;
 $widget-size: 5.5rem;
 $card-menu-height: 9rem;
@@ -127,7 +127,7 @@ body {
   width: $card-width;
   max-width: 77vw;
   border-radius: $card-border-radius;
-  background-color: rgba(255, 255, 255, 0.95);
+  background-color: rgba(0, 0, 0, 0.95);
   box-shadow: $box-shadow;
   overflow: none;
   opacity:0;
@@ -226,7 +226,7 @@ body {
   width:100%;
   display: flex;
   justify-content: center;
-  background-color: rgba(255, 255, 255, 0.95);
+  background-color: rgba(70, 70, 70, 0.95);
   margin-bottom: 3rem;
   box-shadow: 0px 4px 3px -3px rgba(0, 0, 0, 0.1);
   border-radius: $card-border-radius $card-border-radius 0px 0px;
@@ -346,7 +346,7 @@ body {
 
 }
 
-$font-color: rgb(60, 60, 60);
+$font-color: rgb(199, 199, 199);
 
 h1{
   font-weight: 800;
@@ -930,14 +930,14 @@ img {
 .widget__label {
   font-weight: 600;
 	text-shadow: 
-       -1px 1px 0 white,
-				1px 1px 0 white,
-				1px -1px 0 white,
-			 -1px -1px 0 white,
-       -1px 0px 0 white,
-        0px 1px 0 white,
-        1px 0px 0 white,
-        0px 1px 0 white;
+       -1px 1px 0 rgb(66, 66, 66),
+				1px 1px 0 rgb(66, 66, 66),
+				1px -1px 0 rgb(66, 66, 66),
+			 -1px -1px 0 rgb(66, 66, 66),
+       -1px 0px 0 rgb(66, 66, 66),
+        0px 1px 0 rgb(66, 66, 66),
+        1px 0px 0 rgb(66, 66, 66),
+        0px 1px 0 rgb(66, 66, 66);
   -webkit-font-smoothing: antialiased;
         
 }
@@ -1146,7 +1146,6 @@ $switch-height: 2.5rem;
   flex-direction: column;
   align-items: center;
   margin-bottom:15px;
-  z-index: -1000;
   
 }
 
@@ -1156,7 +1155,6 @@ $switch-height: 2.5rem;
   width: $widget-size;
   height: $switch-height;
   margin-bottom: 0.7rem;
-  z-index: -1000;
 }
 
 
@@ -1164,7 +1162,6 @@ $switch-height: 2.5rem;
   opacity: 0;
   width: 0;
   height: 0;
-  z-index: -1000;
 }
 
 .slider {
@@ -1178,7 +1175,6 @@ $switch-height: 2.5rem;
   -webkit-transition: .4s;
   transition: .4s;
   box-shadow: 0px 0px 1px 0.15rem rgba(255, 255, 255, 0.75);
-  z-index: -1000;
 }
 
 $slider-radius: calc(#{$switch-height} - 0.75rem);
@@ -1263,7 +1259,7 @@ input:checked + .slider:before {
   .card {
     -webkit-backdrop-filter: $blur;
     backdrop-filter:$blur;
-    background-color: rgba(255, 255, 255, 0.75);
+    background-color: rgba(59, 59, 59, 0.75);
   }
   .basemap__gallery {
     -webkit-backdrop-filter: $blur;

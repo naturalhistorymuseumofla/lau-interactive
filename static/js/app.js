@@ -667,10 +667,10 @@ require([
         geometry: geometry,
         symbol: {
           type: "simple-fill",
-          color: [126, 203, 198, 0.15],
+          color: [73, 128, 123, 0.15],
           outline: {
             // autocasts as new SimpleLineSymbol()
-            color: [126, 203, 198, 1],
+            color: [73, 128, 123, 1],
             width: 4, // points
           },
         }
@@ -1133,10 +1133,15 @@ require([
     // Create new Basemap
     var basemap = new Basemap({
       baseLayers: [
+        new TileLayer({
+          url: 'https://services.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer',
+          opacity:0.,
+        }),
         new VectorTileLayer({
           portalItem: {
-            id: 'c65f3f7dc5754366b4e515e73e2f7d8b'
-          }
+            id: '43ed5ecba7dd4a75b1395c2f3fa3951b' //lauDarkBasemaps
+          },
+          blendMode:'multiply'
         })
       ],
     });
@@ -1157,10 +1162,7 @@ require([
       visible:false,
     });
 
-    const hillshade =  new TileLayer({
-      url: 'https://services.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer',
-      opacity:0.15,
-    });
+
 
     const boundariesRenderer = {
       type: 'simple',
@@ -1341,10 +1343,10 @@ require([
       symbol: {
         type: 'simple-marker',
         size: 6,
-        color: [0, 96, 122, 0.5],
+        color: [67, 120, 116, 0.5],
         outline: {
           width: 0,
-          color: [0, 96, 122, 0.1],
+          color: [67, 120, 116, 0.1],
         },
       },
     };
@@ -1356,7 +1358,7 @@ require([
         type: 'simple-fill',
         style: 'none',
         outline: {
-          color: [128, 128, 128, 0.5],
+          color: [20, 20, 20, 0.5],
           width: '1.5px',
         },
       },
@@ -1366,9 +1368,9 @@ require([
       labelExpressionInfo: { expression: '$feature.NAME' },
       symbol: {
         type: 'text', // autocasts as new TextSymbol()
-        color: 'rgb(40, 40, 40)',
+        color: 'rgb(199, 199, 199))',
         haloSize: 0.5,
-        haloColor: 'white',
+        haloColor: 'rgb(66,66,66)',
         font: {
           // autocast as new Font()
           family: 'Avenir Next LT Pro Regular',
@@ -1382,9 +1384,9 @@ require([
       labelExpressionInfo: { expression: '$feature.NAME' },
       symbol: {
         type: 'text', // autocasts as new TextSymbol()
-        color: 'rgb(40, 40, 40)',
+        color: 'rgb(199, 199, 199)',
         haloSize: 0.5,
-        haloColor: 'white',
+        haloColor: 'rgb(66,66,66)',
         deconflictionStrategy: 'static',
         font: {
           // autocast as new Font()
@@ -1402,9 +1404,9 @@ require([
       },
       symbol: {
         type: 'text', // autocasts as new TextSymbol()
-        color: 'rgb(40, 40, 40)',
+        color: 'rgb(199, 199, 199)',
         haloSize: 0.5,
-        haloColor: 'white',
+        haloColor: 'rgb(66,66,66)',
         deconflictionStrategy: 'static',
         font: {
           // autocast as new Font()
@@ -1598,70 +1600,6 @@ require([
       });
     }, 2000)
     */
-
-    const basemaps = {
-      'Default': new Basemap({
-        baseLayers: [
-          new VectorTileLayer({
-            portalItem: {
-              id: 'c65f3f7dc5754366b4e515e73e2f7d8b', 
-            },
-          }),
-        ],
-      }),
-      'Bathymetry': new Basemap({
-        baseLayers: [
-          new VectorTileLayer({
-            portalItem: {
-              id: '90a4db2ddbab4d18bbdf8528720de7cb'
-            }
-          })
-        ],
-      }),
-      'Watercolor': new Basemap({
-        baseLayers: [
-          new VectorTileLayer({
-            portalItem: {
-              id: '0f3e9032ce854630bcd37d117ee2b6cb'
-            }
-          })
-        ],
-      }),
-      'Dark': new Basemap({
-        baseLayers: [
-          new VectorTileLayer({
-            portalItem: {
-              id: '43ed5ecba7dd4a75b1395c2f3fa3951b'
-            }
-          })
-        ]
-      })
-    }
-    const basemapDropdown = document.getElementsByClassName('basemap__dropdown')[0]
-    basemapDropdown.addEventListener('click', ()=>{
-      const newBasemap = basemaps[basemapDropdown.value];
-      view.map.basemap = newBasemap;
-      if (newBasemap === 'Default') {
-        defaultSelectedFeatureGroup.visible = true;
-        bathySelectedFeatureGroup.visible = false;
-        waterColorSelectedFeatureGroup = false;
-      } else if (newBasemap === 'Bathymetry') {
-        defaultSelectedFeatureGroup.visible = false;
-        bathySelectedFeatureGroup.visible = true;
-        waterColorSelectedFeatureGroup = false;
-      } else if (newBasemap === 'Watercolor') {
-        defaultSelectedFeatureGroup.visible = false;
-        bathySelectedFeatureGroup.visible = false;
-        waterColorSelectedFeatureGroup = true;
-      } else if (newBasemap === 'Dark') {
-        defaultSelectedFeatureGroup.visible = false;
-        bathySelectedFeatureGroup.visible = false;
-        waterColorSelectedFeatureGroup = true;
-      }
-  
-    })
-
-
 
     return returnObject
   }
