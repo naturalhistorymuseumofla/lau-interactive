@@ -93,7 +93,7 @@ require([
         varying vec2 v_offset;
         const float PI = 3.14159;
         const float N_RINGS = 2.0;
-        const vec3 COLOR = vec3(0.99, 0.65, 0.0);
+        const vec3 COLOR = vec3(0.95, 0.92, 0.33);
         const float FREQ = 0.35;
         void main(void) {
             float l = length(v_offset);
