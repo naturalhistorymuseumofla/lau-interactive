@@ -662,6 +662,7 @@ require([
 
     
     function addAreaHighlight(geometry) {
+      
       const selectedAreaGraphic = new Graphic({
         geometry: geometry,
         symbol: {
@@ -676,6 +677,14 @@ require([
       });
       map.areaGraphics.graphics.removeAll();
       map.areaGraphics.graphics.add(selectedAreaGraphic);
+      
+     /*
+     const selectedAreaGraphic = new Graphic({
+       geometry: geometry
+     });
+     map.selectedAreaGraphics.graphics.removeAll();
+     map.selectedAreaGraphics.graphics.add(selectedAreaGraphic);
+    */
     }
 
 
@@ -1047,7 +1056,7 @@ require([
       clearGraphics();
       clearWidgets();
       setFlex(document.getElementsByClassName('photo-indicator')[0], false);
-      map.view.focus();
+      //map.view.focus();
     }
 
 
@@ -1126,7 +1135,7 @@ require([
       baseLayers: [
         new VectorTileLayer({
           portalItem: {
-            id: '9fcb87276abf4113ae6e464d27199090'
+            id: 'c65f3f7dc5754366b4e515e73e2f7d8b'
           }
         })
       ],
@@ -1135,34 +1144,105 @@ require([
     const waterColorOcean = new VectorTileLayer({
       portalItem: {
         id:'9fcb87276abf4113ae6e464d27199090'
-      }
+      },
+      visible: false,
     })
 
-    const lauBaseMap = new VectorTileLayer({
+    var lauBaseMap = new VectorTileLayer({
       portalItem: {
-        id: '5ab2d80a48e84f01b9566d2dfa24abb9', // Custom LAU Basemap
+        id: '0f3e9032ce854630bcd37d117ee2b6cb', // Custom LAU Basemap
       },
+      blendMode: 'multiply',
+      visible:false,
     });
 
     const hillshade =  new TileLayer({
       url: 'https://services.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer',
-      opacity:0.27,
+      opacity:0.15,
     });
+
+    const boundariesRenderer = {
+      type: 'simple',
+      symbol: {
+        type: 'simple-fill',
+        color: [255,255,255],
+        style: 'solid',
+      }
+    }
 
     const boundariesLayer = new FeatureLayer({
       portalItem: {
-        id: 'fac5699f1713414eb2afef682c224282'
+        id: '9fcb87276abf4113ae6e464d27199090'
       },
       outFields: ['OBJECTID_12'],
       blendMode: 'destination-in',
-
+      renderer: boundariesRenderer,
+      visible: false,
     });
 
 
     const baseGroupLayer = new GroupLayer({
-      layers:  [lauBaseMap, hillshade, boundariesLayer],
-
+      layers:  [hillshade,lauBaseMap, boundariesLayer],
+      effect:'drop-shadow(2px, 2px, 5px, rgba(0,0,0,0.15))',
+      visible: false,
     });
+
+    const selectedAreaGraphicsLayer = new GraphicsLayer({
+      blendMode:'destination-in'
+    });
+
+    var defaultVectorTileLayer = new VectorTileLayer({
+      portalItem: {
+        id: 'c65f3f7dc5754366b4e515e73e2f7d8b', // Custom LAU Basemap
+      },
+      blendMode: 'multiply',
+      opacity:1
+    });
+
+    const defaultSelectedFeatureGroup = new GroupLayer({
+      layers: [
+        defaultVectorTileLayer,
+        selectedAreaGraphicsLayer
+      ],
+      effect:'drop-shadow(2px, 2px, 5px, rgba(0,0,0,0.95))',
+      visible: true,
+    });
+
+    var bathyVectorTileLayer = new VectorTileLayer({
+      portalItem: {
+        id: '90a4db2ddbab4d18bbdf8528720de7cb', // Custom LAU Basemap
+      },
+      blendMode: 'multiply',
+      opacity:1
+    });
+
+    const bathySelectedFeatureGroup = new GroupLayer({
+      layers: [
+        bathyVectorTileLayer,
+        selectedAreaGraphicsLayer
+      ],
+      effect:'drop-shadow(2px, 2px, 5px, rgba(0,0,0,0.95))',
+      visible: false,
+    });
+
+    var waterColorVectorTileLayer = new VectorTileLayer({
+      portalItem: {
+        id: '0f3e9032ce854630bcd37d117ee2b6cb', // Custom LAU Basemap
+      },
+      blendMode: 'multiply',
+      opacity:1
+    });
+
+    const waterColorSelectedFeatureGroup = new GroupLayer({
+      layers: [
+        waterColorVectorTileLayer,
+        selectedAreaGraphicsLayer
+      ],
+      effect:'drop-shadow(2px, 2px, 5px, rgba(0,0,0,0.95))',
+      visible: false,
+    });
+
+
     
    /*
    var basemap = new VectorTileLayer({
@@ -1173,7 +1253,7 @@ require([
    */
 
     var map = new Map({
-      //basemap: basemap,
+      basemap: basemap,
     });
 
     // Returns zoom number based on width and height of client window screen
@@ -1444,9 +1524,10 @@ require([
     */
     
     const layers = [
-      waterColorOcean,
-      baseGroupLayer,
-      //selectedFeatureGraphicLayer,
+      //selectedFeatureGroupLayer,
+      //defaultSelectedFeatureGroup,
+      //bathySelectedFeatureGroup,
+      //waterColorSelectedFeatureGroup,
       intersectingFeatureGraphicLayer,
       neighborhoodsLayer,
       regionsLayer,
@@ -1476,7 +1557,8 @@ require([
       'intersectingGraphicsLayer' : intersectingFeatureGraphicLayer,
       'selectedPhotoGraphicsLayer': selectedPhotoGraphicsLayer,
       'clientFeatureLayer': clientFeatureLayer,
-      'areasLayer': areasLayer
+      'selectedAreaGraphics': selectedAreaGraphicsLayer,
+      'areasLayer': areasLayer,
     };
 
     view.whenLayerView(areasLayer).then(layerView =>{
@@ -1515,6 +1597,57 @@ require([
       });
     }, 2000)
     */
+
+    const basemaps = {
+      'Default': new Basemap({
+        baseLayers: [
+          new VectorTileLayer({
+            portalItem: {
+              id: 'c65f3f7dc5754366b4e515e73e2f7d8b', 
+            },
+          }),
+        ],
+      }),
+      'Bathymetry': new Basemap({
+        baseLayers: [
+          new VectorTileLayer({
+            portalItem: {
+              id: '90a4db2ddbab4d18bbdf8528720de7cb'
+            }
+          })
+        ],
+      }),
+      'Watercolor': new Basemap({
+        baseLayers: [
+          new VectorTileLayer({
+            portalItem: {
+              id: '0f3e9032ce854630bcd37d117ee2b6cb'
+            }
+          })
+        ],
+      }),
+    }
+    const basemapDropdown = document.getElementsByClassName('basemap__dropdown')[0]
+    basemapDropdown.addEventListener('click', ()=>{
+      const newBasemap = basemaps[basemapDropdown.value];
+      view.map.basemap = newBasemap;
+      if (newBasemap === 'Default') {
+        defaultSelectedFeatureGroup.visible = true;
+        bathySelectedFeatureGroup.visible = false;
+        waterColorSelectedFeatureGroup = false;
+      } else if (newBasemap === 'Bathymetry') {
+        defaultSelectedFeatureGroup.visible = false;
+        bathySelectedFeatureGroup.visible = true;
+        waterColorSelectedFeatureGroup = false;
+      } else if (newBasemap === 'Watercolor') {
+        defaultSelectedFeatureGroup.visible = false;
+        bathySelectedFeatureGroup.visible = false;
+        waterColorSelectedFeatureGroup = true;
+      }
+  
+    })
+
+
 
     return returnObject
   }
@@ -1559,7 +1692,7 @@ require([
     setTimeout(()=> {
       instructionsContainer.style.display = 'None';
     }, 750)
-    map.view.focus();
+    //map.view.focus();
   }
 
   
