@@ -14,7 +14,6 @@ require([
   "esri/core/promiseUtils",
   "esri/core/watchUtils",
   "esri/geometry/support/webMercatorUtils",
-  "esri/layers/GroupLayer"
 ], function (
   Map,
   MapView,
@@ -31,7 +30,6 @@ require([
   promiseUtils,
   watchUtils,
   webMercatorUtils,
-  GroupLayer
 ) {
 
   
@@ -353,6 +351,7 @@ require([
     }
   });
 
+  
   // Subclass the custom layer view from GraphicsLayer.
   const AnimatedPointLayer = GraphicsLayer.createSubclass({
     createLayerView: function(view) {
@@ -366,6 +365,7 @@ require([
       }
     }
   });
+  
   
 
 
@@ -405,7 +405,7 @@ require([
  
  
    map.view.when(() => {
-     map.view.extent.expand(3);
+     map.view.extent.expand(2.5);
      setNavigationBounds();
    });
  
@@ -1358,8 +1358,8 @@ require([
         type: 'simple-fill',
         style: 'none',
         outline: {
-          color: [20, 20, 20, 0.5],
-          width: '1.5px',
+          color: [15, 15, 15, 0.5],
+          width: '1.75px',
         },
       },
     };
@@ -1504,7 +1504,7 @@ require([
       effect: "drop-shadow(0px, 4px, 2px rgba(63, 153, 149, 0.75))",
     });
     const intersectingFeatureGraphicLayer = new GraphicsLayer();
-    const selectedPhotoGraphicsLayer = new AnimatedPointLayer();
+    const selectedPhotoGraphicsLayer = new GraphicsLayer();
     /*
     sketchGraphicsLayer = new GraphicsLayer();
     map.add(sketchGraphicsLayer);
@@ -1644,7 +1644,7 @@ require([
     setTimeout(()=> {
       instructionsContainer.style.display = 'None';
     }, 750)
-    //map.view.focus();
+    map.view.focus();
   }
 
   
