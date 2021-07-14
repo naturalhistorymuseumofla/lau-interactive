@@ -1504,7 +1504,7 @@ require([
       effect: "drop-shadow(0px, 4px, 2px rgba(63, 153, 149, 0.75))",
     });
     const intersectingFeatureGraphicLayer = new GraphicsLayer();
-    const selectedPhotoGraphicsLayer = new GraphicsLayer();
+    const selectedPhotoGraphicsLayer = new AnimatedPointLayer();
     /*
     sketchGraphicsLayer = new GraphicsLayer();
     map.add(sketchGraphicsLayer);
