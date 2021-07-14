@@ -41,3 +41,5 @@ if __name__ == "__main__":
     update()
     files = ['./static/css/styles.css', './static/js/app.js']
     app.run(debug=True, extra_files=files)
+    #app.run("0.0.0.0", port=5000)
+

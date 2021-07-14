@@ -1141,6 +1141,7 @@ require([
       ],
     });
 
+    /*
     const waterColorOcean = new VectorTileLayer({
       portalItem: {
         id:'9fcb87276abf4113ae6e464d27199090'
@@ -1557,7 +1558,7 @@ require([
       'intersectingGraphicsLayer' : intersectingFeatureGraphicLayer,
       'selectedPhotoGraphicsLayer': selectedPhotoGraphicsLayer,
       'clientFeatureLayer': clientFeatureLayer,
-      'selectedAreaGraphics': selectedAreaGraphicsLayer,
+      //'selectedAreaGraphics': selectedAreaGraphicsLayer,
       'areasLayer': areasLayer,
     };
 
@@ -1626,6 +1627,15 @@ require([
           })
         ],
       }),
+      'Dark': new Basemap({
+        baseLayers: [
+          new VectorTileLayer({
+            portalItem: {
+              id: '43ed5ecba7dd4a75b1395c2f3fa3951b'
+            }
+          })
+        ]
+      })
     }
     const basemapDropdown = document.getElementsByClassName('basemap__dropdown')[0]
     basemapDropdown.addEventListener('click', ()=>{
@@ -1640,6 +1650,10 @@ require([
         bathySelectedFeatureGroup.visible = true;
         waterColorSelectedFeatureGroup = false;
       } else if (newBasemap === 'Watercolor') {
+        defaultSelectedFeatureGroup.visible = false;
+        bathySelectedFeatureGroup.visible = false;
+        waterColorSelectedFeatureGroup = true;
+      } else if (newBasemap === 'Dark') {
         defaultSelectedFeatureGroup.visible = false;
         bathySelectedFeatureGroup.visible = false;
         waterColorSelectedFeatureGroup = true;
