@@ -3,18 +3,20 @@
   <head>
     <meta name="viewport" content="width=device-width">
     <link rel="stylesheet" href={{url_for('static', filename='css/splide.min.css')}}>
-    <link rel="stylesheet" href={{url_for('static', filename='css/styles.min.css')}}>
+    <link rel="stylesheet" href={{url_for('static', filename='css/styles.min.css')}}>v
     <meta charset="utf-8" />
     <title>LAU Map Interactive (prototype)</title>
     <link rel="shortcut icon" type="image/svg" href={{url_for('static', filename='images/clam.svg')}}/>
   </head>
-  <body>
+  <body lang="en">
     <div id="loading">
     </div>
     <div class="instructions__container">
       <div class="card instructions card--active">
-        <h2>Tap on an area of the map to learn about what 
-          fossils the museum has found there!</h2>
+        <h2 lang="en">Tap on an area of the map to learn which
+          fossils the museum has found there.</h2>
+        <h2 lang="es">Presiona una zona del mapa para conocer cuáles
+          son los fósiles que el museo encontró allí.</h2>
       </div>
     </div>
     <div class="card info-card animate-card"></div>
@@ -34,7 +36,10 @@
                     </svg>
                   </a>
                 </div>
-                <div class="photos__button button__caption button__caption--active" id="collectionButtonCaption"><p>Photos</p></div>
+                <div class="photos__button button__caption button__caption--active" id="collectionButtonCaption">
+                  <p lang="en">Photos</p>
+                  <p lang="es">Fotografías</p>
+                </div>
               </li>
   
               <li class="button__outer-container">
@@ -49,7 +54,10 @@
                     </svg>
                   </a>
                 </div>
-                <div class="button__caption" id="collectionButtonCaption"><p>Time</p></div>
+                <div class="button__caption" id="collectionButtonCaption">
+                  <p lang="en">Time</p>
+                  <p lang="es">Antigüedad</p>
+                </div>
               </li>
   
               <li class="button__outer-container">
@@ -63,7 +71,10 @@
                     </svg>
                   </a>
                 </div>
-                <div class="button__caption" id="locationButtonCaption"><p>Fossils</p></div>
+                <div class="button__caption" id="locationButtonCaption">
+                  <p lang="en">Fossils</p>
+                  <p lang="es">Fósiles</p>
+                </div>
               </li>
   
   
@@ -72,13 +83,18 @@
 
           <div id="locationTitle"class="card__flex-item card__title">
             <h1 class="featureName">San Bernadino County</h1>
-            <h2 id="excavationNumber">2,000 excavation sites</h2>
+            <h2>
+              <span id="excavationNumber">2,000</span>
+              <span lang="en">excavation sites</span>
+              <span lang="es">sitios de excavación</span>
+            </h2>
           </div>
           <div class="card__content">
             <div id="photos" class="card__container">
               <div class="photos--info">
                 <div id="sliderDiv" class="card__flex-item">
-                  <h3 class="card__header">Swipe to see local fossils!</h3>
+                  <h3 lang="en" class="card__header">Swipe to see more fossils in the collection.</h3>
+                  <h3 lang="es" class="card__header">Desliza para ver más fósiles de esta colección.</h3>
                   <div class="splide">
                     <div class="splide__track">
                       <ul class="splide__list">
@@ -114,10 +130,10 @@
             <div id="time" class="card__container">
               <div id="timeDiv" class="timescale">
                 <h3>Fossil age range</h3>
-                <div id="timeText" class="card-header__container--2">
-                  <h1 id="timeText" class="card__header"></h1>
-                  <h1 id="timeRange" class="card__header"></h1>
-                </div>
+                <h5 id="timeText" class="card__header timescale__text">
+                  <span lang="en">The fossils in this area are <br> <span class="time__range"></span></span>
+                  <span lang="es">Los fósiles de esta zona tienen entre <br> <span class="time__range"></span></span>
+                </h5>
                 <div class="timescale__container">
                   <div id="indicator" class="indicator">
                     <div class="indicator__tick"></div>
@@ -129,35 +145,43 @@
                   <div class= "timescale__bar neogene"></div>
                   <div class= "timescale__bar holocene"></div>
                   <div class="timescale__age holocene__age">
-                    2.6 million </br> years ago
+                    <span lang="en">2.6 million </br> years ago</span>
+                    <span lang="es">hace 2.6</br> millones<br> de años </span>
                   </div>
                   <div class="timescale__age neogene__age">
-                    20 million </br> years ago
+                    <span lang="en">20 million</br> years ago</span>
+                    <span lang="es">hace 20</br> millones<br> de años </span>
                   </div>
                   <div class="timescale__age paleogene__age">
-                    66 million </br> years ago
+                    <span lang="en">66 million</br> years ago</span>
+                    <span lang="es">hace 66</br> millones<br> de años </span>
                   </div>
                   <div class="timescale__age cretaceous__age">
-                    100 million </br> years ago
+                    <span lang="en">100 million</br> years ago</span>
+                    <span lang="es">hace 100</br> millones<br> de años </span>
                   </div>
 
               </div>
                 <div class = "timescale-legend">
                   <div class="timescale-legend__item">
                     <div class="timescale-legend__indicator" id="cretaceous-circle"></div>
-                    <p class= "timescale-legend__text">Late Cretaceous</p>
+                    <p lang="en" class= "timescale-legend__text">Cretaceous</p>
+                    <p lang="es" class= "timescale-legend__text">Cretácico</p>
                   </div>
                   <div class="timescale-legend__item">
                     <div class="timescale-legend__indicator" id="paleogene-circle"></div>
-                    <p class= "timescale-legend__text">Paleogene</p>
+                    <p lang="en" class="timescale-legend__text">Paleogene</p>
+                    <p lang="es" class="timescale-legend__text">Paleógeno</p>
                   </div>
                   <div class="timescale-legend__item">
                     <div class="timescale-legend__indicator" id="neogene-circle"></div>
-                    <p class="timescale-legend__text">Neogene</p>
+                    <p lang ="en" class="timescale-legend__text">Neogene</p>
+                    <p lang="es" class="timescale-legend__text">Neógeno</p>
                   </div>
                   <div class="timescale-legend__item">
                     <div class="timescale-legend__indicator" id="recent-circle"></div>
-                    <p class="timescale-legend__text">Recent</p>
+                    <p lang="en" class="timescale-legend__text">Quaternary</p>
+                    <p lang="es" class="timescale-legend__text">Cuaternario</p>
                   </div>
                 </div>
               </div>
@@ -169,9 +193,15 @@
                   </svg>
                 </div>
                 <div class="underwater-text__container">
-                  <h5><div class="featureName">San Bernadino County</div>
-                    was last underwater</br>
-                    <strong id="yearsUnderwater">12,000 years ago</strong></h5>
+                  <h5>
+                    <span lang="es">La última vez que</span>
+                    <div class="featureName">San Bernadino County</div>
+                    <span lang="en">was last underwater</span>
+                    <span lang="es">estuvo bajo el agua fue hace</span>
+                    </br>
+                    <strong class="underwater__age" lang="en">12 thousand years ago</strong>
+                    <strong class="underwater__age" lang="es">12 miles de años</strong>
+                  </h5>
                 </div>
               </div>
             </div>
@@ -180,13 +210,15 @@
                 <h3><span id="fossilsFound">225</span> fossils found</h3>
                 <div class="taxa__grid taxa__container-grid">
                   <div class="invert__container">
-                    <h4>Invertebrate</h4>
+                    <h4 lang="en">Invertebrates</h4>
+                    <h4 lang="es">Invertebrados</h4>
                     <!--<button class="accordion hvr-grow-shadow"><b>&#x25BE; Invertebrates</b></button>-->
                     <div class="invert__top-list taxa__list taxa__grid"></div>
                     <div class="invert__bottom-list taxa__list taxa__bottom-list taxa__grid"></div>
                   </div>
                   <div class="vert__container">
-                    <h4>Vertebrates</h4>
+                    <h4 lang="en">Vertebrates</h4>
+                    <h4 lang="es">Vertebrados</h4>
                     <div class="vert__top-list taxa__list taxa__grid"></div>
                     <div class="vert__bottom-list taxa__list taxa__bottom-list taxa__grid"></div>
                   </div>
@@ -222,7 +254,8 @@
         <div class="ui-container ui-top-left">
           <div class="card card__container content-card"  id="noInfoCard">
             <div class="menu__container">
-              <h1>No fossil sites found in <br> <span class="featureName"></span></h1>
+              <h1 lang="en">There are currently no excavation sites in<br> <span class="featureName"></span></h1>
+              <h1 lang="es">Actualmente, no hay sitios de excavación en<br> <span class="featureName"></span></h1>
             </div>
             <div class="card__flex-item">
               <div class="null__icon">
@@ -246,7 +279,8 @@
         <div class="card legend card--active">
           <div class="legend__flex-item locality-indicator">
             <div class="legend__circle legend__circle--locality"></div>
-            <h3 class="legend__text">Excavation site</h3>
+            <h3  lang="en" class="legend__text">Excavation sites</h3>
+            <h3  lang="es" class="legend__text">Sitios de excavación</h3>
           </div>
           <div class="photo-indicator legend__flex-item ">
             <div class="photo-indicator__container">
@@ -261,7 +295,6 @@
         </div>
       </div>
 
-
       <div class="ui-container ui-top-right">
         <div class="widget reset-widget">
           <button class="widget hvr-grow-shadow" id="resetWidget" ripple = "ripple"  title="Return map to original extent">
@@ -275,7 +308,6 @@
           </button>
           <p class="widget__label">Reset</p>
         </div>
-
 
         <button id="drawWidget" ripple = "ripple" class="widget draw-widget hvr-grow-shadow" title="Select features by polygon">
           <svg viewBox="0 0 40 40" class="draw-widget__svg widget_svg"
@@ -307,14 +339,13 @@
           <div class="absolute-position widget__label">Draw</div>
         </button>
 
-
-
         <div class="switch__container">
           <label class="switch" >
             <input type="checkbox" id="languageSwitch">
             <span class="slider hvr-grow-shadow round"></span>
           </label>
-          <p class="widget__label" id="languageLabel">English</p>
+          <p class="widget__label" lang="en">English</p>
+          <p class="widget__label" lang="es">Español</p>
         </div>
 
       </div>

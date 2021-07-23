@@ -604,7 +604,7 @@ require([
       }
 
       // Set excavation site number 
-      excavationDiv.innerHTML = `${(stats.number_of_sites).toLocaleString()} excavation sites`;
+      excavationDiv.innerHTML = `${(stats.number_of_sites).toLocaleString()}`;
 
       // Reset taxa lists
       const taxaLists = document.getElementsByClassName('taxa__list');
@@ -653,7 +653,11 @@ require([
       displayDiv('#infoCard');
 
       // Handle timescale
+      if (stats.endDate === 0) {
+        stats.endDate = 0.0117;
+      }
       moveTimescale(stats.startDate, stats.endDate);
+      addTimescaleText(stats.startDate, stats.endDate);
 
 
       // Scroll to top of card container div
@@ -697,71 +701,78 @@ require([
       let taxaObj = {
         'Clams, oysters': {
           'fileName': 'clam',
-          'category': 'invertebrate'
+          'category': 'invertebrate',
+          'es': 'Almejas, ostras',
         },
         'Snails': {
           'fileName': 'snail',
-          'category': 'invertebrate' 
+          'category': 'invertebrate',
+          'es': 'Caracoles',
         },
         'Sea urchins': {
           'fileName':'urchin',
-          'category': 'invertebrate'
+          'category': 'invertebrate',
+          'es': 'Erizos de mar',
         },
         'Worms': {
           'fileName': 'worm',
-          'category': 'invertebrate'
+          'category': 'invertebrate',
+          'es': 'Gusanos',
         },
-        'Crustaceans': {
+        'Crabs, shrimps': {
           'fileName': 'crab',
-          'category': 'invertebrate'
+          'category': 'invertebrate',
+          'es': 'Cangrejos, camarones',
         },
         'Nautiloids': {
           'fileName': 'ammonoid',
-          'category': 'invertebrate'
-        },
-        'Trilobites': {
-          'fileName': 'trilobite',
-          'category': 'invertebrate'
+          'category': 'invertebrate',
+          'es': 'Nautiloideos',
         },
         'Corals': {
           'fileName': 'coral',
-          'category': 'invertebrate'
+          'category': 'invertebrate',
+          'es': 'Corales',
         },
         'Barnacles': {
           'fileName': 'barnacle',
-          'category': 'invertebrate'
+          'category': 'invertebrate',
+          'es': 'Percebes'
         },
         'Scaphopods': {
           'fileName': 'scaphopod',
-          'category': 'invertebrate'
-        },
-        'Shrimps': {
-          'fileName': 'shrimp',
-          'category': 'invertebrate'
+          'category': 'invertebrate',
+          'es': 'Conchas colmillo',
         },
         'Sharks, rays': {
           'fileName': 'shark',
-          'category': 'vertebrate'
+          'category': 'vertebrate',
+          'es': 'Tiburones, rayas',
         },
         'Fish': {
           'fileName': 'fish',
-          'category': 'vertebrate'
+          'category': 'vertebrate',
+          'es': 'Peces',
         },
         'Birds': {
           'fileName': 'bird',
-          'category': 'vertebrate'
+          'category': 'vertebrate',
+          'es': 'Aves',
         },
         'Whales, dolphins': {
           'fileName': 'whale',
-          'category': 'vertebrate'
+          'category': 'vertebrate',
+          'es': 'Ballenas, delfines',
         },
         'Microfossils': {
           'fileName': 'magnifying-glass',
-          'category': 'invertebrate'
+          'category': 'invertebrate',
+          'es': 'Microfósiles',
         },
         'Walruses, seals': {
           'fileName': 'walrus',
-          'category': 'vertebrate'
+          'category': 'vertebrate',
+          'es': 'Focas, otarios, morsas',
         },
       }
       // Create document fragments to insert taxa items
@@ -769,6 +780,7 @@ require([
       let invertBottomFrag = document.createDocumentFragment();
       let vertTopFrag = document.createDocumentFragment();
       let vertBottomFrag = document.createDocumentFragment();
+      // Get reference to the top and bottom lists for the invert/vert lists
       const vertTopList = document.getElementsByClassName('vert__top-list')[0];
       const invertTopList = document.getElementsByClassName('invert__top-list')[0];
       const vertBottomList = document.getElementsByClassName('vert__bottom-list')[0];
@@ -783,12 +795,19 @@ require([
         if (taxaObj[taxon]) {
           const fileName = taxaObj[taxon]['fileName'];
           const category = taxaObj[taxon]['category'];
+          const spanishName = taxaObj[taxon]['es'];
           taxaIcon.src = `/static/images/${fileName}.svg`;
-          var taxonDiv = document.createElement("p");
+          // Create english and spanish text elements
+          const englishTaxonText = document.createElement("p"); 
+          const spanishTaxonText = document.createElement("p");
+          // Add their language attributes
+          englishTaxonText.lang = 'en';
+          spanishTaxonText.lang = 'es';
           cell.classList.add('taxa__cell');
           taxaIcon.classList.add('taxa__icon');
-          taxonDiv.innerHTML = `${number.toLocaleString()}<br>${taxon}`;
-          cell.append(taxaIcon, taxonDiv);
+          englishTaxonText.innerHTML = `${number.toLocaleString()}<br>${taxon}`;
+          spanishTaxonText.innerHTML = `${number.toLocaleString()}<br>${spanishName}`;
+          cell.append(taxaIcon, englishTaxonText, spanishTaxonText);
           if (category === "invertebrate") {
             (invertTopFrag.childElementCount === 4) ? invertBottomFrag.append(cell) :
             invertTopFrag.append(cell);
@@ -933,6 +952,27 @@ require([
       timescaleBar.style.width = `${timeRatio*fossilAgeRange}px`;
     }
 
+    function addTimescaleText(startDate, endDate) {
+      let englishText, spanishText;
+      [englishText, spanishText] = document.getElementsByClassName('time__range');
+      if (startDate > 1 && endDate > 1) {
+        endDate = endDate.toFixed(0);
+        startDate = startDate.toFixed(0);
+        englishText.innerHTML = `${endDate}-${startDate} million years old`;
+        spanishText.innerHTML = `${endDate} y ${startDate} millones de años de antigüedad.`;
+      } else if (startDate > 1 && endDate < 1) {
+        endDate = (endDate *1000).toFixed(0);
+        startDate = startDate.toFixed(0);
+        englishText.innerHTML = `${endDate} thousand-${startDate} million years old`;
+        spanishText.innerHTML = `${endDate} miles y ${startDate} millones de años de antigüedad.`;
+      } else if (startDate < 1 && endDate < 1) {
+        endDate = (endDate *1000).toFixed(0);
+        startDate = (startDate *1000).toFixed(0);
+        englishText.innerHTML = `${endDate}-${startDate} thousands of years old`;
+        spanishText.innerHTML = `${endDate} y ${startDate} miles de años de antigüedad.`;
+      }
+    }
+
     /* ==========================================================
      Intersecting features functions
     ========================================================== */
@@ -1058,6 +1098,16 @@ require([
       setFlex(document.getElementsByClassName('photo-indicator')[0], false);
       //map.view.focus();
     }
+
+    // Event handler for language switcher
+    const switcher = document.getElementById('languageSwitch');
+    switcher.addEventListener('change', ()=>{
+      if (switcher.checked) {
+        document.body.setAttribute('lang', 'es');
+      } else {
+        document.body.setAttribute('lang', 'en');
+      }
+    })
 
 
 
@@ -1661,5 +1711,8 @@ require([
   document.addEventListener('mousewheel', hideInstructionsDiv);
 
 })
+
+
+
 
 

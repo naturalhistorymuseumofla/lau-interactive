@@ -50,7 +50,7 @@ $card-width: 52.5rem;
 // the overall height of card__content
 $card-section-height: 48rem; 
 $card-margin-bottom: 1.5rem;
-$box-shadow: 0px 0px 3px 2px rgba(0, 0, 0, 0.15);
+$box-shadow: 0px 0px 3px 2px rgba(0, 0, 0, 0.35);
 $lau-dark-blue: #26566A;
 $lau-dark-turqoise: #3a838a;
 $lau-light-turqoise: #4aa8ab;
@@ -75,6 +75,12 @@ button {
 
 .esri-view .esri-view-surface--inset-outline:focus::after {
   outline: none !important;
+}
+
+
+body[lang="en"] [lang="es"],
+body[lang="es"] [lang="en"]{
+  display: none;
 }
 
 
@@ -132,10 +138,10 @@ body {
   max-width: 77vw;
   border-radius: $card-border-radius;
   background-color: rgba(0, 0, 0, 0.95);
-  box-shadow: $box-shadow;
+  box-shadow: 0px 0px 10px 3px rgba(0, 0, 0, 0.4);
   overflow: none;
   opacity:0;
-  transition: opacity 0.5s;
+  transition: all 0.5s;
   pointer-events: none;
   
 }
@@ -281,7 +287,7 @@ body {
 .button {
   height: 100%;
   width: 100%;
-  background-color: rgb(239, 239, 239);
+  background-color: rgb(224, 224, 224);
   border-radius: 50%;
 }
 
@@ -350,7 +356,7 @@ body {
 
 }
 
-$font-color: rgb(199, 199, 199);
+$font-color: rgb(207, 207, 207);
 
 h1{
   font-weight: 800;
@@ -696,17 +702,21 @@ img {
   border-radius: 0px 5px 5px 0px
 }
 
+.timescale__text {
+  margin-bottom: 1rem;
+}
+
 .timescale__age {
   position: absolute;
   text-align: left;
   width: 100%;
-  bottom: -180%;
+  top: 150%;
   font-size: 1.2rem; 
   color: $font-color;
 }
 
 .cretaceous__age {
-  left: -4%;
+  left: -2%;
 }
 
 .paleogene__age {
@@ -727,7 +737,7 @@ img {
   flex-flow: row wrap;
   grid-template-columns: 1.1fr .9fr;
   grid-column-gap: 0rem;
-  margin-top: 5.75rem;
+  margin-top: 8rem;
   justify-items: left;
 }
 
@@ -1152,6 +1162,7 @@ $switch-height: 2.5rem;
   flex-direction: column;
   align-items: center;
   margin-bottom:15px;
+  pointer-events: auto;
   
 }
 
@@ -1259,18 +1270,13 @@ input:checked + .slider:before {
 @supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
   .zoom {
     backdrop-filter: $blur;
-    -webkit-backdrop-filter: $blur;
+    -webkit-backdrop-filter: blur(15px);
     background-color: rgba(255, 255, 255, 0.45);
   }
   .card {
     -webkit-backdrop-filter: $blur;
-    backdrop-filter:$blur;
-    background-color: rgba(59, 59, 59, 0.75);
-  }
-  .basemap__gallery {
-    -webkit-backdrop-filter: $blur;
-    backdrop-filter:$blur;
-    background-color: rgba(255, 255, 255, 0.75);
+    backdrop-filter:blur(15px);
+    background-color: rgba(59, 59, 59, 0.7);
   }
 }
 
