@@ -1,11 +1,12 @@
 # Updates mongoDB collections with new data from hosted feature layers used in the
 # LAU map interactive.
-from data.database import global_init
+from database import global_init
 from arcgis.gis import GIS
 from collections import Counter
-from data.database import Query
-from data.database import Attachment
+from database import Query
+from database import Attachment
 from datetime import datetime
+import numpy as np
 import json
 import pandas as pd
 import os
@@ -23,14 +24,20 @@ def get_portal_object(id):
 
 
 def update_attachments(photos):
+    # Check if mongoDB collection is updated
     is_updated = check_if_updated(photos, Attachment)
+    # Update collection if not
     if not is_updated:
+        # Retrieve the spatial dataframe from AGOL
         photos_layer = photos.layers[0]
         photos_sdf = photos_layer.query().sdf
+        # Return all attachments from the photos feature layer using an attachments query
         attachments_sdf = pd.DataFrame.from_dict(photos_layer.attachments.search())
         cols = ['PARENTOBJECTID', 'NAME', 'DOWNLOAD_URL']
+        # Create a merged spatial dataframe that has records of photos and their attachments
         merged_sdf = photos_sdf.merge(attachments_sdf[cols], left_on='ObjectId', right_on='PARENTOBJECTID')
         attachments_saved = 0
+        # Input the records as documents into Photos collection
         for i in range(len(merged_sdf)):
             row = merged_sdf.iloc[i]
             attachment = Attachment()
@@ -61,6 +68,10 @@ def check_if_updated(agol_object, Collection):
     try:
         collection_last_modified = Collection.objects[0].modified
         if collection_last_modified > object_last_modified:
+            print(f'The {Collection} is up to date. \n'\
+                  f'{agol_object} was last updated:{object_last_modified} \n'\
+                  f'{Collection} was last modified {collection_last_modified}')
+
             return True
         else:
             return False
@@ -71,7 +82,8 @@ def check_if_updated(agol_object, Collection):
 # Updates localities by filtering spatial df by region type and iterating over
 # all unique region names in returned dataframe
 def update_localities(localities):
-    is_updated = check_if_updated(localities, Query)
+    #is_updated = check_if_updated(localities, Query)
+    is_updated = False
     if not is_updated:
         localities_layer = localities.layers[0]
         localities_sdf = localities_layer.query().sdf
@@ -112,6 +124,8 @@ def iterate_over_regions(region_type, sdf):
 # Return df based on loc query of dataframe
 def filter_df(df, field, value):
     return df.loc[df[field] == value]
+
+
 
 
 # Return a dictionary from list of taxa that summarizes taxa from

@@ -1,3 +1,7 @@
+:root {
+  --cupertino-pane-background	: rgba(59, 59, 59, 0.85);
+}
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;550;600;700;800&display=swap');
 
 @font-face {
@@ -114,6 +118,7 @@ body {
    touch-action: none;
 }
 
+
 .ui-top-left {
   top: 0;
 }
@@ -133,14 +138,21 @@ body {
   left: 0;
 }
 
-.card {
+@mixin card {
   width: $card-width;
   max-width: 77vw;
   border-radius: $card-border-radius;
-  background-color: rgba(0, 0, 0, 0.95);
+  background-color: rgba(30, 30, 30, 0.75);
   box-shadow: 0px 0px 10px 3px rgba(0, 0, 0, 0.4);
   overflow: none;
+  backdrop-filter: $blur;
+  -webkit-backdrop-filter: blur(10px)
+}
+
+.card {
+  @include card;
   opacity:0;
+  display:none;
   transition: all 0.5s;
   pointer-events: none;
   
@@ -1273,7 +1285,7 @@ input:checked + .slider:before {
     -webkit-backdrop-filter: blur(15px);
     background-color: rgba(255, 255, 255, 0.45);
   }
-  .card {
+  .pane, .card{
     -webkit-backdrop-filter: $blur;
     backdrop-filter:blur(15px);
     background-color: rgba(59, 59, 59, 0.7);
@@ -1297,3 +1309,60 @@ input:checked + .slider:before {
     font-size: 1.5rem;
   }
 }
+
+[data-mobile=true] .ui-top-left {
+  height: 100%;
+  width:100%;
+}
+
+[data-mobile=true] .legend {
+  display: none;
+}
+
+[data-mobile=true] .card {
+  pointer-events: auto;
+  width: auto;
+  max-width: 100%;
+  background: rgba(0,0,0,0);
+  box-shadow: 0px 0px rgba(0, 0, 0, 0);
+}
+
+[data-mobile=true] #infoCard {
+  -webkit-backdrop-filter: blur(0px);
+  backdrop-filter: blur(0px);
+}
+
+
+[data-mobile=true] .menu__container {
+  display: none;
+}
+
+[data-mobile=true] .card__content {
+  height: auto;
+}
+
+[data-mobile=true] .info-card {
+  display: block;
+  opacity:1;
+}
+
+[data-mobile=true] .cupertino-pane-wrapper {
+  opacity:1;
+}
+
+[data-mobile=true] .instructions {
+  @include card;
+}
+
+
+
+/*
+.content-card {
+  position: absolute;
+  left: 0; 
+  right: 0; 
+  margin-left: auto; 
+  margin-right: auto; 
+}
+*/
+

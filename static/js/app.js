@@ -1,3 +1,10 @@
+
+var isMobile  = (window.screen.height < 1024 || window.screen.width < 1024) ? true : false;
+
+if (isMobile) {
+  document.documentElement.setAttribute('data-mobile', 'true');
+}
+
 require([
   'esri/Map',
   'esri/views/MapView',
@@ -14,6 +21,7 @@ require([
   "esri/core/promiseUtils",
   "esri/core/watchUtils",
   "esri/geometry/support/webMercatorUtils",
+  "esri/widgets/Search",
 ], function (
   Map,
   MapView,
@@ -30,6 +38,7 @@ require([
   promiseUtils,
   watchUtils,
   webMercatorUtils,
+  Search
 ) {
 
   
@@ -466,22 +475,59 @@ require([
      Functions to query & select localities layer
     ========================================================== */
 
+    // Starting point to display the geometry of a feature, query the database
+    // and display all returned info onto the map/info panels
+    function main(feature) {
+      zoomToFeature(feature);
+      addAreaHighlight(feature.geometry);
+      // Get query object from database
+      getQuery(feature).then(data => {
+        // If response has data, use it to populate info cards
+        if (data) {
+          populateInfoCards(data);
+        } else {
+          populateNullCards(feature.attributes.name)
+        }
+      });
+      displayIntersectingAreas(feature.attributes);
+    }
+
+
+    function returnZoomScale(feature) {
+      const geometry = feature.geometry;
+      let screenArea = window.innerHeight * window.innerWidth;
+      var featureArea;
+      if (feature.attributes.name === 'Los Angeles' || feature.attributes.name === 'Ventura') {
+        featureArea = (geometry.extent.height/4.15) * geometry.extent.width;
+      } else {
+        featureArea = geometry.extent.height * geometry.extent.width;
+      }
+
+      if (featureArea > 90000000){
+        const scale = (featureArea/screenArea) * 150;
+        return scale;
+      } else {
+        const scale = (featureArea/screenArea) * 1000
+        return scale;
+      }
+      
+    }
+
     function zoomToFeature(feature) {
       const geometry = feature.geometry;
       const featureName = feature.attributes.name;
       const geometryOffset = -(geometry.extent.width / 2);
+      const scale = returnZoomScale(feature);
       const goToOptions = {
         animate: true,
         duration: 800,
         ease: 'ease-in'
       }
-  
-  
       if (featureName === 'Los Angeles') {
         map.view
           .goTo({
             center: [-118.735491, 34.222515],
-            scale:1000000
+            scale:(scale-2000000),
           }, goToOptions)
           .catch(function (error) {
             if (error.name != 'AbortError') {
@@ -492,6 +538,7 @@ require([
         map.view
           .goTo({
             center: [-119.254898, 34.515522],
+            scale:scale,
           }, goToOptions)
           .catch(function (error) {
             if (error.name != 'AbortError') {
@@ -499,13 +546,26 @@ require([
             }
           });
       } else {
-        map.view
+        if (isMobile) {
+          map.view
+            .goTo({
+              center: geometry.extent.center,
+              scale:scale
+            })
+            .catch(function(error){
+              if (error.name != 'AborError') {
+                console.error(error);
+              }
+            })
+        } else {
+          map.view
           .goTo(geometry.extent.expand(2).offset(geometryOffset, 0), goToOptions)
           .catch(function (error) {
             if (error.name != 'AbortError') {
               console.error(error);
             }
           });
+        }
       }
     }
 
@@ -529,7 +589,6 @@ require([
 
     function selectFeaturesFromClick(screenPoint) {
       clearGraphics();
-    
       const includeLayers = [
         map.countiesLayer,
         map.regionsLayer,
@@ -541,22 +600,10 @@ require([
       // i.e. screenPoint
       map.view.hitTest( screenPoint, {include: includeLayers})
       .then(feature => {
-
         // Test if any map features were clicked/returned
         if (feature.results[0]) {
-          var returnedFeature = feature.results[0].graphic;
-          zoomToFeature(returnedFeature);
-          addAreaHighlight(returnedFeature.geometry);
-          // Get query object from database
-          getQuery(returnedFeature).then(data => {
-            // If response has data, use it to populate info cards
-            if (data) {
-              populateInfoCards(data);
-            } else {
-              populateNullCards(returnedFeature.attributes.name)
-            }
-          });
-          displayIntersectingAreas(returnedFeature.attributes);
+          console.log(feature);
+          main(feature.results[0].graphic);
         // If nothing returned, reset map
         } else {
           resetButtonClickHandler();
@@ -651,6 +698,9 @@ require([
 
       // Display div
       displayDiv('#infoCard');
+      if(isMobile){
+        map.infoPane.present({animate:true})
+      }
 
       // Handle timescale
       if (stats.endDate === 0) {
@@ -1131,6 +1181,8 @@ require([
       //div.classList.remove('card--active');
       setTimeout(()=>{div.classList.add('card--active')}, 5);
 
+
+
       /*
       const contentCard = document.getElementsByClassName(`${cardName} content-card`)[0];
       const animateCard = document.getElementsByClassName(`${cardName} animate-card`)[0];
@@ -1147,6 +1199,9 @@ require([
       const cards = document.getElementsByClassName('content-card');
       for (let card of cards) {  
         hideDiv(card);
+      }
+      if (isMobile) {
+        map.infoPane.hide({animate:true})
       }
     }
   
@@ -1591,10 +1646,24 @@ require([
       localitiesLayer,
       selectedPhotoGraphicsLayer,
       //areaGraphicsGroupLayer,
-
     ]
 
     map.addMany(layers);
+
+    const infoPane = new CupertinoPane(
+      '.cupertino-pane', // Pane container selector
+      { 
+        parentElement: '.ui-top-left', // Parent container
+        breaks: {
+            middle: { enabled: false, height: 300,  },
+            bottom: { enabled: true, height: 100, bounce: true},
+        },
+        cssClass: 'card--active',
+        simulateTouch: true,
+        initialBreak:'bottom',
+        onDrag: () => console.log('Drag event')
+      }
+    );
 
     var returnObject = {
       'map': map,
@@ -1612,6 +1681,8 @@ require([
       'clientFeatureLayer': clientFeatureLayer,
       //'selectedAreaGraphics': selectedAreaGraphicsLayer,
       'areasLayer': areasLayer,
+      'infoPane': infoPane,
+
     };
 
     view.whenLayerView(areasLayer).then(layerView =>{
@@ -1629,11 +1700,37 @@ require([
       widget.style.opacity = '1';
     }
 
+    // Create a search widget
+    const searchWidget = new Search({
+      view: view,
+      visible: true,
+      popupEnabled: false,
+    });
+
+    view.ui.add(searchWidget);
+
+    searchWidget.on('search-complete', (event)=>{
+      const searchFeature = event.results[0].results[0].feature;
+      const query = {
+        geometry: searchFeature.geometry,
+        spatialRelationship: "intersects",
+        outFields: ["*"],
+        returnGeometry: true,
+      }
+      areasLayer.queryFeatures(query).then((results) => {
+        console.log(results.features[0].geometry.extent)
+        main(results.features[0]);
+
+      })
+    })
+
     // Add ui elements to map view
+    
     var ui = document.getElementsByClassName('ui-container');
     for (let e of ui) {
       view.ui.add(e);
     }
+    
   
     // Stops loading animation and makes map view visible after 
     // localityLayerView has finished loading
@@ -1694,7 +1791,7 @@ require([
     setTimeout(()=> {
       instructionsContainer.style.display = 'None';
     }, 750)
-    map.view.focus();
+    //map.view.focus();
   }
 
   

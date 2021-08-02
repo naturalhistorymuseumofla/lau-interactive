@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html data-mobile="false">
   <head>
     <meta name="viewport" content="width=device-width">
     <link rel="stylesheet" href={{url_for('static', filename='css/splide.min.css')}}>
-    <link rel="stylesheet" href={{url_for('static', filename='css/styles.min.css')}}>v
+    <link rel="stylesheet" href={{url_for('static', filename='css/styles.min.css')}}>
+    <link rel="stylesheet"
+      href="https://js.arcgis.com/4.20/esri/themes/dark/main.css">
     <meta charset="utf-8" />
     <title>LAU Map Interactive (prototype)</title>
     <link rel="shortcut icon" type="image/svg" href={{url_for('static', filename='images/clam.svg')}}/>
@@ -22,7 +24,11 @@
     <div class="card info-card animate-card"></div>
     <div id="viewDiv">
       <div class="ui-container ui-top-left" >
-        <div class="card content-card" id="infoCard">
+        <div class="search">
+
+
+        </div>
+        <div class="card content-card cupertino-pane" id="infoCard">
           <div class="menu__container">
             <nav class="card__menu">
               <li class="button__outer-container photos__button">
@@ -364,6 +370,7 @@
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/2.8.1/gl-matrix.js"></script>
     <script src="https://js.arcgis.com/4.19/"></script>
+    <script src="https://unpkg.com/cupertino-pane/dist/cupertino-pane.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@latest/dist/js/splide.min.js"></script>
     <script src ="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
     <script type="module" src={{url_for('static', filename='js/app.js')}}></script>
