@@ -414,8 +414,9 @@ require([
  
  
    map.view.when(() => {
-     map.view.extent.expand(2.5);
-     setNavigationBounds();
+    const expandConstant = (isMobile) ? 5 : 2.5; 
+    map.view.extent.expand(expandConstant);
+    setNavigationBounds();
    });
  
  
@@ -517,17 +518,77 @@ require([
       const geometry = feature.geometry;
       const featureName = feature.attributes.name;
       const geometryOffset = -(geometry.extent.width / 2);
-      const scale = returnZoomScale(feature);
       const goToOptions = {
         animate: true,
         duration: 800,
         ease: 'ease-in'
       }
+
+      const zoomOptions = {
+        true: {
+          'Los Angeles': {
+            center: [-118.3, 34.25],
+            scale:null,
+          },
+          'Santa Barbara': {
+            center: [-120.1, 34.8],
+          },
+          default: {
+            center: geometry,
+          }
+        },
+        false: {
+          'Los Angeles': {
+            center: [-118.735491, 34.222515],
+            scale: returnZoomScale(feature),
+          },
+          'Ventura': {
+            center: [-119.254898, 34.515522],
+            scale: returnZoomScale(feature),
+          },
+          default: {
+            center: geometry.extent.expand(2).offset(geometryOffset, 0),
+          }
+
+        }
+      }
+      if (featureName in zoomOptions[isMobile]) {
+        map.view
+        .goTo(zoomOptions[isMobile][featureName], goToOptions)
+        .catch(function (error) {
+          if (error.name != 'AbortError') {
+            console.error(error);
+          }
+        }, goToOptions);
+      } else {
+        map.view
+          .goTo(zoomOptions[isMobile].default, goToOptions)
+          .catch(function (error) {
+            if (error.name != 'AbortError') {
+              console.error(error);
+            }
+          }, goToOptions);
+      }
+      /*
+      const zoomOptions2 = {
+        mobile: {
+          'Los Angeles' : [-118.3, 34.25],
+          'Santa Barbara': [-120.1, 34.8]
+        },
+        desktop: {
+          center: geometry.extent.center,
+        }
+      }
+      if (isMobile) {
+        if (featureName === 'Los Angeles') {
+
+        }
+      }
       if (featureName === 'Los Angeles') {
         map.view
           .goTo({
             center: [-118.735491, 34.222515],
-            scale:(scale-2000000),
+            scale:scale,
           }, goToOptions)
           .catch(function (error) {
             if (error.name != 'AbortError') {
@@ -550,7 +611,7 @@ require([
           map.view
             .goTo({
               center: geometry.extent.center,
-              scale:scale
+
             })
             .catch(function(error){
               if (error.name != 'AborError') {
@@ -566,8 +627,9 @@ require([
             }
           });
         }
+        */
       }
-    }
+    
 
     async function getQuery(feature) {
       const queryObject = {
