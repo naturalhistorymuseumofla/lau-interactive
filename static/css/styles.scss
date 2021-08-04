@@ -259,7 +259,7 @@ body {
 }
 
 .card__menu {
-  width:32.5rem;
+  //width:32.5rem;
   display:flex;
 }
 
@@ -425,6 +425,7 @@ p {
 }
 
 .instructions__container {
+  display:flex;
   height: 100vh;
   width: 100vw;
   position:absolute;
@@ -435,14 +436,9 @@ p {
 }
 
 .instructions {
-  position: absolute;
   display: flex;
   text-align: center;
   align-items: center;
-  left:0;
-  right: 0;
-  top:0;
-  bottom: 0;
   margin: auto;
   height: 17rem;
   transition: top 0.5s ease-in-out;
@@ -1333,7 +1329,7 @@ input:checked + .slider:before {
 }
 
 
-[data-mobile=true] .menu__container {
+[data-mobile=true] .menu__container, #noInfoCard, .zoom {
   display: none;
 }
 
@@ -1353,6 +1349,58 @@ input:checked + .slider:before {
 [data-mobile=true] .instructions {
   @include card;
 }
+
+.null-card__content {
+  display: none;
+}
+
+.close-button {
+  height: 3.5rem;
+  width: 3.5rem;
+  background-color: rgb(224, 224, 224);
+  border-radius:50%;
+  border:none;
+  position:absolute;
+}
+
+.close-button::before {
+  left: 0; 
+  right: 1%;
+  top:0;
+  bottom:0;
+  margin: auto; 
+  content:'';
+  width:0.25rem;
+  height:1.6rem;
+  background-color:grey;
+  position:absolute;
+  transform: rotateY(0deg) rotate(45deg); /* needs Y at 0 deg to behave properly*/
+}
+
+.close-button::after {
+  left: 0; 
+  right: 1%; 
+  top:0;
+  bottom:0;
+  margin: auto; 
+  content:'';
+  width:0.25rem;
+  height:1.6rem;
+  background-color:grey;
+  position:absolute;
+  transform: rotateY(0deg) rotate(-45deg); /* needs Y at 0 deg to behave properly*/
+}
+
+.close-button__info-card {
+  right:3%;
+  bottom:93.5%;
+}
+
+.close-button__instructions {
+  right:3%;
+  bottom:71%;
+}
+
 
 
 

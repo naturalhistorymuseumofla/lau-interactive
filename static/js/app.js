@@ -374,10 +374,6 @@ require([
       }
     }
   });
-  
-  
-
-
 
   const zoomInDiv = document.getElementById("zoomIn");
   const zoomOutDiv = document.getElementById("zoomOut");
@@ -404,9 +400,10 @@ require([
    //document.onclick = clearInterval(resetMapSetInterval);
    function resetMap() {
      resetButtonClickHandler();
+     goHome();
      const instructionsDiv = document.getElementsByClassName('instructions')[0];
      const instructionsContainer = document.getElementsByClassName('instructions__container')[0];
-     setDisplay(instructionsContainer, true);
+     setFlex(instructionsContainer, true);
      setFlex(instructionsDiv, true);
      instructionsDiv.style.opacity = 1;
      instructionsContainer.style.opacity = 1;
@@ -528,7 +525,6 @@ require([
         true: {
           'Los Angeles': {
             center: [-118.3, 34.25],
-            scale:null,
           },
           'Santa Barbara': {
             center: [-120.1, 34.8],
@@ -569,66 +565,7 @@ require([
             }
           }, goToOptions);
       }
-      /*
-      const zoomOptions2 = {
-        mobile: {
-          'Los Angeles' : [-118.3, 34.25],
-          'Santa Barbara': [-120.1, 34.8]
-        },
-        desktop: {
-          center: geometry.extent.center,
-        }
-      }
-      if (isMobile) {
-        if (featureName === 'Los Angeles') {
-
-        }
-      }
-      if (featureName === 'Los Angeles') {
-        map.view
-          .goTo({
-            center: [-118.735491, 34.222515],
-            scale:scale,
-          }, goToOptions)
-          .catch(function (error) {
-            if (error.name != 'AbortError') {
-              console.error(error);
-            }
-          }, goToOptions);
-      } else if (featureName == 'Ventura') {
-        map.view
-          .goTo({
-            center: [-119.254898, 34.515522],
-            scale:scale,
-          }, goToOptions)
-          .catch(function (error) {
-            if (error.name != 'AbortError') {
-              console.error(error);
-            }
-          });
-      } else {
-        if (isMobile) {
-          map.view
-            .goTo({
-              center: geometry.extent.center,
-
-            })
-            .catch(function(error){
-              if (error.name != 'AborError') {
-                console.error(error);
-              }
-            })
-        } else {
-          map.view
-          .goTo(geometry.extent.expand(2).offset(geometryOffset, 0), goToOptions)
-          .catch(function (error) {
-            if (error.name != 'AbortError') {
-              console.error(error);
-            }
-          });
-        }
-        */
-      }
+    }
     
 
     async function getQuery(feature) {
@@ -674,14 +611,19 @@ require([
     }
 
     function populateNullCards(featureName) {
-      const infoCard = document.getElementById('infoCard');
-      if (infoCard.style.display != 'none') {
-        hideDiv(infoCard);
-        setTimeout(()=> {
-          displayDiv('#noInfoCard');
-        }, 550)
+      if (isMobile) {
+        hideDiv(document.getElementsByClassName('info-card__content')[0]);
+        displayDiv(document.getElementsByClassName('null-card__content')[0]);
       } else {
-        displayDiv('#noInfoCard');
+        const infoCard = document.getElementById('infoCard');
+        if (infoCard.style.display != 'none') {
+          hideDiv(infoCard);
+          setTimeout(()=> {
+            displayDiv('#noInfoCard');
+          }, 550);
+        } else {
+          displayDiv('#noInfoCard');
+        }
       }
 
       for (let div of document.getElementsByClassName('featureName')) {
@@ -1179,7 +1121,7 @@ require([
     ========================================================== */
 
     // Add event listeners to custom widgets
-    document.getElementById('resetWidget')
+    document.getElementsByClassName('close-button__info-card')[0]
     .addEventListener("click", resetButtonClickHandler);
 
     // Click events for zoom widgets
@@ -1197,18 +1139,21 @@ require([
 
     // Event handler for reset widget
     function resetButtonClickHandler() {
+      displayIntersectingAreas('')
+      removeFeatures();
+      clearGraphics();
+      clearWidgets();
+      setFlex(document.getElementsByClassName('photo-indicator')[0], false);
+      map.view.focus();
+    }
+
+    function goHome() {
       const goToOptions = {
         animate: true,
         duration: 400,
         ease: 'ease-in'
       }
       map.view.goTo({ center: [-118.215, 34.225], scale: map.scale }, goToOptions);
-      displayIntersectingAreas('')
-      removeFeatures();
-      clearGraphics();
-      clearWidgets();
-      setFlex(document.getElementsByClassName('photo-indicator')[0], false);
-      //map.view.focus();
     }
 
     // Event handler for language switcher
@@ -1479,6 +1424,7 @@ require([
       view: view,
     });
 
+    
     // Configure widget icons
     drawWidget.addEventListener(
       'click',
@@ -1491,18 +1437,6 @@ require([
       false
     );
 
-    var resetSvg = document.getElementById('resetSvg');
-
-    resetWidget.addEventListener(
-      'click',
-      function (event) {
-        event.preventDefault;
-        resetSvg.classList.remove('reset-widget__animation');
-        resetWidget.offsetWidth;
-        resetSvg.classList.add('reset-widget__animation');
-      },
-      false
-    );
 
     // Create renderers, LabelClasses and FeatureLayers
     const localitiesRenderer = {
