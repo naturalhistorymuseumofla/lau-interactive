@@ -386,15 +386,15 @@ require([
   var map = setUpMap();
 
    // Refresh map after period of inactivity
-  var resetMapSetInterval = setInterval(resetMap, 30000);
+  var resetMapSetInterval = setInterval(resetMap, 60000);
 
   document.addEventListener('click', function(){
     clearInterval(resetMapSetInterval);
-    resetMapSetInterval = setInterval(resetMap, 30000);
+    resetMapSetInterval = setInterval(resetMap, 60000);
   });
   document.addEventListener('touchstart', function(){
     clearInterval(resetMapSetInterval);
-    resetMapSetInterval = setInterval(resetMap, 30000);
+    resetMapSetInterval = setInterval(resetMap, 60000);
   });
 
    //document.onclick = clearInterval(resetMapSetInterval);
@@ -405,8 +405,9 @@ require([
      const instructionsContainer = document.getElementsByClassName('instructions__container')[0];
      setFlex(instructionsContainer, true);
      setFlex(instructionsDiv, true);
-     instructionsDiv.style.opacity = 1;
-     instructionsContainer.style.opacity = 1;
+     instructionsDiv.classList.remove('instructions--inactive');
+     instructionsContainer.classList.remove('instructions--inactive');
+
    }
  
  
@@ -454,7 +455,7 @@ require([
 
         const goToOptions = {
           animate: true,
-          duration: 450,
+          duration: 500,
           ease: 'linear'
         }
 
@@ -525,6 +526,7 @@ require([
         true: {
           'Los Angeles': {
             center: [-118.3, 34.25],
+            scale: returnZoomScale(feature),
           },
           'Santa Barbara': {
             center: [-120.1, 34.8],
@@ -642,7 +644,13 @@ require([
       const cardContentDiv = document.getElementsByClassName('card__content')[0];
 
       // Hide appropriate divs
-      hideDiv('#noInfoCard');
+      if (isMobile) {
+        hideDiv(document.getElementsByClassName('null-card__content')[0]);
+        document.getElementsByClassName('info-card__content')[0].style.display='block';
+      } else {
+        hideDiv('#noInfoCard');
+      }
+
 
 
       // Highlight locality selected in query
@@ -655,7 +663,11 @@ require([
       }
 
       // Set excavation site number 
-      excavationDiv.innerHTML = `${(stats.number_of_sites).toLocaleString()}`;
+      document.querySelector('.excavation-number[lang=en]')
+      .innerHTML = `${(stats.number_of_sites).toLocaleString()}`;
+
+      document.querySelector('.excavation-number[lang=es]')
+      .innerHTML = `${(stats.number_of_sites).toLocaleString('es')}`;
 
       // Reset taxa lists
       const taxaLists = document.getElementsByClassName('taxa__list');
@@ -669,7 +681,10 @@ require([
         setFlex(taxaInfoDiv, true);
         const taxa = stats.taxa;
         const fossilsFound = Object.values(taxa).reduce((a, b) => a + b);
-        document.getElementById('fossilsFound').innerHTML = fossilsFound.toLocaleString();
+        document.querySelector('.fossils-found[lang=en]')
+        .innerHTML = fossilsFound.toLocaleString();
+        document.querySelector('.fossils-found[lang=es]')
+        .innerHTML = fossilsFound.toLocaleString('es');
         populateTaxa(taxa);
 
         // Display or hide more buttons based on number of taxa
@@ -830,15 +845,11 @@ require([
         },
       }
       // Create document fragments to insert taxa items
-      let invertTopFrag = document.createDocumentFragment();
-      let invertBottomFrag = document.createDocumentFragment();
-      let vertTopFrag = document.createDocumentFragment();
-      let vertBottomFrag = document.createDocumentFragment();
+      let invertFrag = document.createDocumentFragment();
+      let vertFrag = document.createDocumentFragment();
       // Get reference to the top and bottom lists for the invert/vert lists
-      const vertTopList = document.getElementsByClassName('vert__top-list')[0];
-      const invertTopList = document.getElementsByClassName('invert__top-list')[0];
-      const vertBottomList = document.getElementsByClassName('vert__bottom-list')[0];
-      const invertBottomList = document.getElementsByClassName('invert__bottom-list')[0];
+      const vertList = document.getElementsByClassName('vert__list')[0];
+      const invertList = document.getElementsByClassName('invert__list')[0];
       // Sort taxa object and by using Object.entries to create an array of arrays
       const sortedTaxaLists = Object.entries(taxa).sort((a,b) => b[1]-a[1])
       for (const taxonList of sortedTaxaLists) {
@@ -860,21 +871,19 @@ require([
           cell.classList.add('taxa__cell');
           taxaIcon.classList.add('taxa__icon');
           englishTaxonText.innerHTML = `${number.toLocaleString()}<br>${taxon}`;
-          spanishTaxonText.innerHTML = `${number.toLocaleString()}<br>${spanishName}`;
+          spanishTaxonText.innerHTML = `${number.toLocaleString('es')}<br>${spanishName}`;
           cell.append(taxaIcon, englishTaxonText, spanishTaxonText);
+          // Append cell to appropriate fragment
           if (category === "invertebrate") {
-            (invertTopFrag.childElementCount === 4) ? invertBottomFrag.append(cell) :
-            invertTopFrag.append(cell);
+            invertFrag.append(cell);
           } else if (category === "vertebrate") {
-            (vertTopFrag.childElementCount === 4) ? vertBottomFrag.append(cell) :
-            vertTopFrag.append(cell);
+            vertFrag.append(cell);
           }
         }
       }
-      invertTopList.append(invertTopFrag);
-      invertBottomList.append(invertBottomFrag);
-      vertTopList.append(vertTopFrag);
-      vertBottomList.append(vertBottomFrag);
+      // Append all lists to their fragments
+      invertList.append(invertFrag);
+      vertList.append(vertFrag);
     }
 
     /* ==========================================================
@@ -1121,8 +1130,11 @@ require([
     ========================================================== */
 
     // Add event listeners to custom widgets
-    document.getElementsByClassName('close-button__info-card')[0]
-    .addEventListener("click", resetButtonClickHandler);
+    for (let button of document.getElementsByClassName('close-button')) {
+      button.addEventListener("click", resetButtonClickHandler);
+      button.addEventListener("touchstart", resetButtonClickHandler);
+    }
+
 
     // Click events for zoom widgets
     zoomInDiv.addEventListener("click", () => {
@@ -1247,7 +1259,7 @@ require([
       baseLayers: [
         new TileLayer({
           url: 'https://services.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer',
-          opacity:0.3,
+          opacity:0.85,
         }),
         new VectorTileLayer({
           portalItem: {
@@ -1424,7 +1436,7 @@ require([
       view: view,
     });
 
-    
+
     // Configure widget icons
     drawWidget.addEventListener(
       'click',
@@ -1459,8 +1471,8 @@ require([
         type: 'simple-fill',
         style: 'none',
         outline: {
-          color: [15, 15, 15, 0.5],
-          width: '1.75px',
+          color: [15, 15, 15, 0.75],
+          width: '2px',
         },
       },
     };
@@ -1601,9 +1613,11 @@ require([
     });
   
     // Create new GraphicLayers
-    const selectedFeatureGraphicLayer = new GraphicsLayer({
-      effect: "drop-shadow(0px, 4px, 2px rgba(63, 153, 149, 0.75))",
-    });
+    const selectedFeatureGraphicLayer = (isMobile) ? 
+      new GraphicsLayer() :
+      new GraphicsLayer({
+        effect: "drop-shadow(0px, 4px, 2px rgba(63, 153, 149, 0.75))",
+      });
     const intersectingFeatureGraphicLayer = new GraphicsLayer();
     const selectedPhotoGraphicsLayer = new AnimatedPointLayer();
     /*
@@ -1657,6 +1671,7 @@ require([
         cssClass: 'card--active',
         simulateTouch: true,
         initialBreak:'bottom',
+        buttonDestroy:false,
         onDrag: () => console.log('Drag event')
       }
     );
@@ -1703,8 +1718,6 @@ require([
       popupEnabled: false,
     });
 
-    view.ui.add(searchWidget);
-
     searchWidget.on('search-complete', (event)=>{
       const searchFeature = event.results[0].results[0].feature;
       const query = {
@@ -1718,7 +1731,14 @@ require([
         main(results.features[0]);
 
       })
-    })
+    });
+
+    /*
+    if (isMobile) {
+      view.ui.add(searchWidget);
+    }
+    */
+
 
     // Add ui elements to map view
     
@@ -1782,8 +1802,8 @@ require([
   function hideInstructionsDiv() {
     const instructionsDiv = document.getElementsByClassName('instructions')[0];
     const instructionsContainer = document.getElementsByClassName('instructions__container')[0];
-    instructionsDiv.style.opacity = 0;
-    instructionsContainer.style.opacity = 0;
+    instructionsDiv.classList.add('instructions--inactive');
+    instructionsContainer.classList.add('instructions--inactive');
     setTimeout(()=> {
       instructionsContainer.style.display = 'None';
     }, 750)

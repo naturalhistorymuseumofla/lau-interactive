@@ -4,8 +4,7 @@
     <meta name="viewport" content="width=device-width">
     <link rel="stylesheet" href={{url_for('static', filename='css/splide.min.css')}}>
     <link rel="stylesheet" href={{url_for('static', filename='css/styles.min.css')}}>
-    <link rel="stylesheet"
-      href="https://js.arcgis.com/4.20/esri/themes/dark/main.css">
+
     <meta charset="utf-8" />
     <title>LAU Map Interactive (prototype)</title>
     <link rel="shortcut icon" type="image/svg" href={{url_for('static', filename='images/clam.svg')}}/>
@@ -88,9 +87,8 @@
           <div id="locationTitle"class="card__flex-item card__title">
             <h1 class="featureName">San Bernadino County</h1>
             <h2>
-              <span id="excavationNumber">2,000</span>
-              <span lang="en">excavation sites</span>
-              <span lang="es">sitios de excavación</span>
+              <span lang="en"><span lang="en" class="excavation-number">2,000</span> excavation sites</span>
+              <span lang="es"><span lang="es" class="excavation-number">2,000</span> sitios de excavación</span>
             </h2>
           </div>
           <div class="card__content info-card__content">
@@ -133,11 +131,10 @@
             </div>
             <div id="time" class="card__container">
               <div id="timeDiv" class="timescale">
-                <h3>Fossil age range</h3>
-                <h5 id="timeText" class="card__header timescale__text">
+                <h3 id="timeText" class="card__header timescale__text">
                   <span lang="en">The fossils in this area are <br> <span class="time__range"></span></span>
                   <span lang="es">Los fósiles de esta zona tienen entre <br> <span class="time__range"></span></span>
-                </h5>
+                </h3>
                 <div class="timescale__container">
                   <div id="indicator" class="indicator">
                     <div class="indicator__tick"></div>
@@ -150,7 +147,7 @@
                   <div class= "timescale__bar holocene"></div>
                   <div class="timescale__age holocene__age">
                     <span lang="en">2.6 million </br> years ago</span>
-                    <span lang="es">hace 2.6</br> millones<br> de años </span>
+                    <span lang="es">hace 2,6</br> millones<br> de años </span>
                   </div>
                   <div class="timescale__age neogene__age">
                     <span lang="en">20 million</br> years ago</span>
@@ -211,20 +208,20 @@
             </div>
             <div id="location" class="card__container">
               <div class="taxa card__flex-item taxa--info">
-                <h3><span id="fossilsFound">225</span> fossils found</h3>
+                <h3 lang=en><span lang=en class="fossils-found">225</span> fossils found</h3>
+                <h3 lang=es><span lang=es class="fossils-found">225</span> fósiles hallados</h3>
+                
                 <div class="taxa__grid taxa__container-grid">
                   <div class="invert__container">
                     <h4 lang="en">Invertebrates</h4>
                     <h4 lang="es">Invertebrados</h4>
                     <!--<button class="accordion hvr-grow-shadow"><b>&#x25BE; Invertebrates</b></button>-->
-                    <div class="invert__top-list taxa__list taxa__grid"></div>
-                    <div class="invert__bottom-list taxa__list taxa__bottom-list taxa__grid"></div>
+                    <div class="invert__list taxa__list taxa__grid"></div>
                   </div>
                   <div class="vert__container">
                     <h4 lang="en">Vertebrates</h4>
                     <h4 lang="es">Vertebrados</h4>
-                    <div class="vert__top-list taxa__list taxa__grid"></div>
-                    <div class="vert__bottom-list taxa__list taxa__bottom-list taxa__grid"></div>
+                    <div class="vert__list taxa__list taxa__grid"></div>
                   </div>
 
                 </div>
@@ -241,9 +238,10 @@
                     <path class="button__path" mask="url(#fossil-mask)" d="M45.62 71.48a8.404 8.404 0 01-6.66 2.4c-1.78-.16-3.52-.32-5.09-.47-3.51-.32-6.59 2.28-6.85 5.78-.25 3.3 2.13 6.23 5.44 6.68 1.16.16 2.02 1.16 1.98 2.33l-.23 7.22a3.47 3.47 0 003.58 3.57l9.84-.27a3.475 3.475 0 003.38-3.19l.75-9.41a8.265 8.265 0 012.42-5.21l.86-.84 25.37-25.56a8.404 8.404 0 016.66-2.4c1.78.16 3.52.32 5.09.47 3.51.32 6.59-2.28 6.85-5.78.25-3.3-2.13-6.23-5.44-6.68a2.281 2.281 0 01-1.98-2.33l.23-7.22A3.47 3.47 0 0088.24 27l-9.84.27a3.483 3.483 0 00-3.38 3.19l-.75 9.41a8.265 8.265 0 01-2.42 5.21L45.51 71.6"/>
                   </svg>
                 </div>
-                <h3>Try selecting a different area on the map!</h3>
-                <h5>The museum currently does not have information on the kinds of fossils
-                  found here, but is always learning about fossils from around Southern California.</h5>
+                <h3 lang="en">Try selecting a different area on the map!</h3>
+                <h3 lang="es">¡Intenta seleccionar otra zona!</h3>
+                <h5 lang="en">The fossils in this area are still being identified.</h5>
+                <h5 lang="es">Todavía estamos identificando los fósiles de esta zona.</h5>
               </div>
               <!--
               <div class="seperator card__flex-item"></div>
@@ -251,17 +249,16 @@
             </div>
           </div>
           <div class="card__content null-card__content">
-            <h1 lang="en">There are currently no excavation sites in<br> <span class="featureName"></span></h1>
-            <h1 lang="es">Actualmente, no hay sitios de excavación en<br> <span class="featureName"></span></h1>
+            <h1 lang="en">There are currently no excavation sites in <span class="featureName"></span></h1>
+            <h1 lang="es">Actualmente, no hay sitios de excavación en <span class="featureName"></span></h1>
           </div>
         </div>
       </div>
       <div class="ui-container ui-top-left">
-        <div class="card card__container content-card cupertino-pane"  id="noInfoCard">
-          <div class="menu__container">
-            <h1 lang="en">There are currently no excavation sites in<br> <span class="featureName"></span></h1>
-            <h1 lang="es">Actualmente, no hay sitios de excavación en<br> <span class="featureName"></span></h1>
-          </div>
+        <div class="card card__container content-card"  id="noInfoCard">
+          <button class="close-button close-button__null-card hvr-grow-shadow"></button>
+          <h1 class="null__title" lang="en">There are currently no excavation sites in <span class="featureName"></span></h1>
+          <h1 class="null__title" lang="es">Actualmente, no hay sitios de excavación en <span class="featureName"></span></h1>
           <div class="card__flex-item">
             <div class="null__icon">
               <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0" y="0" viewBox="0 0 126 126" xml:space="preserve">
@@ -273,87 +270,84 @@
                   <path class="button__path" mask="url(#null-mask)" d="M45.62 71.48a8.404 8.404 0 01-6.66 2.4c-1.78-.16-3.52-.32-5.09-.47-3.51-.32-6.59 2.28-6.85 5.78-.25 3.3 2.13 6.23 5.44 6.68 1.16.16 2.02 1.16 1.98 2.33l-.23 7.22a3.47 3.47 0 003.58 3.57l9.84-.27a3.475 3.475 0 003.38-3.19l.75-9.41a8.265 8.265 0 012.42-5.21l.86-.84 25.37-25.56a8.404 8.404 0 016.66-2.4c1.78.16 3.52.32 5.09.47 3.51.32 6.59-2.28 6.85-5.78.25-3.3-2.13-6.23-5.44-6.68a2.281 2.281 0 01-1.98-2.33l.23-7.22A3.47 3.47 0 0088.24 27l-9.84.27a3.483 3.483 0 00-3.38 3.19l-.75 9.41a8.265 8.265 0 01-2.42 5.21L45.51 71.6"/>
               </svg>
             </div>
-            <h3>Try selecting a different area on the map!</h3>
-            <h5>The museum has not collected fossils from this area, but is always collecting new fossils from around Southern California. </h5>
+            <h2 lang="en">Try selecting a different area on the map!</h2>
+            <h2 lang="es">¡Intenta seleccionar otra zona!</h2>
           </div>
         </div>
       </div>
     </div>
-
-      <div class="ui-container ui-bottom-left">
-        <div class="card legend card--active">
-          <div class="legend__flex-item locality-indicator">
-            <div class="legend__circle legend__circle--locality"></div>
-            <h3  lang="en" class="legend__text">Excavation sites</h3>
-            <h3  lang="es" class="legend__text">Sitios de excavación</h3>
+    <div class="ui-container ui-bottom-left">
+      <div class="card legend card--active">
+        <div class="legend__flex-item locality-indicator">
+          <div class="legend__circle legend__circle--locality"></div>
+          <h3  lang="en" class="legend__text">Excavation sites</h3>
+          <h3  lang="es" class="legend__text">Sitios de excavación</h3>
+        </div>
+        <div class="photo-indicator legend__flex-item ">
+          <div class="photo-indicator__container">
+            <svg class="photo-indicator__svg">
+              <circle class="still photo-indicator__circle"/>
+              <circle class="photo-indicator__circle"/>
+              <circle class="photo-indicator__circle"/>
+            </svg>
           </div>
-          <div class="photo-indicator legend__flex-item ">
-            <div class="photo-indicator__container">
-              <svg class="photo-indicator__svg">
-                <circle class="still photo-indicator__circle"/>
-                <circle class="photo-indicator__circle"/>
-                <circle class="photo-indicator__circle"/>
-              </svg>
-            </div>
-            <h3 class="legend__text"> Pictured fossil</h3>
-          </div>
+          <h3 class="legend__text"> Pictured fossil</h3>
         </div>
       </div>
-
-      <div class="ui-container ui-top-right">
-
-        <button id="drawWidget" ripple = "ripple" class="widget draw-widget hvr-grow-shadow" title="Select features by polygon">
-          <svg viewBox="0 0 40 40" class="draw-widget__svg widget_svg"
-            <defs>
-              <linearGradient id="linear-gradient" x1="28.29" y1="31.32" x2="33.32" y2="31.32" gradientUnits="userSpaceOnUse">
-                <stop offset="0" stop-color="#444"/>
-                <stop offset="1" stop-color="#444"/>
-              </linearGradient>
-              <linearGradient id="linear-gradient-2" x1="15.83" y1="25.51" x2="39.58" y2="25.51"
-                              gradientTransform="matrix(1.3, 0.27, -0.24, 1.15, -5.05, -13.43)"
-                              gradientUnits="userSpaceOnUse">
-                <stop offset="0" stop-color="#42afe5"/>
-                <stop offset="1" stop-color="#3fdcff"/>
-              </linearGradient>
-            </defs>
-            <path class="draw-widget__path draw-widget__animation"
-                  id = "drawPath"
-                  transform=translate(-3)
-                  d="M 28.31,11.68c-1.13.64-2.72,1.36-3.85,2-2,1.19-4,2.41-6,3.69
-                      a 23.08,23.08,0,0,0-6.87,6.45
-                      A 5.75,5.75,0,0,0,10.52,27,3.29,3.29,0,0,0,12,29.61
-                      c 2.39,1.64,6.06,0,8-1.27,1-.69,1.69-1.25,2.49-1.88,1.3-1,2.62-2,4-3
-                      a 18.94,18.94,0,0,1,5.36-2.72,5.32,5.32,0,0,1,2.57-.15,3.9,3.9,0,0,1,
-                        1.68.89,3.28,3.28,0,0,1,1,1.62,3.2,3.2,0,0,1-.3, 2.17,6.43,6.43,0,0,
-                        1-2.45,2.49,40.41,40.41,0,0,1-3.75,1.8,27.59,27.59,0,0,0-4.67,2.35,
-                        2.76,2.76,0,0,0-1.22,1.89,2.4,2.4,0,0,0,1.92,2.4
-                      c 2.48.54,3.86-2.19,6.09-2.58,1.7-.3,2.59,1.29,3.38,2.38"/>
-          </svg>
-          <div class="absolute-position widget__label">Draw</div>
-        </button>
-
-        <div class="switch__container">
-          <label class="switch" >
-            <input type="checkbox" id="languageSwitch">
-            <span class="slider hvr-grow-shadow round"></span>
-          </label>
-          <p class="widget__label" lang="en">Español</p>
-          <p class="widget__label" lang="es">English</p>
-        </div>
-
-      </div>
-      <div class="ui-container ui-bottom-right">
-        <button id="zoomIn"
-        class="zoom widget widget__container hvr-grow-shadow"
-        ripple = "ripple"
-        title="Zoom in">
+    </div>
+    <div class="ui-container ui-top-right">
+      <button id="drawWidget" ripple = "ripple" class="widget draw-widget hvr-grow-shadow" title="Select features by polygon">
+        <svg viewBox="0 0 40 40" class="draw-widget__svg widget_svg"
+          <defs>
+            <linearGradient id="linear-gradient" x1="28.29" y1="31.32" x2="33.32" y2="31.32" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stop-color="#444"/>
+              <stop offset="1" stop-color="#444"/>
+            </linearGradient>
+            <linearGradient id="linear-gradient-2" x1="15.83" y1="25.51" x2="39.58" y2="25.51"
+                            gradientTransform="matrix(1.3, 0.27, -0.24, 1.15, -5.05, -13.43)"
+                            gradientUnits="userSpaceOnUse">
+              <stop offset="0" stop-color="#42afe5"/>
+              <stop offset="1" stop-color="#3fdcff"/>
+            </linearGradient>
+          </defs>
+          <path class="draw-widget__path draw-widget__animation"
+                id = "drawPath"
+                transform=translate(-3)
+                d="M 28.31,11.68c-1.13.64-2.72,1.36-3.85,2-2,1.19-4,2.41-6,3.69
+                    a 23.08,23.08,0,0,0-6.87,6.45
+                    A 5.75,5.75,0,0,0,10.52,27,3.29,3.29,0,0,0,12,29.61
+                    c 2.39,1.64,6.06,0,8-1.27,1-.69,1.69-1.25,2.49-1.88,1.3-1,2.62-2,4-3
+                    a 18.94,18.94,0,0,1,5.36-2.72,5.32,5.32,0,0,1,2.57-.15,3.9,3.9,0,0,1,
+                      1.68.89,3.28,3.28,0,0,1,1,1.62,3.2,3.2,0,0,1-.3, 2.17,6.43,6.43,0,0,
+                      1-2.45,2.49,40.41,40.41,0,0,1-3.75,1.8,27.59,27.59,0,0,0-4.67,2.35,
+                      2.76,2.76,0,0,0-1.22,1.89,2.4,2.4,0,0,0,1.92,2.4
+                    c 2.48.54,3.86-2.19,6.09-2.58,1.7-.3,2.59,1.29,3.38,2.38"/>
+        </svg>
+        <div class="absolute-position widget__label">Draw</div>
       </button>
-        <button id="zoomOut"
-        class="zoom widget widget widget__container hvr-grow-shadow"
-        ripple = "ripple"
-        title="Zoom out">
-        </button>
+
+      <div class="switch__container">
+        <label class="switch" >
+          <input type="checkbox" id="languageSwitch">
+          <span class="slider hvr-grow-shadow round"></span>
+        </label>
+        <p class="widget__label" lang="en">Español</p>
+        <p class="widget__label" lang="es">English</p>
       </div>
+
+    </div>
+    <div class="ui-container ui-bottom-right">
+      <button id="zoomIn"
+      class="zoom widget widget__container hvr-grow-shadow"
+      ripple = "ripple"
+      title="Zoom in">
+    </button>
+      <button id="zoomOut"
+      class="zoom widget widget widget__container hvr-grow-shadow"
+      ripple = "ripple"
+      title="Zoom out">
+      </button>
+    </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/2.8.1/gl-matrix.js"></script>
     <script src="https://js.arcgis.com/4.19/"></script>
