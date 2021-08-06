@@ -1,9 +1,13 @@
 
-var isMobile  = (window.screen.height < 1024 || window.screen.width < 1024) ? true : false;
+//var isMobile  = (window.screen.height < 1024 || window.screen.width < 1024) ? true : false;
+var isMobile  = (screen.height < 719 || screen.width < 1023) ? true : false;
 
 if (isMobile) {
   document.documentElement.setAttribute('data-mobile', 'true');
 }
+
+
+
 
 require([
   'esri/Map',
@@ -385,6 +389,23 @@ require([
 
   var map = setUpMap();
 
+
+  /*
+  window.addEventListener('orientationchange', ()=> {
+    const isMobileCheck  = (screen.height < 719 || screen.width < 1023) ? true : false;
+    if (isMobileCheck !== isMobile) {
+      isMobile = isMobileCheck
+      resetMap();
+      if (isMobile) {
+        document.documentElement.setAttribute('data-mobile', 'true');
+      } else {
+        document.documentElement.setAttribute('data-mobile', 'false');
+      }
+    }
+  });
+  */
+
+
    // Refresh map after period of inactivity
   var resetMapSetInterval = setInterval(resetMap, 60000);
 
@@ -401,6 +422,7 @@ require([
    function resetMap() {
      resetButtonClickHandler();
      goHome();
+     map.infoPane.destroy();
      const instructionsDiv = document.getElementsByClassName('instructions')[0];
      const instructionsContainer = document.getElementsByClassName('instructions__container')[0];
      setFlex(instructionsContainer, true);
