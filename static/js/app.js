@@ -952,7 +952,7 @@ require([
     function formatCaptions(photo) {
       // Create captions divs 
       const specimenCaption = document.createElement('p');
-      const taxonCaption = document.createElement('span');
+      const taxonCaption = document.createElement('p');
       taxonCaption.classList.add('caption__taxon')
       const ageCaption = document.createElement('p');
       const descriptionCaption = document.createElement('p');
@@ -962,7 +962,7 @@ require([
       taxonCaption.innerHTML = photo.taxon;
       ageCaption.innerHTML = photo.age.replace(' - ', '-').toLowerCase(); // Fix this in the database
       descriptionCaption.innerHTML = photo.description;
-      const catNumberCaption = document.createTextNode(` (${photo.display_id})`);
+      const catNumberCaption = document.createTextNode(`${photo.display_id}`);
       captionsDiv.classList.add('splide__captions');
 
       // Append caption divs to parent divs
