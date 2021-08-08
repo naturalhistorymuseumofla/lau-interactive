@@ -7,8 +7,6 @@ if (isMobile) {
 }
 
 
-
-
 require([
   'esri/Map',
   'esri/views/MapView',
@@ -484,10 +482,7 @@ require([
         view.goTo({ center: [-118.215, 34.225], scale: map.scale }, goToOptions);
       }
     }
-    //document.addEventListener('click', navigationBoundsEventListener);
-    //document.addEventListener('touchstart', navigationBoundsEventListener);
     view.watch(["interacting", 'center', 'stationary'], navigationBoundsEventListener);
-    //view.watch("extent", navigationBoundsEventListener);
    }
 
 
@@ -658,12 +653,10 @@ require([
     function populateInfoCards(stats) {
       const taxaInfoDiv = document.getElementsByClassName('taxa--info')[0];
       const taxaNullDiv = document.getElementsByClassName('taxa--null')[0];
-      const excavationDiv = document.getElementById('excavationNumber');
       const photosDiv = document.getElementById('photos');
       const photosNullDiv = document.getElementsByClassName('photos--null')[0];
       const photoLegend = document.getElementsByClassName('photo-indicator')[0];
       let photosButton = document.getElementsByClassName('photos__button');
-      const cardContentDiv = document.getElementsByClassName('card__content')[0];
 
       // Hide appropriate divs
       if (isMobile) {
@@ -708,13 +701,8 @@ require([
         document.querySelector('.fossils-found[lang=es]')
         .innerHTML = fossilsFound.toLocaleString('es');
         populateTaxa(taxa);
-
-        // Display or hide more buttons based on number of taxa
-        const moreButtons = document.getElementsByClassName('more');
-        for (let button of moreButtons) {
-          displayMoreButton(button);
-        }
       } else {
+        // Hide taxa divs
         setFlex(taxaInfoDiv, false);
         setFlex(taxaNullDiv, true);
       }
@@ -924,7 +912,7 @@ require([
         const li = document.createElement('li');
         const captions = formatCaptions(photo);
         // Format HTML for Splide carousel
-        img.src = photo.url;
+        img.setAttribute('data-splide-lazy', photo.url);
         li.classList.add('splide__slide');
         const newSlide = splideListFrag.appendChild(li);
         const div = document.createElement('div');
@@ -974,8 +962,8 @@ require([
 
     // Mounts splide 
     function newSplide() {
-      splide = new Splide('.splide', {
-        lazyLoad: true,
+       splide = new Splide('.splide', {
+        lazyLoad: 'nearby',
       }).mount();
       return splide;
     }
@@ -1071,80 +1059,6 @@ require([
       }
     }
 
-    // Add corresponding intersecting features as graphics to a 
-    // clientFeatureLayer
-    function displayIntersectingGraphics(feature) {
-      const intersectionObj = {
-        'county': map.regionsLayer,
-        'region': map.neighborhoodsLayer
-      }
-      const query = {
-        where: `parent_region = '${feature.attributes.name}'`,
-        returnGeometry: true,
-        outFields: ["*"],
-      }
-      removeFeatures();
-      intersectionObj[feature.attributes.region_type]
-      .queryFeatures(query)
-        .then(results => {
-          addFeatures(results);
-        })
-    }
-
-    // Adds features to clientFeatureLayer
-    function addFeatures(results) {
-      var graphics = [];
-      results.features.forEach(feature => {
-        var graphic = new Graphic({
-          source: results.features,
-          geometry: feature.geometry,
-          attributes: {
-            name: feature.attributes.name,
-            region_type: feature.layer.title,
-          },
-        });
-        graphics.push(graphic);
-      });
-      const edits = {
-        addFeatures: graphics,
-      };
-      applyEditsToClientFeatureLayer(edits);
-    }
-
-    
-    // Removes all features from clientFeatureLayer, resetting it
-    function removeFeatures() {
-      map.clientFeatureLayer.queryFeatures().then(function (results) {
-        const removeFeatures = {
-          deleteFeatures: results.features,
-        };
-        applyEditsToClientFeatureLayer(removeFeatures);
-      });
-    }
-
-    // Helper function that applies edits made ot clientFeatureLayer
-    function applyEditsToClientFeatureLayer(edits) {
-      map.clientFeatureLayer
-        .applyEdits(edits)
-        .then(results => {
-          // if features were added - call queryFeatures to return newly added graphics
-          if (results.addFeatureResults.length > 0) {
-            var objectIds = [];
-            results.addFeatureResults.forEach(feature => {
-              objectIds.push(feature.objectId);
-            });
-            // query the newly added features from the layer
-            map.clientFeatureLayer
-              .queryFeatures({
-                objectIds: objectIds,
-              })
-          }
-        })
-        .catch(error => {
-          console.log(error);
-        });
-    }
-
 
 
     /* ==========================================================
@@ -1174,7 +1088,6 @@ require([
     // Event handler for reset widget
     function resetButtonClickHandler() {
       displayIntersectingAreas('')
-      removeFeatures();
       clearGraphics();
       clearWidgets();
       setFlex(document.getElementsByClassName('photo-indicator')[0], false);
@@ -1459,19 +1372,6 @@ require([
     });
 
 
-    // Configure widget icons
-    drawWidget.addEventListener(
-      'click',
-      function (event) {
-        event.preventDefault;
-        drawSvg.classList.remove('draw-widget__animation');
-        drawWidget.offsetWidth;
-        drawSvg.classList.add('draw-widget__animation');
-      },
-      false
-    );
-
-
     // Create renderers, LabelClasses and FeatureLayers
     const localitiesRenderer = {
       type: 'simple',
@@ -1642,32 +1542,8 @@ require([
       });
     const intersectingFeatureGraphicLayer = new GraphicsLayer();
     const selectedPhotoGraphicsLayer = new AnimatedPointLayer();
-    /*
-    sketchGraphicsLayer = new GraphicsLayer();
-    map.add(sketchGraphicsLayer);
-
-    // Create the new sketch view model and sets its layer
-    sketchViewModel = new SketchViewModel({
-      view: view,
-      layer: sketchGraphicsLayer,
-      updateOnGraphicClick: false,
-      polygonSymbol: {
-        type: 'simple-fill',
-        color: [0, 185, 235, 0.2],
-        size: '1px',
-        outline: {
-          color: [0, 185, 235, 0.5],
-          width: '3px',
-        },
-      },
-    });
-    */
     
     const layers = [
-      //selectedFeatureGroupLayer,
-      //defaultSelectedFeatureGroup,
-      //bathySelectedFeatureGroup,
-      //waterColorSelectedFeatureGroup,
       intersectingFeatureGraphicLayer,
       neighborhoodsLayer,
       regionsLayer,
@@ -1768,58 +1644,9 @@ require([
     for (let e of ui) {
       view.ui.add(e);
     }
-    
-  
-    // Stops loading animation and makes map view visible after 
-    // localityLayerView has finished loading
-    /*
-    setTimeout(()=> {
-      localitiesLayer.when(function() {
-        const instructionsDiv = document.getElementsByClassName('instructions')[0];
-        const instructionsContainer = document.getElementsByClassName('instructions__container')[0];
-        //document.getElementById('viewDiv').style.opacity = '1';
-        instructionsDiv.style.opacity = '1';     
-        instructionsContainer.style.opacity = 1;     
-      }).catch(function(error){
-        console.log('error: ', error);
-      });
-    }, 2000)
-    */
 
     return returnObject
   }
-
-
-  function displayMoreButton(button) {
-    let bottomLists = document.getElementsByClassName('taxa__bottom-list');
-    let isPopulated = false;
-    for (let list of bottomLists){
-      list.childElementCount > 0 ? isPopulated = true: isPopulated = false;
-    }
-    isPopulated ? setDisplay(button, true) : setDisplay(button, false);
-  }
-
-    //Add Event listener to "more" buttons
-  const moreButton = document.getElementsByClassName('more')[0];
-  moreButton.addEventListener('click', () => {
-    let bottomLists = document.getElementsByClassName('taxa__bottom-list');
-    let ifExpanded = moreButton.classList.toggle('button--active');
-    if (ifExpanded) {
-      moreButton.innerHTML = '- Less';
-      for (let list of bottomLists) {
-        list.style.maxHeight = list.scrollHeight + 'px';
-      }
-      const position = moreButton.parentElement.offsetTop;
-      ($('.card__content')).animate({
-        scrollTop: position
-      }, 400);
-    } else {
-      moreButton.innerHTML = '+ More';
-      for (let list of bottomLists) {
-        list.style.maxHeight = null;
-      }
-    }
-  })
 
   function hideInstructionsDiv() {
     const instructionsDiv = document.getElementsByClassName('instructions')[0];

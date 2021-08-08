@@ -213,7 +213,6 @@
                   <div class="invert__container">
                     <h4 lang="en">Invertebrates</h4>
                     <h4 lang="es">Invertebrados</h4>
-                    <!--<button class="accordion hvr-grow-shadow"><b>&#x25BE; Invertebrates</b></button>-->
                     <div class="invert__list taxa__list taxa__grid"></div>
                   </div>
                   <div class="vert__container">
@@ -221,9 +220,7 @@
                     <h4 lang="es">Vertebrados</h4>
                     <div class="vert__list taxa__list taxa__grid"></div>
                   </div>
-
                 </div>
-                <button class="more hvr-grow-shadow">+ More</button>
               </div>
               <div class="taxa card__flex-item taxa--null">
                 <div class="null__icon">
@@ -294,35 +291,6 @@
       </div>
     </div>
     <div class="ui-container ui-top-right">
-      <button id="drawWidget" ripple = "ripple" class="widget draw-widget hvr-grow-shadow" title="Select features by polygon">
-        <svg viewBox="0 0 40 40" class="draw-widget__svg widget_svg"
-          <defs>
-            <linearGradient id="linear-gradient" x1="28.29" y1="31.32" x2="33.32" y2="31.32" gradientUnits="userSpaceOnUse">
-              <stop offset="0" stop-color="#444"/>
-              <stop offset="1" stop-color="#444"/>
-            </linearGradient>
-            <linearGradient id="linear-gradient-2" x1="15.83" y1="25.51" x2="39.58" y2="25.51"
-                            gradientTransform="matrix(1.3, 0.27, -0.24, 1.15, -5.05, -13.43)"
-                            gradientUnits="userSpaceOnUse">
-              <stop offset="0" stop-color="#42afe5"/>
-              <stop offset="1" stop-color="#3fdcff"/>
-            </linearGradient>
-          </defs>
-          <path class="draw-widget__path draw-widget__animation"
-                id = "drawPath"
-                transform=translate(-3)
-                d="M 28.31,11.68c-1.13.64-2.72,1.36-3.85,2-2,1.19-4,2.41-6,3.69
-                    a 23.08,23.08,0,0,0-6.87,6.45
-                    A 5.75,5.75,0,0,0,10.52,27,3.29,3.29,0,0,0,12,29.61
-                    c 2.39,1.64,6.06,0,8-1.27,1-.69,1.69-1.25,2.49-1.88,1.3-1,2.62-2,4-3
-                    a 18.94,18.94,0,0,1,5.36-2.72,5.32,5.32,0,0,1,2.57-.15,3.9,3.9,0,0,1,
-                      1.68.89,3.28,3.28,0,0,1,1,1.62,3.2,3.2,0,0,1-.3, 2.17,6.43,6.43,0,0,
-                      1-2.45,2.49,40.41,40.41,0,0,1-3.75,1.8,27.59,27.59,0,0,0-4.67,2.35,
-                      2.76,2.76,0,0,0-1.22,1.89,2.4,2.4,0,0,0,1.92,2.4
-                    c 2.48.54,3.86-2.19,6.09-2.58,1.7-.3,2.59,1.29,3.38,2.38"/>
-        </svg>
-        <div class="absolute-position widget__label">Draw</div>
-      </button>
 
       <div class="switch__container">
         <label class="switch" >
@@ -348,10 +316,10 @@
     </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/2.8.1/gl-matrix.js"></script>
-    <script src="https://js.arcgis.com/4.19/"></script>
+    <script src="https://js.arcgis.com/4.20/"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://unpkg.com/cupertino-pane/dist/cupertino-pane.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@latest/dist/js/splide.min.js"></script>
-    <script src ="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
     <script type="module" src={{url_for('static', filename='js/app.js')}}></script>
     <script type="module" src={{url_for('static', filename='js/scrollBox.js')}}></script>
 
