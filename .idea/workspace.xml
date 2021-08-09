@@ -157,7 +157,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/data/update.py</url>
-          <line>88</line>
+          <line>87</line>
           <option name="timeStamp" value="11" />
         </line-breakpoint>
       </breakpoints>
