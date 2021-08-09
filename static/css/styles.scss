@@ -178,25 +178,25 @@ body {
 }
 
 /* width */
-::-webkit-scrollbar {
+.info-card__content::-webkit-scrollbar {
   width: 8px;
 }
 
 /* Handle */
-::-webkit-scrollbar-thumb {
+.info-card__content::-webkit-scrollbar-thumb {
   background: rgba(20,20,20,.35);
   border-radius: 8px;
 
 }
 
 /* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
+.info-card__content::-webkit-scrollbar-thumb:hover {
   background: rgba(20,20,20,.5);
 }
 
 /* Track */
-::-webkit-scrollbar-track {
-  background: none;
+.info-card__content::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 
