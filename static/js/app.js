@@ -420,13 +420,16 @@ require([
    function resetMap() {
      resetButtonClickHandler();
      goHome();
-     map.infoPane.destroy();
+     if (isMobile){
+      map.infoPane.destroy();
+     }
      const instructionsDiv = document.getElementsByClassName('instructions')[0];
      const instructionsContainer = document.getElementsByClassName('instructions__container')[0];
      setFlex(instructionsContainer, true);
      setFlex(instructionsDiv, true);
      instructionsDiv.classList.remove('instructions--inactive');
      instructionsContainer.classList.remove('instructions--inactive');
+     document.addEventListener('click', hideInstructionsDiv)
 
    }
  
@@ -483,6 +486,7 @@ require([
       }
     }
     view.watch(["interacting", 'center', 'stationary'], navigationBoundsEventListener);
+
    }
 
 
@@ -1558,21 +1562,25 @@ require([
 
     map.addMany(layers);
 
-    const infoPane = new CupertinoPane(
-      '.cupertino-pane', // Pane container selector
-      { 
-        parentElement: '.ui-top-left', // Parent container
-        breaks: {
-            middle: { enabled: false, height: 300,  },
-            bottom: { enabled: true, height: 100, bounce: true},
-        },
-        cssClass: 'card--active',
-        simulateTouch: true,
-        initialBreak:'bottom',
-        buttonDestroy:false,
-        onDrag: () => console.log('Drag event')
-      }
-    );
+    var infoPane;
+    if (isMobile) {
+      infoPane = new CupertinoPane(
+        '.cupertino-pane', // Pane container selector
+        { 
+          parentElement: '.ui-top-left', // Parent container
+          breaks: {
+              middle: { enabled: false, height: 300,  },
+              bottom: { enabled: true, height: 100, bounce: true},
+          },
+          cssClass: 'card--active',
+          simulateTouch: true,
+          initialBreak:'bottom',
+          buttonDestroy:false,
+          onDrag: () => console.log('Drag event')
+        }
+      );
+    }
+
 
     var returnObject = {
       'map': map,
@@ -1655,22 +1663,13 @@ require([
     instructionsContainer.classList.add('instructions--inactive');
     setTimeout(()=> {
       instructionsContainer.style.display = 'None';
-    }, 750)
+    }, 750);
+    document.removeEventListener('click', hideInstructionsDiv);
     //map.view.focus();
   }
 
-  
-  window.addEventListener('wheel', event => {
-    const { ctrlKey } = event
-    if (ctrlKey) {
-       event.preventDefault();
-       return
-    }
- }, { passive: false })
- 
-
   document.addEventListener('click', hideInstructionsDiv);
-  document.addEventListener('mousewheel', hideInstructionsDiv);
+  //document.addEventListener('mousewheel', hideInstructionsDiv);
 
 })
 
