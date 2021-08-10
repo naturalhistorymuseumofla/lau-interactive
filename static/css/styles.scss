@@ -143,7 +143,7 @@ body {
   width: $card-width;
   max-width: 77vw;
   border-radius: $card-border-radius;
-  background-color: rgba(29, 72, 90, 0.75);
+  background-color: rgba(23, 56, 70, 0.95);
   box-shadow: 0px 0px 10px 4px rgba(0, 0, 0, 0.75);
   overflow: none;
 }
@@ -177,15 +177,17 @@ body {
   transition: opacity 0.15s;
 }
 
+// SCROLLBAR 
+
 /* width */
 .info-card__content::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 /* Handle */
 .info-card__content::-webkit-scrollbar-thumb {
   background: rgba(20,20,20,.35);
-  border-radius: 8px;
+  border-radius: 6px;
 
 }
 
@@ -199,6 +201,13 @@ body {
   background: transparent;
 }
 
+@-moz-document url-prefix() {
+  .info-card__content {
+    scrollbar-color: rgba(20,20,20,.35) rgba(0,0,0,0);
+    scrollbar-width: thick;
+  }
+
+}
 
 
 .card__title {
@@ -681,8 +690,7 @@ img {
   width:100%;
   height:7px;
   border-radius:20px;
-  background-color: rgba(200,200,200,0.3);
-  backdrop-filter: blur(10px);
+  background-color: rgba(200,200,200,0.75);
   transition: width 1s ease-out;
 }
 
@@ -1283,9 +1291,7 @@ input:checked + .slider:before {
     background-color: rgba(225,225,225,0.5);
   }
   .pane, .card {
-    -webkit-backdrop-filter: $blur;
-    backdrop-filter: blur(10px);
-    background-color:rgba(29, 72, 90, 0.5);
+    -webkit-backdrop-filter: blur(10px);
   }
 }
 
