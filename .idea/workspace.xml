@@ -5,6 +5,7 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/static/css/styles.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/styles.min.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/static/css/styles.scss" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/styles.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/js/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/app.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

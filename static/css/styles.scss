@@ -204,7 +204,7 @@ body {
 @-moz-document url-prefix() {
   .info-card__content {
     scrollbar-color: rgba(20,20,20,.35) rgba(0,0,0,0);
-    scrollbar-width: thick;
+    scrollbar-width: thin;
   }
 
 }

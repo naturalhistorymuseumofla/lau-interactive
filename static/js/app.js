@@ -430,66 +430,7 @@ require([
      instructionsDiv.classList.remove('instructions--inactive');
      instructionsContainer.classList.remove('instructions--inactive');
      document.addEventListener('click', hideInstructionsDiv)
-
    }
- 
- 
-   map.view.when(() => {
-    const expandConstant = (isMobile) ? 5 : 2.5; 
-    map.view.extent.expand(expandConstant);
-    setNavigationBounds();
-   });
- 
- 
-   // Stops panning of the map past a defined bounding box
-   function setNavigationBounds() {
-     var view = map.view;
-     var initialExtent = view.extent;
-
-     function navigationBoundsEventListener(event) {
-      if (!event) {
-        return;
-      }
-      // If the map has moved to the point where it's center is
-      // outside the initial boundaries, then move it back to the
-      // edge where it moved out
-      var currentCenter = view.extent.center;
-      if (!initialExtent.contains(currentCenter)) {
-        /*
-        var newCenter = view.extent.center;
-
-
-        // check each side of the initial extent and if the
-        // current center is outside that extent,
-        // set the new center to be on the edge that it went out on
-        if (currentCenter.x < initialExtent.xmin) {
-          newCenter.x = initialExtent.xmin;
-        }
-        if (currentCenter.x > initialExtent.xmax) {
-          newCenter.x = initialExtent.xmax;
-        }
-        if (currentCenter.y < initialExtent.ymin) {
-          newCenter.y = initialExtent.ymin;
-        }
-        if (currentCenter.y > initialExtent.ymax) {
-          newCenter.y = initialExtent.ymax;
-        }
-        */
-
-        const goToOptions = {
-          animate: true,
-          duration: 500,
-          ease: 'linear'
-        }
-
-        view.goTo({ center: [-118.215, 34.225], scale: map.scale }, goToOptions);
-      }
-    }
-    view.watch(["interacting", 'center', 'stationary'], navigationBoundsEventListener);
-
-   }
-
-
 
   /* ==========================================================
      Functions to query & select localities layer
@@ -967,7 +908,7 @@ require([
     // Mounts splide 
     function newSplide() {
        splide = new Splide('.splide', {
-        lazyLoad: 'nearby',
+        lazyLoad: 'sequential',
       }).mount();
       return splide;
     }
@@ -1358,6 +1299,13 @@ require([
         rotationEnabled: false,
         minZoom: zoom, // Maximum zoom "out"
         maxZoom: 13, // Maximum zoom "in"
+        geometry: {
+          type: "extent",
+          xmin: -121.5,
+          ymin:  32.7,
+          xmax: -114.7,
+          ymax:  36.0
+        }
       },
       popup: {
         autoOpenEnabled: false,
