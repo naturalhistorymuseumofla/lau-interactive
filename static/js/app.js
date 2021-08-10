@@ -1490,7 +1490,7 @@ require([
     const selectedFeatureGraphicLayer = (isMobile) ? 
       new GraphicsLayer() :
       new GraphicsLayer({
-        effect: "drop-shadow(0px, 4px, 2px rgba(63, 153, 149, 0.75))",
+        effect: "drop-shadow(0px, 2px, 2px rgba(63, 153, 149, 0.75))",
       });
     const intersectingFeatureGraphicLayer = new GraphicsLayer();
     const selectedPhotoGraphicsLayer = new AnimatedPointLayer();
