@@ -160,6 +160,10 @@ body {
   opacity: 1;
 }
 
+.null-card__content {
+  display:none;
+}
+
 .card__content { 
   overflow-y: scroll;
   height: $card-section-height;
@@ -1405,6 +1409,10 @@ input:checked + .slider:before {
     width: 100%;
     background: rgba(0,0,0,0);
     box-shadow: 0px 0px rgba(0, 0, 0, 0);
+  }
+
+  .null-card__content {
+    display:block;
   }
 
   .pane {
