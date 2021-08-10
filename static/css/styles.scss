@@ -511,7 +511,7 @@ p {
 
 
 $taxa-col-width: 15rem;
-$taxa-row-gap: 1.5rem;
+$taxa-row-gap: 2.0rem;
 
 .taxa__grid {
   display:inline-grid;
@@ -545,7 +545,7 @@ $taxa-row-gap: 1.5rem;
 }
 
 .taxa__icon {
-  $radius: 5rem;
+  $radius: 6.15rem;
   border-radius: 50%;
   height: $radius;
   width: $radius;
@@ -606,8 +606,12 @@ $taxa-row-gap: 1.5rem;
   fill:#223a44;
 }
 
+.caption__description {
+  font-weight:700;
+  text-transform: uppercase;
+}
+
 .caption__taxon {
-  font-weight: 700;
   font-style: italic;
 }
 
@@ -1302,7 +1306,7 @@ input:checked + .slider:before {
 
 @media only screen and (max-height: 850px) {
   html {
-    font-size: calc(.2vmin + 7px);
+    font-size: calc(.25vh + 7px);
   }
   .widget {
     font-size: 1.5rem;
@@ -1381,66 +1385,84 @@ input:checked + .slider:before {
   bottom:90%;
 }
 
+[data-mobile=true] {
+  html {
+    font-size: calc(.25vmin + 7px);
+  }
 
-[data-mobile=true] .ui-top-left {
-  height: 100%;
-  width:100%;
+  .ui-top-left {
+    height: 100%;
+    width:100%;
+  }
+
+  .legend {
+    display: none;
+  }
+
+  .card {
+    pointer-events: auto;
+    max-width: 100%;
+    width: 100%;
+    background: rgba(0,0,0,0);
+    box-shadow: 0px 0px rgba(0, 0, 0, 0);
+  }
+
+  .pane {
+    -webkit-backdrop-filter: blur(15px);
+    backdrop-filter: blur(15px);
+  }
+
+  .zoom {
+    display: none;
+  }
+
+  .card__content {
+    height: auto;
+    max-height:none;
+  }
+
+  .info-card {
+    display: block;
+    opacity:1;
+  }
+
+  .menu__container, #noInfoCard{
+    display: none;
+  }
+
+  .cupertino-pane-wrapper {
+    opacity:1;
+  }
+
+  .draggable
+
+  .instructions {
+    @include card;
+  }
+
+  .close-button__info-card {
+    top:1%;
+  }
+
+  ::-webkit-scrollbar {
+    width:0px;
+  }
+
+  .null-card__content {
+    display: none;
+  }
+
+  .timescale__container {
+    max-width: auto;
+    width:100%;
+  }
+
+  .timescale {
+    width:80%;
+  }
+
 }
 
-[data-mobile=true] .legend {
-  display: none;
-}
-
-[data-mobile=true] .card {
-  pointer-events: auto;
-  max-width: 100%;
-  width: 100%;
-  background: rgba(0,0,0,0);
-  box-shadow: 0px 0px rgba(0, 0, 0, 0);
-}
-
-[data-mobile=true] #infoCard {
-  -webkit-backdrop-filter: blur(0px);
-  backdrop-filter: blur(0px);
-}
-
-
-[data-mobile=true] .menu__container, #noInfoCard{
-  display: none;
-}
-
-[data-mobile=true] .zoom {
-  display: none;
-}
-
-[data-mobile=true] .card__content {
-  height: auto;
-  max-height:none;
-}
-
-[data-mobile=true] .info-card {
-  display: block;
-  opacity:1;
-}
-
-[data-mobile=true] .cupertino-pane-wrapper {
-  opacity:1;
-}
-
-[data-mobile=true] .instructions {
-  @include card;
-}
-
-[data-mobile=true] .close-button__info-card {
-  top:0%;
-}
-
-[data-mobile=true] ::-webkit-scrollbar {
-  width:0px;
-}
-.null-card__content {
-  display: none;
-}
 
 
 

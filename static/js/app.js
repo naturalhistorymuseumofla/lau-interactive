@@ -730,77 +730,92 @@ require([
         'Clams, oysters': {
           'fileName': 'clam',
           'category': 'invertebrate',
-          'es': 'Almejas, ostras',
+          'es': 'Almejas, ostras, vieiras',
+          'en': 'Clams, oysters, scallops',
         },
         'Snails': {
           'fileName': 'snail',
           'category': 'invertebrate',
           'es': 'Caracoles',
+          'en': 'Snails'
         },
         'Sea urchins': {
           'fileName':'urchin',
           'category': 'invertebrate',
           'es': 'Erizos de mar',
+          'en': 'Sea urchins',
         },
         'Worms': {
           'fileName': 'worm',
           'category': 'invertebrate',
           'es': 'Gusanos',
+          'en': 'Worms',
         },
         'Crabs, shrimps': {
           'fileName': 'crab',
           'category': 'invertebrate',
           'es': 'Cangrejos, camarones',
+          'en': 'Crabs, shrimp',
         },
         'Nautiloids': {
           'fileName': 'ammonoid',
           'category': 'invertebrate',
-          'es': 'Nautiloideos',
+          'es': 'Ammoniodeos, nautiloideos, pulpos',
+          'en': 'Ammonoids, nautiloids, octopuses'
         },
         'Corals': {
           'fileName': 'coral',
           'category': 'invertebrate',
           'es': 'Corales',
+          'en': 'Corals'
         },
         'Barnacles': {
           'fileName': 'barnacle',
           'category': 'invertebrate',
-          'es': 'Percebes'
+          'es': 'Percebes',
+          'en': 'Barnacles',
         },
         'Scaphopods': {
           'fileName': 'scaphopod',
           'category': 'invertebrate',
           'es': 'Conchas colmillo',
+          'en': 'Tusk shells'
         },
         'Sharks, rays': {
           'fileName': 'shark',
           'category': 'vertebrate',
           'es': 'Tiburones, rayas',
+          'en': 'Sharks, rays',
         },
         'Fish': {
           'fileName': 'fish',
           'category': 'vertebrate',
           'es': 'Peces',
+          'en': 'Fish',
         },
         'Birds': {
           'fileName': 'bird',
           'category': 'vertebrate',
           'es': 'Aves',
+          'en': 'Birds',
         },
         'Whales, dolphins': {
           'fileName': 'whale',
           'category': 'vertebrate',
           'es': 'Ballenas, delfines',
+          'en': 'Whales, dolphins',
         },
         'Microfossils': {
           'fileName': 'magnifying-glass',
           'category': 'invertebrate',
           'es': 'Microfósiles',
+          'en': 'Microfossils'
         },
         'Walruses, seals': {
           'fileName': 'walrus',
           'category': 'vertebrate',
           'es': 'Focas, otarios, morsas',
+          'en': 'Seals, sea lions, walruses'
         },
       }
       // Create document fragments to insert taxa items
@@ -820,6 +835,7 @@ require([
           const fileName = taxaObj[taxon]['fileName'];
           const category = taxaObj[taxon]['category'];
           const spanishName = taxaObj[taxon]['es'];
+          const englishName = taxaObj[taxon]['en'];
           taxaIcon.src = `/static/images/${fileName}.svg`;
           // Create english and spanish text elements
           const englishTaxonText = document.createElement("p"); 
@@ -829,7 +845,7 @@ require([
           spanishTaxonText.lang = 'es';
           cell.classList.add('taxa__cell');
           taxaIcon.classList.add('taxa__icon');
-          englishTaxonText.innerHTML = `${number.toLocaleString()}<br>${taxon}`;
+          englishTaxonText.innerHTML = `${number.toLocaleString()}<br>${englishName}`;
           spanishTaxonText.innerHTML = `${number.toLocaleString('es')}<br>${spanishName}`;
           cell.append(taxaIcon, englishTaxonText, spanishTaxonText);
           // Append cell to appropriate fragment
@@ -861,7 +877,8 @@ require([
         const li = document.createElement('li');
         const captions = formatCaptions(photo);
         // Format HTML for Splide carousel
-        img.setAttribute('data-splide-lazy', photo.url);
+        //img.setAttribute('data-splide-lazy', photo.url);
+        img.src = photo.url
         li.classList.add('splide__slide');
         const newSlide = splideListFrag.appendChild(li);
         const div = document.createElement('div');
@@ -888,23 +905,30 @@ require([
     // Foramts captions from photos array for splide carousel
     function formatCaptions(photo) {
       // Create captions divs 
-      const specimenCaption = document.createElement('p');
       const taxonCaption = document.createElement('p');
-      taxonCaption.classList.add('caption__taxon')
       const ageCaption = document.createElement('p');
       const descriptionCaption = document.createElement('p');
+      const catNumberCaption = document.createElement('p')
       const captionsDiv = document.createElement('div');
+
+      // Add classes to style captions
+      taxonCaption.classList.add('caption__taxon');
+      descriptionCaption.classList.add('caption__description');
 
       // Add photo info to divs
       taxonCaption.innerHTML = photo.taxon;
       ageCaption.innerHTML = photo.age.replace(' - ', '-').toLowerCase(); // Fix this in the database
       descriptionCaption.innerHTML = photo.description;
-      const catNumberCaption = document.createTextNode(`${photo.display_id}`);
+      catNumberCaption.innerHTML = `${photo.display_id}`;
       captionsDiv.classList.add('splide__captions');
 
       // Append caption divs to parent divs
-      specimenCaption.append(taxonCaption, catNumberCaption);
-      captionsDiv.append(specimenCaption, ageCaption, descriptionCaption);
+      captionsDiv.append(
+        descriptionCaption,
+        taxonCaption,
+        ageCaption,
+        catNumberCaption
+      );
 
       return captionsDiv;
     }
@@ -912,7 +936,7 @@ require([
     // Mounts splide 
     function newSplide() {
        splide = new Splide('.splide', {
-        lazyLoad: 'sequential',
+        //lazyLoad: 'sequential',
       }).mount();
       return splide;
     }
