@@ -1410,6 +1410,15 @@ input:checked + .slider:before {
   .pane {
     -webkit-backdrop-filter: blur(15px);
     backdrop-filter: blur(15px);
+    box-shadow: 0px 0px 4px 4px rgba(0, 0, 0, .30);
+  }
+
+  .instructions {
+    -webkit-backdrop-filter: blur(15px);
+    backdrop-filter: blur(15px);
+    background-color: var(--cupertino-pane-background);
+    max-width: 90vw;
+    box-shadow: 0px 0px 4px 4px rgba(0, 0, 0, .30);
   }
 
   .zoom {
@@ -1434,7 +1443,6 @@ input:checked + .slider:before {
     opacity:1;
   }
 
-  .draggable
 
   .instructions {
     @include card;
@@ -1443,6 +1451,7 @@ input:checked + .slider:before {
   .close-button__info-card {
     top:1%;
   }
+
 
   ::-webkit-scrollbar {
     width:0px;
@@ -1453,12 +1462,17 @@ input:checked + .slider:before {
   }
 
   .timescale__container {
-    max-width: auto;
+    max-width: 100%;
     width:100%;
   }
 
   .timescale {
-    width:80%;
+    width:85%;
+  }
+
+  .taxa__icon {
+    height: 8rem;
+    width:8rem;
   }
 
 }
