@@ -169,6 +169,11 @@ body {
   text-align: center; 
   margin: 0rem 1rem 1rem 1rem;
   max-height:55vh;
+  will-change: scroll-position;
+}
+
+.card__content > * {
+  will-change: scroll-position;
 }
 
 .animate-card {

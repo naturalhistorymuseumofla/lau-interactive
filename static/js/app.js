@@ -415,6 +415,10 @@ require([
     clearInterval(resetMapSetInterval);
     resetMapSetInterval = setInterval(resetMap, 60000);
   });
+  document.addEventListener('mousewheel', function(){
+    clearInterval(resetMapSetInterval);
+    resetMapSetInterval = setInterval(resetMap, 60000);
+  });
 
    //document.onclick = clearInterval(resetMapSetInterval);
    function resetMap() {
