@@ -377,8 +377,6 @@ require([
     }
   });
 
-  const zoomInDiv = document.getElementById("zoomIn");
-  const zoomOutDiv = document.getElementById("zoomOut");
 
   /* ==========================================================
     Initialize map
@@ -404,21 +402,6 @@ require([
   */
 
 
-   // Refresh map after period of inactivity
-  var resetMapSetInterval = setInterval(resetMap, 60000);
-
-  document.addEventListener('click', function(){
-    clearInterval(resetMapSetInterval);
-    resetMapSetInterval = setInterval(resetMap, 60000);
-  });
-  document.addEventListener('touchstart', function(){
-    clearInterval(resetMapSetInterval);
-    resetMapSetInterval = setInterval(resetMap, 60000);
-  }, {passive:true});
-  document.addEventListener('mousewheel', function(){
-    clearInterval(resetMapSetInterval);
-    resetMapSetInterval = setInterval(resetMap, 60000);
-  }), {passive:true};
 
    //document.onclick = clearInterval(resetMapSetInterval);
    function resetMap() {
@@ -569,7 +552,6 @@ require([
       .then(feature => {
         // Test if any map features were clicked/returned
         if (feature.results[0]) {
-          console.log(feature);
           main(feature.results[0].graphic);
         // If nothing returned, reset map
         } else {
@@ -1038,20 +1020,38 @@ require([
      Event handler functions
     ========================================================== */
 
-    // Add event listeners to custom widgets
-    for (let button of document.getElementsByClassName('close-button')) {
-      button.addEventListener("click", resetButtonClickHandler);
-      button.addEventListener("touchstart", resetButtonClickHandler);
-    }
+   // Refresh map after period of inactivity
+   var resetMapSetInterval = setInterval(resetMap, 60000);
 
+   document.addEventListener('click', function(event) {
+     // Idle timer event handling
+     clearInterval(resetMapSetInterval);
+     resetMapSetInterval = setInterval(resetMap, 60000);
+     // Close button event handling
+     if (event.target.classList.contains('close-button')) {
+       resetButtonClickHandler();
+     // Zoom buttons event handling
+     } else if (event.target.id === "zoomIn"){
+       map.zoomViewModel.zoomIn();
+     } else if (event.target.id === "zoomOut"){
+       map.zoomViewModel.zoomOut();
+     }
+   });
+   document.addEventListener('touchstart', function(event) {
+     // Idle timer event handling
+     clearInterval(resetMapSetInterval);
+     resetMapSetInterval = setInterval(resetMap, 60000);
+     //Close button event handling
+     if (event.target.classList.contains('close-button')) {
+       resetButtonClickHandler();
+     }
+   }, {passive:true});
+   
+   document.addEventListener('mousewheel', function(){
+     clearInterval(resetMapSetInterval);
+     resetMapSetInterval = setInterval(resetMap, 60000);
+   }), {passive:true};
 
-    // Click events for zoom widgets
-    zoomInDiv.addEventListener("click", () => {
-      map.zoomViewModel.zoomIn();
-    });
-    zoomOutDiv.addEventListener("click", () => {
-      map.zoomViewModel.zoomOut();
-    });
 
     // Click event for select feature from feature layers
     map.view.on("click", function (event) {
@@ -1609,7 +1609,6 @@ require([
         returnGeometry: true,
       }
       areasLayer.queryFeatures(query).then((results) => {
-        console.log(results.features[0].geometry.extent)
         main(results.features[0]);
 
       })
