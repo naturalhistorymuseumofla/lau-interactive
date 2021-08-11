@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="80110b40-11bc-4ba2-b490-f798780d0fea" name="Default Changelist" comment="" />
+    <list default="true" id="80110b40-11bc-4ba2-b490-f798780d0fea" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/css/styles.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/styles.min.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/css/styles.scss" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/styles.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/js/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/app.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/js/scrollBox.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/scrollBox.js" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

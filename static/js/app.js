@@ -414,11 +414,11 @@ require([
   document.addEventListener('touchstart', function(){
     clearInterval(resetMapSetInterval);
     resetMapSetInterval = setInterval(resetMap, 60000);
-  });
+  }, {passive:true});
   document.addEventListener('mousewheel', function(){
     clearInterval(resetMapSetInterval);
     resetMapSetInterval = setInterval(resetMap, 60000);
-  });
+  }), {passive:true};
 
    //document.onclick = clearInterval(resetMapSetInterval);
    function resetMap() {
@@ -433,7 +433,7 @@ require([
      setFlex(instructionsDiv, true);
      instructionsDiv.classList.remove('instructions--inactive');
      instructionsContainer.classList.remove('instructions--inactive');
-     document.addEventListener('click', hideInstructionsDiv)
+     document.addEventListener('click', hideInstructionsDiv, {once:true})
    }
 
   /* ==========================================================
@@ -1640,11 +1640,10 @@ require([
     setTimeout(()=> {
       instructionsContainer.style.display = 'None';
     }, 750);
-    document.removeEventListener('click', hideInstructionsDiv);
     //map.view.focus();
   }
 
-  document.addEventListener('click', hideInstructionsDiv);
+  document.addEventListener('click', hideInstructionsDiv, {once:true});
   //document.addEventListener('mousewheel', hideInstructionsDiv);
 
 })

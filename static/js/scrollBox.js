@@ -1,7 +1,6 @@
 
 $(document).ready(function(){
 	var contentSection = $('.card__content');
-	var navigation = $('nav');
 	
 	// When a nav link is clicked, smooth scroll to the section
 	$("a").on('click', function(event) {
