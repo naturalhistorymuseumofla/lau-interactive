@@ -322,6 +322,7 @@ body {
   background-color: $lau-light-grey;
   border-radius: 50%;
   padding:0.25rem;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .button__path {
