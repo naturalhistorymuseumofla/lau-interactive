@@ -23,7 +23,6 @@ require([
   "esri/core/promiseUtils",
   "esri/core/watchUtils",
   "esri/geometry/support/webMercatorUtils",
-  "esri/widgets/Search",
 ], function (
   Map,
   MapView,
@@ -40,7 +39,6 @@ require([
   promiseUtils,
   watchUtils,
   webMercatorUtils,
-  Search
 ) {
 
   
@@ -1593,26 +1591,6 @@ require([
       widget.style.opacity = '1';
     }
 
-    // Create a search widget
-    const searchWidget = new Search({
-      view: view,
-      visible: true,
-      popupEnabled: false,
-    });
-
-    searchWidget.on('search-complete', (event)=>{
-      const searchFeature = event.results[0].results[0].feature;
-      const query = {
-        geometry: searchFeature.geometry,
-        spatialRelationship: "intersects",
-        outFields: ["*"],
-        returnGeometry: true,
-      }
-      areasLayer.queryFeatures(query).then((results) => {
-        main(results.features[0]);
-
-      })
-    });
 
     /*
     if (isMobile) {
