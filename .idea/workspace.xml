@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="80110b40-11bc-4ba2-b490-f798780d0fea" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/data/update.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/update.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/js/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/app.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -156,9 +156,9 @@
           <option name="timeStamp" value="5" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/data/update.py</url>
-          <line>87</line>
-          <option name="timeStamp" value="11" />
+          <url>file://$PROJECT_DIR$/app.py</url>
+          <line>8</line>
+          <option name="timeStamp" value="6" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

@@ -1,9 +1,11 @@
 
-var isMobile  = (window.screen.height < 1024 || window.screen.width < 1024) ? true : false;
+//var isMobile  = (window.screen.height < 1024 || window.screen.width < 1024) ? true : false;
+var isMobile  = (screen.height < 719 || screen.width < 1023) ? true : false;
 
 if (isMobile) {
   document.documentElement.setAttribute('data-mobile', 'true');
 }
+
 
 require([
   'esri/Map',
@@ -21,7 +23,6 @@ require([
   "esri/core/promiseUtils",
   "esri/core/watchUtils",
   "esri/geometry/support/webMercatorUtils",
-  "esri/widgets/Search",
 ], function (
   Map,
   MapView,
@@ -38,7 +39,6 @@ require([
   promiseUtils,
   watchUtils,
   webMercatorUtils,
-  Search
 ) {
 
   
@@ -374,13 +374,7 @@ require([
       }
     }
   });
-  
-  
 
-
-
-  const zoomInDiv = document.getElementById("zoomIn");
-  const zoomOutDiv = document.getElementById("zoomOut");
 
   /* ==========================================================
     Initialize map
@@ -389,87 +383,39 @@ require([
 
   var map = setUpMap();
 
-   // Refresh map after period of inactivity
-  var resetMapSetInterval = setInterval(resetMap, 30000);
 
-  document.addEventListener('click', function(){
-    clearInterval(resetMapSetInterval);
-    resetMapSetInterval = setInterval(resetMap, 30000);
+  /*
+  window.addEventListener('orientationchange', ()=> {
+    const isMobileCheck  = (screen.height < 719 || screen.width < 1023) ? true : false;
+    if (isMobileCheck !== isMobile) {
+      isMobile = isMobileCheck
+      resetMap();
+      if (isMobile) {
+        document.documentElement.setAttribute('data-mobile', 'true');
+      } else {
+        document.documentElement.setAttribute('data-mobile', 'false');
+      }
+    }
   });
-  document.addEventListener('touchstart', function(){
-    clearInterval(resetMapSetInterval);
-    resetMapSetInterval = setInterval(resetMap, 30000);
-  });
+  */
+
+
 
    //document.onclick = clearInterval(resetMapSetInterval);
    function resetMap() {
      resetButtonClickHandler();
+     goHome();
+     if (isMobile){
+      map.infoPane.destroy();
+     }
      const instructionsDiv = document.getElementsByClassName('instructions')[0];
      const instructionsContainer = document.getElementsByClassName('instructions__container')[0];
-     setDisplay(instructionsContainer, true);
+     setFlex(instructionsContainer, true);
      setFlex(instructionsDiv, true);
-     instructionsDiv.style.opacity = 1;
-     instructionsContainer.style.opacity = 1;
+     instructionsDiv.classList.remove('instructions--inactive');
+     instructionsContainer.classList.remove('instructions--inactive');
+     document.addEventListener('click', hideInstructionsDiv, {once:true})
    }
- 
- 
-   map.view.when(() => {
-     map.view.extent.expand(2.5);
-     setNavigationBounds();
-   });
- 
- 
-   // Stops panning of the map past a defined bounding box
-   function setNavigationBounds() {
-     var view = map.view;
-     var initialExtent = view.extent;
-
-     function navigationBoundsEventListener(event) {
-      if (!event) {
-        return;
-      }
-      // If the map has moved to the point where it's center is
-      // outside the initial boundaries, then move it back to the
-      // edge where it moved out
-      var currentCenter = view.extent.center;
-      if (!initialExtent.contains(currentCenter)) {
-        /*
-        var newCenter = view.extent.center;
-
-
-        // check each side of the initial extent and if the
-        // current center is outside that extent,
-        // set the new center to be on the edge that it went out on
-        if (currentCenter.x < initialExtent.xmin) {
-          newCenter.x = initialExtent.xmin;
-        }
-        if (currentCenter.x > initialExtent.xmax) {
-          newCenter.x = initialExtent.xmax;
-        }
-        if (currentCenter.y < initialExtent.ymin) {
-          newCenter.y = initialExtent.ymin;
-        }
-        if (currentCenter.y > initialExtent.ymax) {
-          newCenter.y = initialExtent.ymax;
-        }
-        */
-
-        const goToOptions = {
-          animate: true,
-          duration: 450,
-          ease: 'linear'
-        }
-
-        view.goTo({ center: [-118.215, 34.225], scale: map.scale }, goToOptions);
-      }
-    }
-    //document.addEventListener('click', navigationBoundsEventListener);
-    //document.addEventListener('touchstart', navigationBoundsEventListener);
-    view.watch(["interacting", 'center', 'stationary'], navigationBoundsEventListener);
-    //view.watch("extent", navigationBoundsEventListener);
-   }
-
-
 
   /* ==========================================================
      Functions to query & select localities layer
@@ -517,57 +463,59 @@ require([
       const geometry = feature.geometry;
       const featureName = feature.attributes.name;
       const geometryOffset = -(geometry.extent.width / 2);
-      const scale = returnZoomScale(feature);
       const goToOptions = {
         animate: true,
         duration: 800,
         ease: 'ease-in'
       }
-      if (featureName === 'Los Angeles') {
-        map.view
-          .goTo({
+
+      const zoomOptions = {
+        true: {
+          'Los Angeles': {
+            center: [-118.3, 34.25],
+            scale: returnZoomScale(feature),
+          },
+          'Santa Barbara': {
+            center: [-120.1, 34.8],
+          },
+          default: {
+            center: geometry,
+          }
+        },
+        false: {
+          'Los Angeles': {
             center: [-118.735491, 34.222515],
-            scale:(scale-2000000),
-          }, goToOptions)
+            scale: returnZoomScale(feature),
+          },
+          'Ventura': {
+            center: [-119.254898, 34.515522],
+            scale: returnZoomScale(feature),
+          },
+          default: {
+            center: geometry.extent.expand(2).offset(geometryOffset, 0),
+          }
+
+        }
+      }
+      if (featureName in zoomOptions[isMobile]) {
+        map.view
+        .goTo(zoomOptions[isMobile][featureName], goToOptions)
+        .catch(function (error) {
+          if (error.name != 'AbortError') {
+            console.error(error);
+          }
+        }, goToOptions);
+      } else {
+        map.view
+          .goTo(zoomOptions[isMobile].default, goToOptions)
           .catch(function (error) {
             if (error.name != 'AbortError') {
               console.error(error);
             }
           }, goToOptions);
-      } else if (featureName == 'Ventura') {
-        map.view
-          .goTo({
-            center: [-119.254898, 34.515522],
-            scale:scale,
-          }, goToOptions)
-          .catch(function (error) {
-            if (error.name != 'AbortError') {
-              console.error(error);
-            }
-          });
-      } else {
-        if (isMobile) {
-          map.view
-            .goTo({
-              center: geometry.extent.center,
-              scale:scale
-            })
-            .catch(function(error){
-              if (error.name != 'AborError') {
-                console.error(error);
-              }
-            })
-        } else {
-          map.view
-          .goTo(geometry.extent.expand(2).offset(geometryOffset, 0), goToOptions)
-          .catch(function (error) {
-            if (error.name != 'AbortError') {
-              console.error(error);
-            }
-          });
-        }
       }
     }
+    
 
     async function getQuery(feature) {
       const queryObject = {
@@ -602,7 +550,6 @@ require([
       .then(feature => {
         // Test if any map features were clicked/returned
         if (feature.results[0]) {
-          console.log(feature);
           main(feature.results[0].graphic);
         // If nothing returned, reset map
         } else {
@@ -612,14 +559,19 @@ require([
     }
 
     function populateNullCards(featureName) {
-      const infoCard = document.getElementById('infoCard');
-      if (infoCard.style.display != 'none') {
-        hideDiv(infoCard);
-        setTimeout(()=> {
-          displayDiv('#noInfoCard');
-        }, 550)
+      if (isMobile) {
+        hideDiv(document.getElementsByClassName('info-card__content')[0]);
+        displayDiv(document.getElementsByClassName('null-card__content')[0]);
       } else {
-        displayDiv('#noInfoCard');
+        const infoCard = document.getElementById('infoCard');
+        if (infoCard.style.display != 'none') {
+          hideDiv(infoCard);
+          setTimeout(()=> {
+            displayDiv('#noInfoCard');
+          }, 550);
+        } else {
+          displayDiv('#noInfoCard');
+        }
       }
 
       for (let div of document.getElementsByClassName('featureName')) {
@@ -630,15 +582,19 @@ require([
     function populateInfoCards(stats) {
       const taxaInfoDiv = document.getElementsByClassName('taxa--info')[0];
       const taxaNullDiv = document.getElementsByClassName('taxa--null')[0];
-      const excavationDiv = document.getElementById('excavationNumber');
       const photosDiv = document.getElementById('photos');
       const photosNullDiv = document.getElementsByClassName('photos--null')[0];
       const photoLegend = document.getElementsByClassName('photo-indicator')[0];
       let photosButton = document.getElementsByClassName('photos__button');
-      const cardContentDiv = document.getElementsByClassName('card__content')[0];
 
       // Hide appropriate divs
-      hideDiv('#noInfoCard');
+      if (isMobile) {
+        hideDiv(document.getElementsByClassName('null-card__content')[0]);
+        document.getElementsByClassName('info-card__content')[0].style.display='block';
+      } else {
+        hideDiv('#noInfoCard');
+      }
+
 
 
       // Highlight locality selected in query
@@ -651,7 +607,11 @@ require([
       }
 
       // Set excavation site number 
-      excavationDiv.innerHTML = `${(stats.number_of_sites).toLocaleString()}`;
+      document.querySelector('.excavation-number[lang=en]')
+      .innerHTML = `${(stats.number_of_sites).toLocaleString()}`;
+
+      document.querySelector('.excavation-number[lang=es]')
+      .innerHTML = `${(stats.number_of_sites).toLocaleString('es')}`;
 
       // Reset taxa lists
       const taxaLists = document.getElementsByClassName('taxa__list');
@@ -665,15 +625,13 @@ require([
         setFlex(taxaInfoDiv, true);
         const taxa = stats.taxa;
         const fossilsFound = Object.values(taxa).reduce((a, b) => a + b);
-        document.getElementById('fossilsFound').innerHTML = fossilsFound.toLocaleString();
+        document.querySelector('.fossils-found[lang=en]')
+        .innerHTML = fossilsFound.toLocaleString();
+        document.querySelector('.fossils-found[lang=es]')
+        .innerHTML = fossilsFound.toLocaleString('es');
         populateTaxa(taxa);
-
-        // Display or hide more buttons based on number of taxa
-        const moreButtons = document.getElementsByClassName('more');
-        for (let button of moreButtons) {
-          displayMoreButton(button);
-        }
       } else {
+        // Hide taxa divs
         setFlex(taxaInfoDiv, false);
         setFlex(taxaNullDiv, true);
       }
@@ -752,89 +710,100 @@ require([
         'Clams, oysters': {
           'fileName': 'clam',
           'category': 'invertebrate',
-          'es': 'Almejas, ostras',
+          'es': 'Almejas, ostras, vieiras',
+          'en': 'Clams, oysters, scallops',
         },
         'Snails': {
           'fileName': 'snail',
           'category': 'invertebrate',
           'es': 'Caracoles',
+          'en': 'Snails'
         },
         'Sea urchins': {
           'fileName':'urchin',
           'category': 'invertebrate',
           'es': 'Erizos de mar',
+          'en': 'Sea urchins',
         },
         'Worms': {
           'fileName': 'worm',
           'category': 'invertebrate',
           'es': 'Gusanos',
+          'en': 'Worms',
         },
         'Crabs, shrimps': {
           'fileName': 'crab',
           'category': 'invertebrate',
           'es': 'Cangrejos, camarones',
+          'en': 'Crabs, shrimp',
         },
         'Nautiloids': {
           'fileName': 'ammonoid',
           'category': 'invertebrate',
-          'es': 'Nautiloideos',
+          'es': 'Ammoniodeos, nautiloideos, pulpos',
+          'en': 'Ammonoids, nautiloids, octopuses'
         },
         'Corals': {
           'fileName': 'coral',
           'category': 'invertebrate',
           'es': 'Corales',
+          'en': 'Corals'
         },
         'Barnacles': {
           'fileName': 'barnacle',
           'category': 'invertebrate',
-          'es': 'Percebes'
+          'es': 'Percebes',
+          'en': 'Barnacles',
         },
         'Scaphopods': {
           'fileName': 'scaphopod',
           'category': 'invertebrate',
           'es': 'Conchas colmillo',
+          'en': 'Tusk shells'
         },
         'Sharks, rays': {
           'fileName': 'shark',
           'category': 'vertebrate',
           'es': 'Tiburones, rayas',
+          'en': 'Sharks, rays',
         },
         'Fish': {
           'fileName': 'fish',
           'category': 'vertebrate',
           'es': 'Peces',
+          'en': 'Fish',
         },
         'Birds': {
           'fileName': 'bird',
           'category': 'vertebrate',
           'es': 'Aves',
+          'en': 'Birds',
         },
         'Whales, dolphins': {
           'fileName': 'whale',
           'category': 'vertebrate',
           'es': 'Ballenas, delfines',
+          'en': 'Whales, dolphins',
         },
         'Microfossils': {
           'fileName': 'magnifying-glass',
           'category': 'invertebrate',
           'es': 'Microfósiles',
+          'en': 'Microfossils'
         },
         'Walruses, seals': {
           'fileName': 'walrus',
           'category': 'vertebrate',
           'es': 'Focas, otarios, morsas',
+          'en': 'Seals, sea lions, walruses'
         },
       }
       // Create document fragments to insert taxa items
-      let invertTopFrag = document.createDocumentFragment();
-      let invertBottomFrag = document.createDocumentFragment();
-      let vertTopFrag = document.createDocumentFragment();
-      let vertBottomFrag = document.createDocumentFragment();
+      let invertFrag = document.createDocumentFragment();
+      let vertFrag = document.createDocumentFragment();
       // Get reference to the top and bottom lists for the invert/vert lists
-      const vertTopList = document.getElementsByClassName('vert__top-list')[0];
-      const invertTopList = document.getElementsByClassName('invert__top-list')[0];
-      const vertBottomList = document.getElementsByClassName('vert__bottom-list')[0];
-      const invertBottomList = document.getElementsByClassName('invert__bottom-list')[0];
+      const vertList = document.getElementsByClassName('vert__list')[0];
+      const invertList = document.getElementsByClassName('invert__list')[0];
       // Sort taxa object and by using Object.entries to create an array of arrays
       const sortedTaxaLists = Object.entries(taxa).sort((a,b) => b[1]-a[1])
       for (const taxonList of sortedTaxaLists) {
@@ -846,6 +815,7 @@ require([
           const fileName = taxaObj[taxon]['fileName'];
           const category = taxaObj[taxon]['category'];
           const spanishName = taxaObj[taxon]['es'];
+          const englishName = taxaObj[taxon]['en'];
           taxaIcon.src = `/static/images/${fileName}.svg`;
           // Create english and spanish text elements
           const englishTaxonText = document.createElement("p"); 
@@ -855,22 +825,20 @@ require([
           spanishTaxonText.lang = 'es';
           cell.classList.add('taxa__cell');
           taxaIcon.classList.add('taxa__icon');
-          englishTaxonText.innerHTML = `${number.toLocaleString()}<br>${taxon}`;
-          spanishTaxonText.innerHTML = `${number.toLocaleString()}<br>${spanishName}`;
+          englishTaxonText.innerHTML = `${number.toLocaleString()}<br>${englishName}`;
+          spanishTaxonText.innerHTML = `${number.toLocaleString('es')}<br>${spanishName}`;
           cell.append(taxaIcon, englishTaxonText, spanishTaxonText);
+          // Append cell to appropriate fragment
           if (category === "invertebrate") {
-            (invertTopFrag.childElementCount === 4) ? invertBottomFrag.append(cell) :
-            invertTopFrag.append(cell);
+            invertFrag.append(cell);
           } else if (category === "vertebrate") {
-            (vertTopFrag.childElementCount === 4) ? vertBottomFrag.append(cell) :
-            vertTopFrag.append(cell);
+            vertFrag.append(cell);
           }
         }
       }
-      invertTopList.append(invertTopFrag);
-      invertBottomList.append(invertBottomFrag);
-      vertTopList.append(vertTopFrag);
-      vertBottomList.append(vertBottomFrag);
+      // Append all lists to their fragments
+      invertList.append(invertFrag);
+      vertList.append(vertFrag);
     }
 
     /* ==========================================================
@@ -889,7 +857,8 @@ require([
         const li = document.createElement('li');
         const captions = formatCaptions(photo);
         // Format HTML for Splide carousel
-        img.src = photo.url;
+        //img.setAttribute('data-splide-lazy', photo.url);
+        img.src = photo.url
         li.classList.add('splide__slide');
         const newSlide = splideListFrag.appendChild(li);
         const div = document.createElement('div');
@@ -916,31 +885,38 @@ require([
     // Foramts captions from photos array for splide carousel
     function formatCaptions(photo) {
       // Create captions divs 
-      const specimenCaption = document.createElement('p');
-      const taxonCaption = document.createElement('span');
-      taxonCaption.classList.add('caption__taxon')
+      const taxonCaption = document.createElement('p');
       const ageCaption = document.createElement('p');
       const descriptionCaption = document.createElement('p');
+      const catNumberCaption = document.createElement('p')
       const captionsDiv = document.createElement('div');
+
+      // Add classes to style captions
+      taxonCaption.classList.add('caption__taxon');
+      descriptionCaption.classList.add('caption__description');
 
       // Add photo info to divs
       taxonCaption.innerHTML = photo.taxon;
       ageCaption.innerHTML = photo.age.replace(' - ', '-').toLowerCase(); // Fix this in the database
       descriptionCaption.innerHTML = photo.description;
-      const catNumberCaption = document.createTextNode(` (${photo.display_id})`);
+      catNumberCaption.innerHTML = `${photo.display_id}`;
       captionsDiv.classList.add('splide__captions');
 
       // Append caption divs to parent divs
-      specimenCaption.append(taxonCaption, catNumberCaption);
-      captionsDiv.append(specimenCaption, ageCaption, descriptionCaption);
+      captionsDiv.append(
+        descriptionCaption,
+        taxonCaption,
+        ageCaption,
+        catNumberCaption
+      );
 
       return captionsDiv;
     }
 
     // Mounts splide 
     function newSplide() {
-      splide = new Splide('.splide', {
-        lazyLoad: true,
+       splide = new Splide('.splide', {
+        //lazyLoad: 'sequential',
       }).mount();
       return splide;
     }
@@ -1036,97 +1012,44 @@ require([
       }
     }
 
-    // Add corresponding intersecting features as graphics to a 
-    // clientFeatureLayer
-    function displayIntersectingGraphics(feature) {
-      const intersectionObj = {
-        'county': map.regionsLayer,
-        'region': map.neighborhoodsLayer
-      }
-      const query = {
-        where: `parent_region = '${feature.attributes.name}'`,
-        returnGeometry: true,
-        outFields: ["*"],
-      }
-      removeFeatures();
-      intersectionObj[feature.attributes.region_type]
-      .queryFeatures(query)
-        .then(results => {
-          addFeatures(results);
-        })
-    }
-
-    // Adds features to clientFeatureLayer
-    function addFeatures(results) {
-      var graphics = [];
-      results.features.forEach(feature => {
-        var graphic = new Graphic({
-          source: results.features,
-          geometry: feature.geometry,
-          attributes: {
-            name: feature.attributes.name,
-            region_type: feature.layer.title,
-          },
-        });
-        graphics.push(graphic);
-      });
-      const edits = {
-        addFeatures: graphics,
-      };
-      applyEditsToClientFeatureLayer(edits);
-    }
-
-    
-    // Removes all features from clientFeatureLayer, resetting it
-    function removeFeatures() {
-      map.clientFeatureLayer.queryFeatures().then(function (results) {
-        const removeFeatures = {
-          deleteFeatures: results.features,
-        };
-        applyEditsToClientFeatureLayer(removeFeatures);
-      });
-    }
-
-    // Helper function that applies edits made ot clientFeatureLayer
-    function applyEditsToClientFeatureLayer(edits) {
-      map.clientFeatureLayer
-        .applyEdits(edits)
-        .then(results => {
-          // if features were added - call queryFeatures to return newly added graphics
-          if (results.addFeatureResults.length > 0) {
-            var objectIds = [];
-            results.addFeatureResults.forEach(feature => {
-              objectIds.push(feature.objectId);
-            });
-            // query the newly added features from the layer
-            map.clientFeatureLayer
-              .queryFeatures({
-                objectIds: objectIds,
-              })
-          }
-        })
-        .catch(error => {
-          console.log(error);
-        });
-    }
-
 
 
     /* ==========================================================
      Event handler functions
     ========================================================== */
 
-    // Add event listeners to custom widgets
-    document.getElementById('resetWidget')
-    .addEventListener("click", resetButtonClickHandler);
+   // Refresh map after period of inactivity
+   var resetMapSetInterval = setInterval(resetMap, 60000);
 
-    // Click events for zoom widgets
-    zoomInDiv.addEventListener("click", () => {
-      map.zoomViewModel.zoomIn();
-    });
-    zoomOutDiv.addEventListener("click", () => {
-      map.zoomViewModel.zoomOut();
-    });
+   document.addEventListener('click', function(event) {
+     // Idle timer event handling
+     clearInterval(resetMapSetInterval);
+     resetMapSetInterval = setInterval(resetMap, 60000);
+     // Close button event handling
+     if (event.target.classList.contains('close-button')) {
+       resetButtonClickHandler();
+     // Zoom buttons event handling
+     } else if (event.target.id === "zoomIn"){
+       map.zoomViewModel.zoomIn();
+     } else if (event.target.id === "zoomOut"){
+       map.zoomViewModel.zoomOut();
+     }
+   });
+   document.addEventListener('touchstart', function(event) {
+     // Idle timer event handling
+     clearInterval(resetMapSetInterval);
+     resetMapSetInterval = setInterval(resetMap, 60000);
+     //Close button event handling
+     if (event.target.classList.contains('close-button')) {
+       resetButtonClickHandler();
+     }
+   }, {passive:true});
+   
+   document.addEventListener('mousewheel', function(){
+     clearInterval(resetMapSetInterval);
+     resetMapSetInterval = setInterval(resetMap, 60000);
+   }), {passive:true};
+
 
     // Click event for select feature from feature layers
     map.view.on("click", function (event) {
@@ -1135,18 +1058,20 @@ require([
 
     // Event handler for reset widget
     function resetButtonClickHandler() {
+      displayIntersectingAreas('')
+      clearGraphics();
+      clearWidgets();
+      setFlex(document.getElementsByClassName('photo-indicator')[0], false);
+      map.view.focus();
+    }
+
+    function goHome() {
       const goToOptions = {
         animate: true,
         duration: 400,
         ease: 'ease-in'
       }
       map.view.goTo({ center: [-118.215, 34.225], scale: map.scale }, goToOptions);
-      displayIntersectingAreas('')
-      removeFeatures();
-      clearGraphics();
-      clearWidgets();
-      setFlex(document.getElementsByClassName('photo-indicator')[0], false);
-      //map.view.focus();
     }
 
     // Event handler for language switcher
@@ -1240,7 +1165,7 @@ require([
       baseLayers: [
         new TileLayer({
           url: 'https://services.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer',
-          opacity:0.3,
+          opacity:0.85,
         }),
         new VectorTileLayer({
           portalItem: {
@@ -1400,6 +1325,13 @@ require([
         rotationEnabled: false,
         minZoom: zoom, // Maximum zoom "out"
         maxZoom: 13, // Maximum zoom "in"
+        geometry: {
+          type: "extent",
+          xmin: -121.5,
+          ymin:  32.7,
+          xmax: -114.7,
+          ymax:  36.0
+        }
       },
       popup: {
         autoOpenEnabled: false,
@@ -1417,30 +1349,6 @@ require([
       view: view,
     });
 
-    // Configure widget icons
-    drawWidget.addEventListener(
-      'click',
-      function (event) {
-        event.preventDefault;
-        drawSvg.classList.remove('draw-widget__animation');
-        drawWidget.offsetWidth;
-        drawSvg.classList.add('draw-widget__animation');
-      },
-      false
-    );
-
-    var resetSvg = document.getElementById('resetSvg');
-
-    resetWidget.addEventListener(
-      'click',
-      function (event) {
-        event.preventDefault;
-        resetSvg.classList.remove('reset-widget__animation');
-        resetWidget.offsetWidth;
-        resetSvg.classList.add('reset-widget__animation');
-      },
-      false
-    );
 
     // Create renderers, LabelClasses and FeatureLayers
     const localitiesRenderer = {
@@ -1463,8 +1371,8 @@ require([
         type: 'simple-fill',
         style: 'none',
         outline: {
-          color: [15, 15, 15, 0.5],
-          width: '1.75px',
+          color: [15, 15, 15, 0.75],
+          width: '2px',
         },
       },
     };
@@ -1605,37 +1513,15 @@ require([
     });
   
     // Create new GraphicLayers
-    const selectedFeatureGraphicLayer = new GraphicsLayer({
-      effect: "drop-shadow(0px, 4px, 2px rgba(63, 153, 149, 0.75))",
-    });
+    const selectedFeatureGraphicLayer = (isMobile) ? 
+      new GraphicsLayer() :
+      new GraphicsLayer({
+        effect: "drop-shadow(0px, 2px, 2px rgba(63, 153, 149, 0.75))",
+      });
     const intersectingFeatureGraphicLayer = new GraphicsLayer();
     const selectedPhotoGraphicsLayer = new AnimatedPointLayer();
-    /*
-    sketchGraphicsLayer = new GraphicsLayer();
-    map.add(sketchGraphicsLayer);
-
-    // Create the new sketch view model and sets its layer
-    sketchViewModel = new SketchViewModel({
-      view: view,
-      layer: sketchGraphicsLayer,
-      updateOnGraphicClick: false,
-      polygonSymbol: {
-        type: 'simple-fill',
-        color: [0, 185, 235, 0.2],
-        size: '1px',
-        outline: {
-          color: [0, 185, 235, 0.5],
-          width: '3px',
-        },
-      },
-    });
-    */
     
     const layers = [
-      //selectedFeatureGroupLayer,
-      //defaultSelectedFeatureGroup,
-      //bathySelectedFeatureGroup,
-      //waterColorSelectedFeatureGroup,
       intersectingFeatureGraphicLayer,
       neighborhoodsLayer,
       regionsLayer,
@@ -1650,20 +1536,25 @@ require([
 
     map.addMany(layers);
 
-    const infoPane = new CupertinoPane(
-      '.cupertino-pane', // Pane container selector
-      { 
-        parentElement: '.ui-top-left', // Parent container
-        breaks: {
-            middle: { enabled: false, height: 300,  },
-            bottom: { enabled: true, height: 100, bounce: true},
-        },
-        cssClass: 'card--active',
-        simulateTouch: true,
-        initialBreak:'bottom',
-        onDrag: () => console.log('Drag event')
-      }
-    );
+    var infoPane;
+    if (isMobile) {
+      infoPane = new CupertinoPane(
+        '.cupertino-pane', // Pane container selector
+        { 
+          parentElement: '.ui-top-left', // Parent container
+          breaks: {
+              middle: { enabled: false, height: 300,  },
+              bottom: { enabled: true, height: 100, bounce: true},
+          },
+          cssClass: 'card--active',
+          simulateTouch: true,
+          initialBreak:'bottom',
+          buttonDestroy:false,
+          onDrag: () => console.log('Drag event')
+        }
+      );
+    }
+
 
     var returnObject = {
       'map': map,
@@ -1700,29 +1591,13 @@ require([
       widget.style.opacity = '1';
     }
 
-    // Create a search widget
-    const searchWidget = new Search({
-      view: view,
-      visible: true,
-      popupEnabled: false,
-    });
 
-    view.ui.add(searchWidget);
+    /*
+    if (isMobile) {
+      view.ui.add(searchWidget);
+    }
+    */
 
-    searchWidget.on('search-complete', (event)=>{
-      const searchFeature = event.results[0].results[0].feature;
-      const query = {
-        geometry: searchFeature.geometry,
-        spatialRelationship: "intersects",
-        outFields: ["*"],
-        returnGeometry: true,
-      }
-      areasLayer.queryFeatures(query).then((results) => {
-        console.log(results.features[0].geometry.extent)
-        main(results.features[0]);
-
-      })
-    })
 
     // Add ui elements to map view
     
@@ -1730,82 +1605,23 @@ require([
     for (let e of ui) {
       view.ui.add(e);
     }
-    
-  
-    // Stops loading animation and makes map view visible after 
-    // localityLayerView has finished loading
-    /*
-    setTimeout(()=> {
-      localitiesLayer.when(function() {
-        const instructionsDiv = document.getElementsByClassName('instructions')[0];
-        const instructionsContainer = document.getElementsByClassName('instructions__container')[0];
-        //document.getElementById('viewDiv').style.opacity = '1';
-        instructionsDiv.style.opacity = '1';     
-        instructionsContainer.style.opacity = 1;     
-      }).catch(function(error){
-        console.log('error: ', error);
-      });
-    }, 2000)
-    */
 
     return returnObject
   }
 
-
-  function displayMoreButton(button) {
-    let bottomLists = document.getElementsByClassName('taxa__bottom-list');
-    let isPopulated = false;
-    for (let list of bottomLists){
-      list.childElementCount > 0 ? isPopulated = true: isPopulated = false;
-    }
-    isPopulated ? setDisplay(button, true) : setDisplay(button, false);
-  }
-
-    //Add Event listener to "more" buttons
-  const moreButton = document.getElementsByClassName('more')[0];
-  moreButton.addEventListener('click', () => {
-    let bottomLists = document.getElementsByClassName('taxa__bottom-list');
-    let ifExpanded = moreButton.classList.toggle('button--active');
-    if (ifExpanded) {
-      moreButton.innerHTML = '- Less';
-      for (let list of bottomLists) {
-        list.style.maxHeight = list.scrollHeight + 'px';
-      }
-      const position = moreButton.parentElement.offsetTop;
-      ($('.card__content')).animate({
-        scrollTop: position
-      }, 400);
-    } else {
-      moreButton.innerHTML = '+ More';
-      for (let list of bottomLists) {
-        list.style.maxHeight = null;
-      }
-    }
-  })
-
   function hideInstructionsDiv() {
     const instructionsDiv = document.getElementsByClassName('instructions')[0];
     const instructionsContainer = document.getElementsByClassName('instructions__container')[0];
-    instructionsDiv.style.opacity = 0;
-    instructionsContainer.style.opacity = 0;
+    instructionsDiv.classList.add('instructions--inactive');
+    instructionsContainer.classList.add('instructions--inactive');
     setTimeout(()=> {
       instructionsContainer.style.display = 'None';
-    }, 750)
+    }, 750);
     //map.view.focus();
   }
 
-  
-  window.addEventListener('wheel', event => {
-    const { ctrlKey } = event
-    if (ctrlKey) {
-       event.preventDefault();
-       return
-    }
- }, { passive: false })
- 
-
-  document.addEventListener('click', hideInstructionsDiv);
-  document.addEventListener('mousewheel', hideInstructionsDiv);
+  document.addEventListener('click', hideInstructionsDiv, {once:true});
+  //document.addEventListener('mousewheel', hideInstructionsDiv);
 
 })
 
