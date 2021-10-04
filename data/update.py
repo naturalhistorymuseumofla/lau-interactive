@@ -18,7 +18,7 @@ def get_portal_object(id):
     load_dotenv()
     GIS_USR = os.getenv('GIS_USR')
     GIS_PSWD = os.getenv('GIS_PSWD')
-    gis = GIS('https://nhmlac.maps.arcgis.com/', GIS_USR, GIS_PSWD)
+    gis = GIS('https://lacnhm.maps.arcgis.com/', GIS_USR, GIS_PSWD)
     agol_object = gis.content.get(id)
     return agol_object
 
