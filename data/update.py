@@ -140,8 +140,8 @@ def process_taxa(taxa_list):
 
 def update():
     global_init()
-    localities = get_portal_object('a3700e0e2c974434b3db0d426436a085')
-    photos = get_portal_object('54cf1a9a79524a0d9af4952b0f05ef3f')
+    localities = get_portal_object('0142ccc5d236408ea680ac93e42934e6')
+    photos = get_portal_object('c82427b3fcac451986dfdc5b7d7a8173')
     update_attachments(photos)
     update_localities(localities)
 
