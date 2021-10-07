@@ -41,6 +41,9 @@ require([
   webMercatorUtils,
 ) {
 
+  var splide = newSplide();
+
+
   
   const CustomLayerView2D = BaseLayerViewGL2D.createSubclass({
     // Locations of the two vertex attributes that we use. They
@@ -867,7 +870,7 @@ require([
         newSlide.appendChild(captions);
       });
       splideList.append(splideListFrag);
-      const splide = newSplide();
+      splide = newSplide();
       // Create point graphic for initial slide
       createPhotoPointGraphic(photos[0].point.coordinates);
       // Splide event listener for changes in active slide
@@ -913,9 +916,10 @@ require([
       return captionsDiv;
     }
 
+
     // Mounts splide 
     function newSplide() {
-       splide = new Splide('.splide', {
+       const splide = new Splide('.splide', {
         //lazyLoad: 'sequential',
       }).mount();
       return splide;

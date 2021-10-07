@@ -642,6 +642,7 @@ $splide-img-height: calc(#{$splide-height} - 8rem);
 
 .splide {
   width:$splide-width;
+  //visibility: visible !important;
   //margin-bottom: calc(#{$card-flex-gap} - 1rem);
 }
 

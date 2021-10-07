@@ -54,7 +54,7 @@ def update_attachments(photos):
             attachment.county = row.county
             attachment.region = row.region
             attachment.neighborhood = row.neighborhood
-            attachment.url = row.DOWNLOAD_URL
+            attachment.url = row.DOWNLOAD_URL.split("?")[0]
             attachment.save()
             print(f'Attachment {row.specimenID} saved to attachments!')
             attachments_saved += 1
@@ -141,7 +141,7 @@ def process_taxa(taxa_list):
 def update():
     global_init()
     localities = get_portal_object('0142ccc5d236408ea680ac93e42934e6')
-    photos = get_portal_object('c82427b3fcac451986dfdc5b7d7a8173')
+    photos = get_portal_object('d074b2bfe5014887ab1796f633966ee6')
     update_attachments(photos)
     update_localities(localities)
 
