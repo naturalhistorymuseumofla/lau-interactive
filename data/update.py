@@ -82,7 +82,8 @@ def check_if_updated(agol_object, Collection):
 # Updates localities by filtering spatial df by region type and iterating over
 # all unique region names in returned dataframe
 def update_localities(localities):
-    is_updated = check_if_updated(localities, Query)
+    # is_updated = check_if_updated(localities, Query)
+    is_updated = False
     if not is_updated:
         localities_layer = localities.layers[0]
         localities_sdf = localities_layer.query().sdf
