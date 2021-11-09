@@ -1456,7 +1456,7 @@ require([
       },
     });
 
-    var countiesMaxScale = 600000;
+    var countiesMaxScale = 400000;
     var regionsMaxScale = 188895;
     //var neighborhoodsMinScale = 144448;
 
