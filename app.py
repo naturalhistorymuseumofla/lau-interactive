@@ -39,6 +39,6 @@ def home():
 if __name__ == "__main__":
     global_init()
     files = ['./static/css/styles.css', './static/js/app.js']
-    app.run(#debug=True,
+    app.run(debug=True,
             extra_files=files)
 

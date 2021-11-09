@@ -5,6 +5,7 @@ from random import sample
 from mongoengine import connect
 import os
 from dotenv import load_dotenv
+import numpy as np
 
 
 # Connects to remote Atlas database
@@ -57,6 +58,9 @@ class Query(mongoengine.Document):
         'collection': 'queries'
     }
 
+    def handle_nan(self, value):
+        return None if np.isnan(value) else value
+
     def export(self):
         photos = [x.to_mongo().to_dict() for x in self.photos]
         if len(photos) > 7:
@@ -67,8 +71,8 @@ class Query(mongoengine.Document):
             'number_of_specimens': self.number_of_specimens,
             'taxa': self.taxa,
             'photos': photos,
-            'startDate':self.start_date,
-            'endDate': self.end_date,
+            'startDate': self.handle_nan(self.start_date),
+            'endDate': self.handle_nan(self.end_date),
             'oids': self.oids,
         }
         return dumps(response_dict)

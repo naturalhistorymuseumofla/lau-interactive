@@ -36,6 +36,7 @@ def update_attachments(photos):
         cols = ['PARENTOBJECTID', 'NAME', 'DOWNLOAD_URL']
         # Create a merged spatial dataframe that has records of photos and their attachments
         merged_sdf = photos_sdf.merge(attachments_sdf[cols], left_on='ObjectId', right_on='PARENTOBJECTID')
+
         attachments_saved = 0
         # Input the records as documents into Photos collection
         for i in range(len(merged_sdf)):
@@ -123,8 +124,6 @@ def iterate_over_regions(region_type, sdf):
 # Return df based on loc query of dataframe
 def filter_df(df, field, value):
     return df.loc[df[field] == value]
-
-
 
 
 # Return a dictionary from list of taxa that summarizes taxa from

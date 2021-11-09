@@ -44,8 +44,8 @@
                   <p lang="es">Fotografías</p>
                 </div>
               </li>
-              <li class="button__outer-container">
-                <div class="button__inner-container">
+              <li class="button__outer-container time__button">
+                <div class="button__inner-container time__button">
                   <a href="#time" ripple="ripple" class="button hvr-grow-shadow menu__button" id="collectionButton">
                     <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 126 126" xml:space="preserve">
                       <style>
@@ -184,7 +184,7 @@
                   </div>
                 </div>
               </div>
-              <div class="seperator card__flex-item"></div>
+              <div class="seperator card__flex-item" id="timeSeperator"></div>
               <div class="underwater__container card__flex-item">
                 <div class="underwater__icon">
                   <svg class="underwater__svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
@@ -319,8 +319,8 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://unpkg.com/cupertino-pane/dist/cupertino-pane.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@2.4.21/dist/js/splide.min.js"></script>
-    <script src="https://js.arcgis.com/4.20/"></script>
-    <script type="module" src={{url_for('static', filename='js/app.min.js')}}></script>
+    <script src="https://js.arcgis.com/4.21/"></script>
+    <script type="module" src={{url_for('static', filename='js/app.js')}}></script>
     <script type="module" src={{url_for('static', filename='js/scrollBox.js')}}></script>
 
   </body>

@@ -518,6 +518,19 @@ require([
           }, goToOptions);
       }
     }
+
+
+    function toggleButton(buttons, bool) {
+      if (bool) {
+        for (let button of buttons) {
+          button.classList.remove('button--removed');
+        }
+      } else {
+        for (let button of buttons) {
+          button.classList.add('button--removed');
+        }
+      }
+    }
     
 
     async function getQuery(feature) {
@@ -589,6 +602,7 @@ require([
       const photosNullDiv = document.getElementsByClassName('photos--null')[0];
       const photoLegend = document.getElementsByClassName('photo-indicator')[0];
       let photosButton = document.getElementsByClassName('photos__button');
+      let timeButton = document.getElementsByClassName('time__button');
 
       // Hide appropriate divs
       if (isMobile) {
@@ -597,8 +611,6 @@ require([
       } else {
         hideDiv('#noInfoCard');
       }
-
-
 
       // Highlight locality selected in query
       (map.highlight) ? map.highlight.remove() : map.highlight;
@@ -664,11 +676,20 @@ require([
       }
 
       // Handle timescale
-      if (stats.endDate === 0) {
-        stats.endDate = 0.0117;
+      if (stats.endDate !== null && stats.startDate != null) {
+        setFlex(document.getElementById('time'), true);
+        toggleButton(timeButton, true);
+        if (stats.endDate === 0) {
+          stats.endDate = 0.0117;
+        }
+        moveTimescale(stats.startDate, stats.endDate);
+        addTimescaleText(stats.startDate, stats.endDate);
+      } else {
+        setFlex(document.getElementById('time'), false);
+        toggleButton(timeButton, false);
+        //setDisplay(document.getElementsByClassName('time__button')[0], false);
       }
-      moveTimescale(stats.startDate, stats.endDate);
-      addTimescaleText(stats.startDate, stats.endDate);
+
 
 
       // Scroll to top of card container div
@@ -677,7 +698,6 @@ require([
 
     
     function addAreaHighlight(geometry) {
-      
       const selectedAreaGraphic = new Graphic({
         geometry: geometry,
         symbol: {
@@ -969,6 +989,7 @@ require([
     /* ==========================================================
      Timescale functions
     ========================================================== */
+
     // Moves timescale indicator div based on age range array
     function moveTimescale(startDate, endDate) {
       const timescaleBar = document.getElementById('indicator'); 
@@ -1039,6 +1060,7 @@ require([
        map.zoomViewModel.zoomOut();
      }
    });
+
    document.addEventListener('touchstart', function(event) {
      // Idle timer event handling
      clearInterval(resetMapSetInterval);
@@ -1328,7 +1350,7 @@ require([
         snapToZoom: false,
         rotationEnabled: false,
         minZoom: zoom, // Maximum zoom "out"
-        maxZoom: 13, // Maximum zoom "in"
+        maxZoom: 14, // Maximum zoom "in"
         geometry: {
           type: "extent",
           xmin: -121.5,
@@ -1434,8 +1456,8 @@ require([
       },
     });
 
-    var countiesMaxScale = 690000;
-    var regionsMaxScale = 288895;
+    var countiesMaxScale = 600000;
+    var regionsMaxScale = 188895;
     //var neighborhoodsMinScale = 144448;
 
     const clientFeatureLayer = new FeatureLayer({
