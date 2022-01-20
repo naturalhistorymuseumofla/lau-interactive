@@ -6,7 +6,6 @@ from collections import Counter
 from data.database import Query
 from data.database import Attachment
 from datetime import datetime
-import numpy as np
 import json
 import pandas as pd
 import os
