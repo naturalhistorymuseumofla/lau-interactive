@@ -1,6 +1,6 @@
 mongoengine~=0.22.1
 pymongo~=3.11.4
-pandas~=1.2.4
+pandas~=1.2
 arcgis~=1.8.5
 geojson~=2.5.0
 python-dotenv~=0.17.1
