@@ -64,7 +64,8 @@ def update_attachments(photos):
 # Tests if database is up to date by testing against last modified
 # timestamp of localities hosted feature layer
 def check_if_updated(agol_object, Collection):
-    object_last_modified = datetime.fromtimestamp(agol_object.modified/ 1e3)
+    date_last_updated = max(i.properties.editingInfo.lastEditDate for i in agol_object.layers + agol_object.tables)
+    object_last_modified = datetime.fromtimestamp(date_last_updated/ 1e3)
     try:
         collection_last_modified = Collection.objects[0].modified
         if collection_last_modified > object_last_modified:
