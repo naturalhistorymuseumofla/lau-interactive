@@ -11,8 +11,9 @@ import numpy as np
 # Connects to remote Atlas database
 def global_init():
     load_dotenv()
-    DB_URI = os.getenv('DB_URI')
-    connect(alias='laumap', host=DB_URI)
+    #DB_URI = os.getenv('DB_URI')
+    #connect(alias='laumap', host=DB_URI)
+    connect('fossil-map')
     #mongoengine.register_connection(alias='lau-prototype', name='lau-prototype')
 
 
