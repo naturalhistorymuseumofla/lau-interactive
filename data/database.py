@@ -36,7 +36,7 @@ class Attachment(mongoengine.Document):
     neighborhood = mongoengine.StringField()
     url = mongoengine.URLField()
     meta = {
-        'db_alias': 'laumap',
+        #'db_alias': 'laumap',
         'collection': 'attachments'
     }
 
@@ -55,7 +55,7 @@ class Query(mongoengine.Document):
     end_date = mongoengine.FloatField()
     oids = mongoengine.ListField()
     meta = {
-        'db_alias': 'laumap',
+        #'db_alias': 'laumap',
         'collection': 'queries'
     }
 
