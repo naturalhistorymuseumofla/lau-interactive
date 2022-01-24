@@ -13,9 +13,9 @@ def global_init():
     load_dotenv()
     #DB_URI = os.getenv('DB_URI')
     #connect(alias='laumap', host=DB_URI)
-    connect('fossil-map')
+    MONGO_URL = os.getenv('MONGO_URL')
+    connect(alias='fossilmap', host=MONGO_URL)
     #mongoengine.register_connection(alias='lau-prototype', name='lau-prototype')
-
 
 global_init()
 
@@ -36,7 +36,7 @@ class Attachment(mongoengine.Document):
     neighborhood = mongoengine.StringField()
     url = mongoengine.URLField()
     meta = {
-        #'db_alias': 'laumap',
+        'db_alias': 'fossilmap',
         'collection': 'attachments'
     }
 
@@ -55,7 +55,7 @@ class Query(mongoengine.Document):
     end_date = mongoengine.FloatField()
     oids = mongoengine.ListField()
     meta = {
-        #'db_alias': 'laumap',
+        'db_alias': 'fossilmap',
         'collection': 'queries'
     }
 
