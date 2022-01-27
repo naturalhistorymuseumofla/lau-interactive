@@ -10,6 +10,10 @@ import json
 import pandas as pd
 import os
 from dotenv import load_dotenv
+from boto3 import session
+import urllib.request
+import io
+from PIL import Image
 
 
 # Return fearture layer item from ArcGIS Online
@@ -21,12 +25,68 @@ def get_portal_object(id):
     agol_object = gis.content.get(id)
     return agol_object
 
+class Spaces:
+    def __init__(self, space='fossilmap', prefix='images/'):
+        self.prefix = prefix
+        self.space = space
+        self.client = self._connect_to_spaces()
+        self.image_list = self._get_images()
+
+    def _connect_to_spaces(self):
+        load_dotenv()
+        SPACES_ACCESS_ID = os.getenv('SPACES_ACCESS_ID')
+        SPACES_SECRET_KEY = os.getenv('SPACES_SECRET_KEY')
+        ENDPOINT_URL = 'https://sfo3.digitaloceanspaces.com'
+        spaces_session = session.Session()
+        client = spaces_session.client('s3',
+                                       region_name='sfo3',
+                                       endpoint_url=ENDPOINT_URL,
+                                       aws_access_key_id=SPACES_ACCESS_ID,
+                                       aws_secret_access_key=SPACES_SECRET_KEY
+                                       )
+        return client
+
+    def _get_images(self):
+        paginator = self.client.get_paginator('list_objects_v2')
+        pages = paginator.paginate(Bucket=self.space, Prefix=self.prefix)
+        contents = [page['Contents'] for page in pages][0]
+        image_list = [content['Key'] for content in contents]
+        return image_list
+
+    def is_in_spaces(self, key):
+        key = self.prefix + key
+        if key in self.image_list:
+            return True
+        else:
+            return False
+
+    def upload_photo(self, img, key):
+        self.client.upload_fileobj(img, self.space, key)
+        self.client.put_object_acl(ACL='public-read', Bucket=self.space, Key=key)
+
+
+def load_image(url):
+    with urllib.request.urlopen(url) as f:
+        f = io.BytesIO(url.read())
+        img = Image.open(f)
+        return img
+
+
+def resize_image(img, resized_width='500px'):
+    width, height = img.size
+    ratio = (resized_width / float(width))
+    resized_height = int((float(height) * float(ratio)))
+    resized_image = img.resize(resized_width, resized_height)
+    return resized_image
+
 
 def update_attachments(photos):
     # Check if mongoDB collection is updated
     is_updated = check_if_updated(photos, Attachment)
     # Update collection if not
     if not is_updated:
+        # Connect to DO Spaces
+        space = Spaces()
         # Retrieve the spatial dataframe from AGOL
         photos_layer = photos.layers[0]
         photos_sdf = photos_layer.query().sdf
@@ -39,6 +99,16 @@ def update_attachments(photos):
         attachments_saved = 0
         # Input the records as documents into Photos collection
         for i in range(len(merged_sdf)):
+            filename = row.NAME.split('.')[0]
+            if not space.is_in_spaces(filename + '_500px.png'):
+                key = filename + '_500px.png'
+                img = load_image(row.DOWNLOAD_URL)
+                img = resize_image(img, key)
+                space.upload_photo(img, filename + '_500px.png')
+            if not space.is_in_spaces(filename + '_modal.png'):
+                key = filename + '_modal.png'
+                img = load_image(row.DOWNLOAD_URL)
+                space.upload_photo(img, key)
             row = merged_sdf.iloc[i]
             attachment = Attachment()
             if Attachment.objects(specimen_id=row.specimenID):
@@ -54,8 +124,7 @@ def update_attachments(photos):
             attachment.county = row.county
             attachment.region = row.region
             attachment.neighborhood = row.neighborhood
-            attachment.url = row.DOWNLOAD_URL.split("?")[0]
-            attachment.save()
+            attachment.key = filename
             print(f'Attachment {row.specimenID} saved to attachments!')
             attachments_saved += 1
         print(f'{attachments_saved} attachment(s) succesfully saved')

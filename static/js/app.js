@@ -881,7 +881,7 @@ require([
         const captions = formatCaptions(photo);
         // Format HTML for Splide carousel
         //img.setAttribute('data-splide-lazy', photo.url);
-        img.src = photo.url
+        img.src = photo.url + photo.key + "_500px.png"
         li.classList.add('splide__slide');
         const newSlide = splideListFrag.appendChild(li);
         const div = document.createElement('div');
