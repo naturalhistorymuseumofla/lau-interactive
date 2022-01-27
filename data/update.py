@@ -99,6 +99,7 @@ def update_attachments(photos):
         attachments_saved = 0
         # Input the records as documents into Photos collection
         for i in range(len(merged_sdf)):
+            row = merged_sdf.iloc[i]
             filename = row.NAME.split('.')[0]
             if not space.is_in_spaces(filename + '_500px.png'):
                 key = filename + '_500px.png'
@@ -109,7 +110,6 @@ def update_attachments(photos):
                 key = filename + '_modal.png'
                 img = load_image(row.DOWNLOAD_URL)
                 space.upload_photo(img, key)
-            row = merged_sdf.iloc[i]
             attachment = Attachment()
             if Attachment.objects(specimen_id=row.specimenID):
                 attachment.id = Attachment.objects(specimen_id=row.specimenID)[0].id
