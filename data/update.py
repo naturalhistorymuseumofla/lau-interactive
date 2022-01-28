@@ -162,7 +162,6 @@ def check_if_updated(agol_object, Collection):
 # all unique region names in returned dataframe
 def update_localities(localities):
     is_updated = check_if_updated(localities, Query)
-    is_updated = 0
     if not is_updated:
         localities_layer = localities.layers[0]
         localities_sdf = localities_layer.query().sdf
