@@ -874,6 +874,7 @@ require([
       resetSplide();
       const splideListFrag = document.createDocumentFragment();
       const splideList = document.getElementsByClassName('splide__list')[0];
+      const url = 'https://fossilmap.sfo3.cdn.digitaloceanspaces.com/images/'
       photos.forEach((photo) => {
         // Create divs for slide
         const img = document.createElement('img');
@@ -881,7 +882,7 @@ require([
         const captions = formatCaptions(photo);
         // Format HTML for Splide carousel
         //img.setAttribute('data-splide-lazy', photo.url);
-        img.src = photo.url + photo.key + "_500px.png"
+        img.src = url + photo.key + "_500px.png"
         li.classList.add('splide__slide');
         const newSlide = splideListFrag.appendChild(li);
         const div = document.createElement('div');

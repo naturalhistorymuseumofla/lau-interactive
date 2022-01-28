@@ -23,7 +23,6 @@ global_init()
 # Class for queries collection that stores all queries of a polygon region
 # intersection with localities layer
 class Attachment(mongoengine.Document):
-    url = mongoengine.URLField(default='https://fossilmap.sfo3.cdn.digitaloceanspaces.com/images/')
     specimen_id = mongoengine.StringField(required=True, unique=True)
     display_id = mongoengine.StringField(required=True)
     modified = mongoengine.DateTimeField(required=True)

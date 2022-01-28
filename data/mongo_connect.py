@@ -5,7 +5,6 @@ import sys
 
 
 def global_init():
-
     load_dotenv()
     #DB_URI = os.getenv('DB_URI')
     MONGO_URL = os.getenv('MONGO_URL')

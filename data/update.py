@@ -61,22 +61,30 @@ class Spaces:
             return False
 
     def upload_photo(self, img, key):
-        self.client.upload_fileobj(img, self.space, key)
+        # Save image to file in memory
+        in_memory_file = io.BytesIO()
+        img.save(in_memory_file, format='png')
+        in_memory_file.seek(0)
+        # Upload byte like file object to Spaces
+        key = 'images/' + key
+        self.client.upload_fileobj(in_memory_file, self.space, key)
+        # Change its permissions to public
         self.client.put_object_acl(ACL='public-read', Bucket=self.space, Key=key)
 
 
 def load_image(url):
-    with urllib.request.urlopen(url) as f:
-        f = io.BytesIO(url.read())
+    with urllib.request.urlopen(url) as obj:
+        f = io.BytesIO(obj.read())
         img = Image.open(f)
         return img
 
 
-def resize_image(img, resized_width='500px'):
+def resize_image(img, resized_width=500):
     width, height = img.size
     ratio = (resized_width / float(width))
     resized_height = int((float(height) * float(ratio)))
-    resized_image = img.resize(resized_width, resized_height)
+    new_size = (resized_width, resized_height)
+    resized_image = img.resize(new_size)
     return resized_image
 
 
@@ -104,7 +112,7 @@ def update_attachments(photos):
             if not space.is_in_spaces(filename + '_500px.png'):
                 key = filename + '_500px.png'
                 img = load_image(row.DOWNLOAD_URL)
-                img = resize_image(img, key)
+                img = resize_image(img)
                 space.upload_photo(img, filename + '_500px.png')
             if not space.is_in_spaces(filename + '_modal.png'):
                 key = filename + '_modal.png'
@@ -125,6 +133,7 @@ def update_attachments(photos):
             attachment.region = row.region
             attachment.neighborhood = row.neighborhood
             attachment.key = filename
+            attachment.save()
             print(f'Attachment {row.specimenID} saved to attachments!')
             attachments_saved += 1
         print(f'{attachments_saved} attachment(s) succesfully saved')
@@ -153,6 +162,7 @@ def check_if_updated(agol_object, Collection):
 # all unique region names in returned dataframe
 def update_localities(localities):
     is_updated = check_if_updated(localities, Query)
+    is_updated = 0
     if not is_updated:
         localities_layer = localities.layers[0]
         localities_sdf = localities_layer.query().sdf
