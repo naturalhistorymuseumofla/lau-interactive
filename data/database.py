@@ -41,9 +41,17 @@ class Attachment(mongoengine.Document):
     }
 
 
+class Polygon(mongoengine.EmbeddedDocument):
+    geometry = mongoengine.PolygonField()
+
+
+class MultiPolygon(mongoengine.EmbeddedDocument):
+    geometry = mongoengine.MultiPolygonField()
+
+
 # Class for queries collection that stores all queries of a polygon region
 # intersection with localities layer
-class Query(mongoengine.Document):
+class Area(mongoengine.Document):
     name = mongoengine.StringField(required=True)
     modified = mongoengine.DateTimeField(required=True)
     region = mongoengine.StringField(required=True)
@@ -54,13 +62,18 @@ class Query(mongoengine.Document):
     start_date = mongoengine.FloatField()
     end_date = mongoengine.FloatField()
     oids = mongoengine.ListField()
+    # mongoengine.DynamicField(choices=[mongoengine.PolygonField(), mongoengine.MultiPolygonField()])
     meta = {
         'db_alias': 'fossilmap',
-        'collection': 'queries'
+        'collection': 'queries',
+        'allow_inheritance': True,
     }
 
     def handle_nan(self, value):
         return None if np.isnan(value) else value
+
+    def parse_json(self):
+        return json.loads(dumps(self))
 
     def export(self):
         photos = [x.to_mongo().to_dict() for x in self.photos]
@@ -75,10 +88,32 @@ class Query(mongoengine.Document):
             'startDate': self.handle_nan(self.start_date),
             'endDate': self.handle_nan(self.end_date),
             'oids': self.oids,
+            'geometry': self.geometry
         }
         return dumps(response_dict)
 
-    def parse_json(self):
-        return json.loads(dumps(self))
+class Polygon(Area):
+    geometry = mongoengine.PolygonField()
+    parent_region = mongoengine.StringField()
 
+class MultiPolygon(Area):
+    geometry = mongoengine.MultiPolygonField()
+    parent_region = mongoengine.StringField()
+
+    def export(self):
+        photos = [x.to_mongo().to_dict() for x in self.photos]
+        if len(photos) > 7:
+            photos = sample(photos, 7)
+        response_dict = {
+            'name': self.name,
+            'number_of_sites': self.number_of_sites,
+            'number_of_specimens': self.number_of_specimens,
+            'taxa': self.taxa,
+            'photos': photos,
+            'startDate': self.handle_nan(self.start_date),
+            'endDate': self.handle_nan(self.end_date),
+            'oids': self.oids,
+            'geometry': self.geometry
+        }
+        return dumps(response_dict)
 

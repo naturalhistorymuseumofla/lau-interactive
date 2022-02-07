@@ -426,19 +426,35 @@ require([
 
     // Starting point to display the geometry of a feature, query the database
     // and display all returned info onto the map/info panels
-    function main(feature) {
-      zoomToFeature(feature);
-      addAreaHighlight(feature.geometry);
+    function main(mapPoint) {
+
+      //zoomToFeature(feature);
+      
       // Get query object from database
-      getQuery(feature).then(data => {
+
+      getArea(mapPoint).then(data => {
         // If response has data, use it to populate info cards
         if (data) {
+          let geojson = {
+            "type": "FeatureCollection",
+            "features": [
+              {
+                "type": "Feature",
+                "geometry": data.geometry,
+                "properties": {
+                  "name": data.name,
+                },
+              }
+            ]
+          }
+          addAreaHighlight(geojson);
           populateInfoCards(data);
+
         } else {
-          populateNullCards(feature.attributes.name)
+          //populateNullCards(feature.attributes.name)
         }
       });
-      displayIntersectingAreas(feature.attributes);
+      //displayIntersectingAreas(feature.attributes);
     }
 
 
@@ -533,10 +549,36 @@ require([
     }
     
 
+    
     async function getQuery(feature) {
+
       const queryObject = {
         'region': feature.attributes.region_type,
         'name': feature.attributes.name,
+        'region': region
+      }
+      let response = await fetch('/query', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json;charset=utf-8'},
+        body: JSON.stringify(queryObject)
+      });
+      let data = await response.text()
+      if (data) {
+        return JSON.parse(data);
+      } else {
+        return data;
+      }
+    }
+
+    async function getArea(mapPoint) {
+      const scale = map.view.scale;
+      const region = (scale > 600000) ? 'county' :
+                     (600000 > scale > 188895) ? 'region' :
+                      'neighborhood';
+      const queryObject = {
+        'latitude': mapPoint.latitude,
+        'longitude': mapPoint.longitude,
+        'region': region
       }
       let response = await fetch('/query', {
         method: 'POST',
@@ -553,6 +595,10 @@ require([
 
     function selectFeaturesFromClick(screenPoint) {
       clearGraphics();
+      const mapPoint = map.view.toMap(screenPoint);
+      main(mapPoint);
+
+      /*
       const includeLayers = [
         map.countiesLayer,
         map.regionsLayer,
@@ -572,6 +618,7 @@ require([
           resetButtonClickHandler();
         }
       })
+      */
     }
 
     function populateNullCards(featureName) {
@@ -697,7 +744,18 @@ require([
     }
 
     
-    function addAreaHighlight(geometry) {
+    function addAreaHighlight(geojson) {
+      //map.map.layers.remove(map.highlightLayer);
+      let blob = new Blob([JSON.stringify(geojson)], {type: "application/json"});
+      let url  = URL.createObjectURL(blob);
+      map.highlightLayer.url = url;
+      map.highlightLayer.refresh()
+      map.map.layers.removeAt(9)
+      map.map.layers.add(map.highlightLayer);
+      //map.map.layers.add(map.highlightLayer);
+      //console.log(map.map.layers.highlightLayer.url)
+      //map.highlightLayer.refresh()
+      /*
       const selectedAreaGraphic = new Graphic({
         geometry: geometry,
         symbol: {
@@ -1404,6 +1462,18 @@ require([
       },
     };
 
+    const highlightFeatureRenderer = {
+      type: 'simple',
+      symbol: {
+        type: 'simple-fill',
+        style: 'none',
+        outline: {
+          color: [15, 50, 200, 0.75],
+          width: '2px',
+        },
+      },
+    };
+
     const countiesLabelClass = new LabelClass({
       labelExpressionInfo: { expression: '$feature.NAME' },
       symbol: {
@@ -1538,6 +1608,13 @@ require([
       title: 'area',
       outFields: ['*'],
     });
+
+    var highlightLayer = new GeoJSONLayer({
+      url: '/static/layers/lauNeighborhoodsSimplified.geojson',
+      title: 'highlight',
+      labelingInfo: [areasLabelClass],
+      renderer: highlightFeatureRenderer,
+    });
   
     // Create new GraphicLayers
     const selectedFeatureGraphicLayer = (isMobile) ? 
@@ -1558,6 +1635,7 @@ require([
       selectedFeatureGraphicLayer,
       localitiesLayer,
       selectedPhotoGraphicsLayer,
+      highlightLayer,
       //areaGraphicsGroupLayer,
     ]
 
@@ -1600,6 +1678,7 @@ require([
       //'selectedAreaGraphics': selectedAreaGraphicsLayer,
       'areasLayer': areasLayer,
       'infoPane': infoPane,
+      'highlightLayer': highlightLayer
 
     };
 

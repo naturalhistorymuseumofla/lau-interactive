@@ -3,10 +3,11 @@
 from data.database import global_init
 from arcgis.gis import GIS
 from collections import Counter
-from data.database import Query
+from data.database import Polygon
+from data.database import MultiPolygon
+from data.database import Area
 from data.database import Attachment
 from datetime import datetime
-import json
 import pandas as pd
 import os
 from dotenv import load_dotenv
@@ -14,7 +15,7 @@ from boto3 import session
 import urllib.request
 import io
 from PIL import Image
-
+import json
 
 # Return fearture layer item from ArcGIS Online
 def get_portal_object(id):
@@ -139,6 +140,7 @@ def update_attachments(photos):
         print(f'{attachments_saved} attachment(s) succesfully saved')
 
 
+
 # Tests if database is up to date by testing against last modified
 # timestamp of localities hosted feature layer
 def check_if_updated(agol_object, Collection):
@@ -156,34 +158,65 @@ def check_if_updated(agol_object, Collection):
             return False
     except IndexError:
         print (f'No documents exist in {Collection}')
+        return False
+
 
 
 # Updates localities by filtering spatial df by region type and iterating over
 # all unique region names in returned dataframe
 def update_localities(localities):
-    is_updated = check_if_updated(localities, Query)
+    is_updated = check_if_updated(localities, Area)
+    #is_updated = False
     if not is_updated:
-        localities_layer = localities.layers[0]
-        localities_sdf = localities_layer.query().sdf
+        localities_layer = localities.layers[0].query()
+        localities_sdf = localities_layer.sdf
+        #areas_layer = get_portal_object('c273ac12f11a413eae2331ad758e3c6b').layers[0].query()
+        #counties_layer = get_portal_object('fa404082563d460681efe17c6a0ea163').layers[0].query()
+        #areas_features = json.loads(areas_layer.to_geojson)['features'] + json.loads(counties_layer.to_geojson)['features']
+        areas_json = json.load(open('../static/layers/lauAllAreasFinal.geojson'))
+        areas_df = pd.DataFrame.from_dict(areas_json['features'])
+        areas_df = pd.concat([areas_df, areas_df["properties"].apply(pd.Series)], axis=1)
         for region in ['county', 'region', 'neighborhood']:
-            iterate_over_regions(region, localities_sdf)
+            iterate_over_regions(region, localities_sdf, areas_json, areas_df)
+
+
+def return_area_geometry(features, name, type):
+    g = [f['geometry'] for f in features if f['properties']['name'] == name and f['properties']['region_type'] == type]
+    if len(g) == 0:
+        print(f'{name} did not return a geometry')
+        return False
+    else:
+        return g
 
 
 # Creates a new document for each region feature in specified region type
-def iterate_over_regions(region_type, sdf):
-    region_list = sdf[region_type].to_list()
-    unique_names = list(set(region_list))
-    for region_name in unique_names:
-        if region_name is not None:
-            returned_rows = filter_df(sdf, region_type, region_name)
-            region_taxa = process_taxa(returned_rows.taxa.to_list())
-            returned_photos = Attachment.objects(__raw__={region_type: region_name})
-            # Create new query document in Query collection
-            query = Query()
+def iterate_over_regions(region_type, sdf, geojson, areas_df):
+    features = geojson['features']
+    #region_list = sdf[region_type].to_list()
+    #unique_names = [name for name in (set(region_list)) if name != '']
+    for feature in features:
+        region_name = feature['properties']['name']
+        region_type = feature['properties']['region_type']
+        returned_area = feature['geometry']
+        returned_rows = filter_df(sdf, region_type, region_name)
+        region_taxa = process_taxa(returned_rows.taxa.to_list())
+        returned_photos = Attachment.objects(__raw__={region_type: region_name})
+
+        # Create new query document in Query collection
+        if returned_area:
+            returned_area = returned_area[0]
+            if returned_area['type'] == 'Polygon':
+                query = Polygon()
+            elif returned_area['type'] == 'MultiPolygon':
+                query = MultiPolygon()
+
+
             # By using the same id as existing record, query.save() will
             # overwrite existing record, as opposed to creating duplicates
-            if Query.objects(name=region_name, region=region_type):
-                query.id = Query.objects(name=region_name, region=region_type)[0].id
+
+            if Area.objects(name=region_name, region=region_type):
+                query.id = Area.objects(name=region_name, region=region_type)[0].id
+
             query.name = region_name
             query.region = region_type
             query.modified = datetime.now()
@@ -195,8 +228,11 @@ def iterate_over_regions(region_type, sdf):
             query.start_date = max(returned_rows['start_date'].to_list())
             query.end_date = min(returned_rows['end_date'].to_list())
             query.oids = returned_rows['ObjectId'].to_list()
+            query.geometry = returned_area
             query.save()
             print(f'Sucessfully saved {region_name} to db!')
+        else:
+            pass
 
 
 # Return df based on loc query of dataframe

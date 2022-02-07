@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request
 from data.database import global_init
-from data.database import Query
+from data.database import Area
 from data.update import update
 from datetime import datetime
 from whitenoise import WhiteNoise
@@ -21,9 +21,12 @@ for static in my_static_folders:
 def query():
     if request.method == 'POST':
         feature = request.json
-        feature_name = feature['name']
-        feature_region = feature['region']
-        feature_query = Query.objects(name=feature_name, region=feature_region)
+        #feature_name = feature['name']
+        region = feature['region']
+        latitude = feature['latitude']
+        longitude = feature['longitude']
+        #feature_query = Area.objects(name=feature_name, region=feature_region)
+        feature_query = Area.objects(geometry__geo_intersects=[longitude, latitude], region=region)
         if feature_query:
             response = feature_query[0].export()
         else:
