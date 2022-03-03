@@ -57,6 +57,7 @@ class Area(mongoengine.Document):
     region = mongoengine.StringField(required=True)
     number_of_sites = mongoengine.IntField(required=True)
     number_of_specimens = mongoengine.IntField(required=True)
+    parent_region = mongoengine.StringField()
     taxa = mongoengine.DictField()
     photos = mongoengine.ListField(mongoengine.ReferenceField(Attachment, dbref=True))
     start_date = mongoengine.FloatField()
@@ -70,7 +71,13 @@ class Area(mongoengine.Document):
     }
 
     def handle_nan(self, value):
-        return None if np.isnan(value) else value
+        #return None if np.isnan(value) else value
+        if value is None:
+            return None
+        elif np.isnan(value):
+            return None
+        else:
+            return value
 
     def parse_json(self):
         return json.loads(dumps(self))
@@ -81,6 +88,7 @@ class Area(mongoengine.Document):
             photos = sample(photos, 7)
         response_dict = {
             'name': self.name,
+            'region': self.region,
             'number_of_sites': self.number_of_sites,
             'number_of_specimens': self.number_of_specimens,
             'taxa': self.taxa,
@@ -88,7 +96,7 @@ class Area(mongoengine.Document):
             'startDate': self.handle_nan(self.start_date),
             'endDate': self.handle_nan(self.end_date),
             'oids': self.oids,
-            'geometry': self.geometry
+            #'geometry': self.geometry
         }
         return dumps(response_dict)
 

@@ -31,7 +31,7 @@ class Spaces:
         self.prefix = prefix
         self.space = space
         self.client = self._connect_to_spaces()
-        self.image_list = self._get_images()
+        self.object_list = self._get_objects()
 
     def _connect_to_spaces(self):
         load_dotenv()
@@ -47,7 +47,7 @@ class Spaces:
                                        )
         return client
 
-    def _get_images(self):
+    def _get_objects(self):
         paginator = self.client.get_paginator('list_objects_v2')
         pages = paginator.paginate(Bucket=self.space, Prefix=self.prefix)
         contents = [page['Contents'] for page in pages][0]
@@ -56,7 +56,7 @@ class Spaces:
 
     def is_in_spaces(self, key):
         key = self.prefix + key
-        if key in self.image_list:
+        if key in self.object_list:
             return True
         else:
             return False
@@ -71,6 +71,16 @@ class Spaces:
         self.client.upload_fileobj(in_memory_file, self.space, key)
         # Change its permissions to public
         self.client.put_object_acl(ACL='public-read', Bucket=self.space, Key=key)
+
+    def upload_geojson(self, geojson, key):
+        # Save image to file in memory
+        response = self.client.put_object (
+            Body=json.dumps(geojson),
+            Bucket='fossilmap',
+            Key=f'{self.prefix}{key}'
+        )
+        self.client.put_object_acl(ACL='public-read', Bucket=self.space, Key=f'{self.prefix}{key}')
+        return response
 
 
 def load_image(url):
@@ -189,14 +199,50 @@ def return_area_geometry(features, name, type):
         return g
 
 
+def intersection_areas(spaces, features, name, region_type):
+    key = f'{name.replace(" ","")}_{region_type}.geojson'
+    if not spaces.is_in_spaces(key):
+        intersecting_features = [f.copy() for f in features if f['properties']['parent_region'] == name]
+        if intersecting_features:
+            for feature in intersecting_features:
+                feature['properties'] = {
+                    "name": feature['properties']['name'],
+                    #"type": 1
+                }
+        '''
+        parent_feature = [f.copy() for f in features if f['properties']['name'] == name][0]
+        parent_feature['properties'] = {
+                "name": name,
+                "type": 0
+        }
+        '''
+
+        new_geojson = {
+            "type": "FeatureCollection",
+            "features": intersecting_features
+        }
+
+        response = spaces.upload_geojson(new_geojson, key)
+        status_code = response['ResponseMetadata']['HTTPStatusCode']
+        if status_code == 200:
+            print(f'{key} successufully uploaded')
+        else:
+            print(f'{key} was not able to be uploaded with error code: {status_code}')
+
+
+
+
 # Creates a new document for each region feature in specified region type
 def iterate_over_regions(region_type, sdf, geojson, areas_df):
+    geojson_spaces = Spaces(prefix='intersecting-areas/')
     features = geojson['features']
+
     #region_list = sdf[region_type].to_list()
     #unique_names = [name for name in (set(region_list)) if name != '']
     for feature in features:
         region_name = feature['properties']['name']
         region_type = feature['properties']['region_type']
+        intersection_areas(geojson_spaces, features, region_name, region_type)
         returned_area = feature['geometry']
         returned_rows = filter_df(sdf, region_type, region_name)
         region_taxa = process_taxa(returned_rows.taxa.to_list())
@@ -204,7 +250,6 @@ def iterate_over_regions(region_type, sdf, geojson, areas_df):
 
         # Create new query document in Query collection
         if returned_area:
-            returned_area = returned_area[0]
             if returned_area['type'] == 'Polygon':
                 query = Polygon()
             elif returned_area['type'] == 'MultiPolygon':
@@ -219,14 +264,17 @@ def iterate_over_regions(region_type, sdf, geojson, areas_df):
 
             query.name = region_name
             query.region = region_type
+            query.parent_region = feature['properties']['parent_region']
             query.modified = datetime.now()
             query.number_of_sites = len(returned_rows)
             query.taxa = region_taxa
             query.number_of_specimens = sum(region_taxa.values())
             # Get list of specimen IDs from photos sdf based on their region name value
             query.photos = [x.id for x in returned_photos]
-            query.start_date = max(returned_rows['start_date'].to_list())
-            query.end_date = min(returned_rows['end_date'].to_list())
+            if returned_rows['start_date'].to_list():
+                query.start_date = max(returned_rows['start_date'].to_list())
+            if returned_rows['end_date'].to_list():
+                query.end_date = min(returned_rows['end_date'].to_list())
             query.oids = returned_rows['ObjectId'].to_list()
             query.geometry = returned_area
             query.save()
