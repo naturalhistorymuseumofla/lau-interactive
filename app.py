@@ -37,7 +37,7 @@ def export_area(area):
     }
     return dumps(response_dict)
 
-@app.route("/query", methods=["GET", "POST"])
+@app.route("/spatial-query", methods=["GET", "POST"])
 def query():
     if request.method == 'POST':
         feature = request.json
@@ -57,14 +57,20 @@ def query():
         return response
 
 
+
+
 @app.route("/")
 def home():
     return render_template("index.html")
 
+@app.route("/exhibit")
+def exhibit():
+    return render_template("exhibit-index.html")
+
 
 if __name__ == "__main__":
     global_init()
-    files = ['./static/css/styles.css', './static/js/app.js']
+    files = ['./static/css/styles.css', './static/js/app.js', './static/js/exhibit-app.js']
     app.run(debug=True,
             #host='192.168.1.89',
             extra_files=files)

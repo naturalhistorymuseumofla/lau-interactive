@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html data-mobile="false">
+  <head>
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href={{url_for('static', filename='css/splide.min.css')}}>
+    <link rel="stylesheet" href={{url_for('static', filename='css/styles.min.css')}}>
+
+    <meta charset="utf-8" />
+    <title>LAU Map Interactive (prototype)</title>
+    <link rel="shortcut icon" type="image/svg" href={{url_for('static', filename='images/clam.svg')}}/>
+  </head>
+  <body lang="en">
+    <div id="loading">
+    </div>
+    <div class="instructions__container">
+
+      <div class="card instructions card--active">
+        <button class="close-button close-button__instructions hvr-grow-shadow"></button>
+        <h2 lang="en">Tap on the map to discover fossils in Los Angeles.</h2>
+        <h2 lang="es">Presiona una zona del mapa para conocer cuáles son los fósiles que el museo encontró allí.</h2>
+      </div>
+    </div>
+    <div id="viewDiv">
+      <div class="ui-container ui-top-left" >
+        <div class="search">
+        </div>
+        <div class="card content-card cupertino-pane" id="infoCard">
+          <button class="close-button close-button__info-card hvr-grow-shadow"></button>
+          <div class="menu__container">
+            <nav class="card__menu">
+              <li class="button__outer-container photos__button">
+                <div class="button__inner-container photos__button">
+                  <a href="#photos" ripple="ripple" class="button button--active hvr-grow-shadow menu__button" id="collectionButton">
+                    <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 126 126" xml:space="preserve">
+                      <style>
+                        .st0{fill:#26566A;} .button__path{fill-rule:evenodd;clip-rule:evenodd;}
+                      </style>
+                      <path class="button__path button__path--active" d="M78.43 32.14H47.57c-8.52 0-15.43 6.91-15.43 15.43v24.65l8.47-8.47c1-1 2.63-1 3.64 0l8.47 8.47L74.04 50.9c1-1 2.63-1 3.64 0l16.18 16.18V47.57c0-8.52-6.91-15.43-15.43-15.43zM47.57 27C36.21 27 27 36.21 27 47.57v30.86C27 89.79 36.21 99 47.57 99h30.86C89.79 99 99 89.79 99 78.43V47.57C99 36.21 89.79 27 78.43 27H47.57zm7.72 20.57c0 4.26-3.45 7.71-7.71 7.71s-7.71-3.45-7.71-7.71 3.45-7.71 7.71-7.71c4.25 0 7.71 3.45 7.71 7.71z"/>
+                    </svg>
+                  </a>
+                </div>
+                <div class="photos__button button__caption button__caption--active" id="collectionButtonCaption">
+                  <p lang="en">Photos</p>
+                  <p lang="es">Fotografías</p>
+                </div>
+              </li>
+              <li class="button__outer-container time__button">
+                <div class="button__inner-container time__button">
+                  <a href="#time" ripple="ripple" class="button hvr-grow-shadow menu__button" id="collectionButton">
+                    <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 126 126" xml:space="preserve">
+                      <style>
+                        .st0{fill:#26566A;} .st1{fill:#FFFFFF;}
+                      </style>
+                      <path class="button__path" d="M40.49 32.59c0 1.84-.01 3.63.01 5.43 0 .43.05.87.13 1.29.57 2.79 3.12 4.75 5.97 4.63 2.83-.12 5.19-2.29 5.54-5.1.05-.36.06-.73.06-1.1.01-1.7 0-3.41 0-5.14h21.59v.46c0 1.67-.01 3.33 0 5 .01 3.1 2.29 5.57 5.4 5.87 2.88.28 5.58-1.76 6.19-4.7.08-.4.11-.81.12-1.21.01-1.64.01-3.28.01-4.92v-.48c.07-.02.11-.05.16-.05 2.34.01 4.67-.07 7 .05 3.51.17 6.28 3.14 6.37 6.65 0 .14.01.29.01.43v52.2c0 3.25-1.91 5.93-4.89 6.8-.62.18-1.29.29-1.93.29-19.49.01-38.97.01-58.46.01-3.68 0-6.7-2.97-6.82-6.67v-.28-52.51c0-3.2 2.05-5.92 5.1-6.73.58-.15 1.19-.23 1.79-.24 2.11-.03 4.22-.01 6.34-.01.08 0 .17.02.31.03zm-8.04 19.54V89.9c0 2.19 1.46 3.65 3.65 3.65 17.91 0 35.82-.01 53.73.02 2.18 0 3.75-1.62 3.74-3.75-.04-12.41-.02-24.82-.02-37.24v-.44c-20.37-.01-40.71-.01-61.1-.01z"/>
+                      <path class="button__path" d="M43.64 33.86c0-1.39-.01-2.78 0-4.17.02-1.22.81-2.26 1.94-2.58 1.16-.33 2.41.1 3.01 1.14.25.43.43.98.43 1.48.04 2.77.03 5.53.02 8.3 0 1.53-1.18 2.71-2.68 2.72-1.5.01-2.7-1.15-2.72-2.68-.02-1.4 0-2.81 0-4.21zM76.95 33.87v-4.05c0-1.61 1.16-2.81 2.71-2.81 1.54 0 2.69 1.21 2.69 2.82 0 2.74.01 5.48 0 8.22 0 1.36-1.02 2.51-2.31 2.67-1.38.17-2.62-.63-2.98-1.95-.07-.27-.1-.57-.11-.85-.01-1.35 0-2.7 0-4.05zM47.65 80.36v6.13h-8.28v-6.13h8.28zM52.38 80.34h8.24v6.15h-8.24v-6.15zM73.63 80.36v6.12h-8.26v-6.12h8.26zM78.36 80.34h8.25v6.14h-8.25v-6.14zM73.63 69.76v6.13h-8.26v-6.13h8.26zM60.64 69.76v6.13h-8.26v-6.13h8.26zM86.63 69.76v6.13h-8.26v-6.13h8.26zM47.66 69.77v6.12h-8.28v-6.12h8.28zM47.64 65.29h-8.26v-6.12h8.26v6.12zM60.64 59.16v6.12h-8.25v-6.12h8.25zM65.37 59.16h8.26v6.12h-8.26v-6.12zM86.62 59.16v6.12h-8.27v-6.12h8.27z"/>
+                    </svg>
+                  </a>
+                </div>
+                <div class="button__caption" id="collectionButtonCaption">
+                  <p lang="en">Time</p>
+                  <p lang="es">Antigüedad</p>
+                </div>
+              </li>
+
+              <li class="button__outer-container">
+                <div class="button__inner-container">
+                  <a  href="#location" ripple="ripple" class="button hvr-grow-shadow menu__button" id="locationButton">
+                    <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0" y="0" viewBox="0 0 126 126" xml:space="preserve">
+                      <style>
+                        .button__icon{} .st1{fill:#FFFFFF;}
+                      </style>
+                      <path class="button__path" d="M45.62 71.48a8.404 8.404 0 01-6.66 2.4c-1.78-.16-3.52-.32-5.09-.47-3.51-.32-6.59 2.28-6.85 5.78-.25 3.3 2.13 6.23 5.44 6.68 1.16.16 2.02 1.16 1.98 2.33l-.23 7.22a3.47 3.47 0 003.58 3.57l9.84-.27a3.475 3.475 0 003.38-3.19l.75-9.41a8.265 8.265 0 012.42-5.21l.86-.84 25.37-25.56a8.404 8.404 0 016.66-2.4c1.78.16 3.52.32 5.09.47 3.51.32 6.59-2.28 6.85-5.78.25-3.3-2.13-6.23-5.44-6.68a2.281 2.281 0 01-1.98-2.33l.23-7.22A3.47 3.47 0 0088.24 27l-9.84.27a3.483 3.483 0 00-3.38 3.19l-.75 9.41a8.265 8.265 0 01-2.42 5.21L45.51 71.6"/>
+                    </svg>
+                  </a>
+                </div>
+                <div class="button__caption" id="locationButtonCaption">
+                  <p lang="en">Fossils</p>
+                  <p lang="es">Fósiles</p>
+                </div>
+              </li>
+
+
+            </nav>
+          </div>
+          <div id="locationTitle"class="card__flex-item card__title">
+            <h1 class="featureName">San Bernadino County</h1>
+            <h2>
+              <span lang="en"><span lang="en" class="excavation-number">2,000</span> excavation sites</span>
+              <span lang="es"><span lang="es" class="excavation-number">2,000</span> sitios de excavación</span>
+            </h2>
+          </div>
+          <div class="card__content info-card__content">
+            <div id="photos" class="card__container">
+              <div class="photos--info">
+                <div id="sliderDiv" class="card__flex-item">
+                  <h3 lang="en" class="card__header">Swipe to see more fossils in the collection.</h3>
+                  <h3 lang="es" class="card__header">Desliza para ver más fósiles de esta colección.</h3>
+                  <div class="splide">
+                    <div class="splide__track">
+                      <ul class="splide__list">
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <!--
+                <div class="seperator card__flex-item"></div>
+                -->
+              </div>
+              <div class="photos--null card__flex-item">
+                <div class="null__icon">
+                  <svg version="1.1" id="nullPhotoIcon" class="icon" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 126 126" xml:space="preserve">
+                    <style>
+                      #clip{clip-rule:evenodd;} .st1{fill-rule:evenodd;clip-rule:evenodd;fill:#FFFFFF;}
+                    </style>
+                    <line class="slash" x1="20%" y1="20%" x2="80%" y2="80%" ></line>
+                    <mask id="mask">
+                      <rect x="0" y=0 width="100%" height="100%" fill="white"></rect>
+                      <line class="slash__outline" x1="20%" y1="20%" x2="80%" y2="80%"></line>
+                    </mask>
+                    <path class="button__path" mask="url(#mask)" d="M78.43 32.14H47.57c-8.52 0-15.43 6.91-15.43 15.43v24.65l8.47-8.47c1-1 2.63-1 3.64 0l8.47 8.47L74.04 50.9c1-1 2.63-1 3.64 0l16.18 16.18V47.57c0-8.52-6.91-15.43-15.43-15.43zM47.57 27C36.21 27 27 36.21 27 47.57v30.86C27 89.79 36.21 99 47.57 99h30.86C89.79 99 99 89.79 99 78.43V47.57C99 36.21 89.79 27 78.43 27H47.57zm7.72 20.57c0 4.26-3.45 7.71-7.71 7.71s-7.71-3.45-7.71-7.71 3.45-7.71 7.71-7.71c4.25 0 7.71 3.45 7.71 7.71z"/>
+                  </svg>
+                </div>
+                <div>
+                  <h3>Try selecting a different area on the map!</h3>
+                  <h5>The museum has not photographed fossils from this area,
+                    but is always photographing new fossils from around Southern California.</h5>
+                </div>
+              </div>
+            </div>
+            <div id="time" class="card__container">
+              <div id="timeDiv" class="timescale">
+                <h3 id="timeText" class="card__header timescale__text">
+                  <span lang="en">The fossils in this area are <br> <span class="time__range"></span></span>
+                  <span lang="es">Los fósiles de esta zona tienen entre <br> <span class="time__range"></span></span>
+                </h3>
+                <div class="timescale__container">
+                  <div id="indicator" class="indicator">
+                    <div class="indicator__tick"></div>
+                    <div class="indicator__line"></div>
+                    <div class="indicator__tick"></div>
+                  </div>
+                  <div class= "timescale__bar cretaceous"></div>
+                  <div class= "timescale__bar paleogene"></div>
+                  <div class= "timescale__bar neogene"></div>
+                  <div class= "timescale__bar holocene"></div>
+                  <div class="timescale__age holocene__age">
+                    <span lang="en">2.6 million </br> years ago</span>
+                    <span lang="es">hace 2,6</br> millones<br> de años </span>
+                  </div>
+                  <div class="timescale__age neogene__age">
+                    <span lang="en">20 million</br> years ago</span>
+                    <span lang="es">hace 20</br> millones<br> de años </span>
+                  </div>
+                  <div class="timescale__age paleogene__age">
+                    <span lang="en">66 million</br> years ago</span>
+                    <span lang="es">hace 66</br> millones<br> de años </span>
+                  </div>
+                  <div class="timescale__age cretaceous__age">
+                    <span lang="en">100 million</br> years ago</span>
+                    <span lang="es">hace 100</br> millones<br> de años </span>
+                  </div>
+
+              </div>
+                <div class = "timescale-legend">
+                  <div class="timescale-legend__item">
+                    <div class="timescale-legend__indicator" id="cretaceous-circle"></div>
+                    <p lang="en" class= "timescale-legend__text">Cretaceous</p>
+                    <p lang="es" class= "timescale-legend__text">Cretácico</p>
+                  </div>
+                  <div class="timescale-legend__item">
+                    <div class="timescale-legend__indicator" id="paleogene-circle"></div>
+                    <p lang="en" class="timescale-legend__text">Paleogene</p>
+                    <p lang="es" class="timescale-legend__text">Paleógeno</p>
+                  </div>
+                  <div class="timescale-legend__item">
+                    <div class="timescale-legend__indicator" id="neogene-circle"></div>
+                    <p lang ="en" class="timescale-legend__text">Neogene</p>
+                    <p lang="es" class="timescale-legend__text">Neógeno</p>
+                  </div>
+                  <div class="timescale-legend__item">
+                    <div class="timescale-legend__indicator" id="recent-circle"></div>
+                    <p lang="en" class="timescale-legend__text">Quaternary</p>
+                    <p lang="es" class="timescale-legend__text">Cuaternario</p>
+                  </div>
+                </div>
+              </div>
+              <div class="seperator card__flex-item" id="timeSeperator"></div>
+              <div class="underwater__container card__flex-item">
+                <div class="underwater__icon">
+                  <svg class="underwater__svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
+                    <path class="button-svg__path" d="M562 384c-21-3-42-11-58-23a39 39 0 00-48 0c-38 30-107 30-146-1-13-12-33-10-46 1-38 30-107 30-146-1-13-12-33-9-47 2-15 12-36 20-57 22-8 1-14 8-14 16v32c0 9 8 17 17 16 29-3 56-12 79-26 57 35 137 34 192 0 57 35 137 34 192 0 23 14 51 23 79 26 9 1 17-7 17-16v-32c0-8-6-15-14-16zm0-144c-21-3-42-11-58-23a39 39 0 00-48 0c-38 30-107 30-146-2-13-11-33-9-46 2-38 30-107 30-146-1-13-12-33-9-47 2-15 12-36 20-57 22-8 1-14 8-14 16v32c0 9 8 17 17 16 29-3 56-12 79-26 57 35 137 34 192 0 57 35 137 34 192 0 23 14 51 23 79 26 9 1 17-7 17-16v-32c0-8-6-15-14-16zm0-144c-21-3-42-11-58-23a39 39 0 00-48 0c-38 30-107 30-146-1-13-12-33-10-46 1-38 30-107 30-146-1-13-12-33-9-47 2-15 12-36 20-57 22-8 1-14 8-14 16v32c0 9 8 17 17 16 29-3 56-11 79-26 57 35 137 34 192 0 57 35 137 34 192 0 23 14 51 23 79 26 9 1 17-7 17-16v-32c0-8-6-15-14-16z"/>
+                  </svg>
+                </div>
+                <div class="underwater-text__container">
+                  <h5>
+                    <span lang="es">La última vez que</span>
+                    <div class="featureName">San Bernadino County</div>
+                    <span lang="en">was last underwater</span>
+                    <span lang="es">estuvo bajo el agua fue hace</span>
+                    </br>
+                    <strong class="underwater__age" lang="en">12 thousand years ago</strong>
+                    <strong class="underwater__age" lang="es">12 miles de años</strong>
+                  </h5>
+                </div>
+              </div>
+            </div>
+            <div id="location" class="card__container">
+              <div class="taxa card__flex-item taxa--info">
+                <h3 lang=en><span lang=en class="fossils-found">225</span> fossils found</h3>
+                <h3 lang=es><span lang=es class="fossils-found">225</span> fósiles hallados</h3>
+                
+                <div class="taxa__grid taxa__container-grid">
+                  <div class="invert__container">
+                    <h4 lang="en">Invertebrates</h4>
+                    <h4 lang="es">Invertebrados</h4>
+                    <div class="invert__list taxa__list taxa__grid"></div>
+                  </div>
+                  <div class="vert__container">
+                    <h4 lang="en">Vertebrates</h4>
+                    <h4 lang="es">Vertebrados</h4>
+                    <div class="vert__list taxa__list taxa__grid"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="taxa card__flex-item taxa--null">
+                <div class="null__icon">
+                  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0" y="0" viewBox="0 0 126 126" xml:space="preserve">
+                  <line class="slash" x1="20%" y1="20%" x2="80%" y2="80%"></line>
+                  <mask id="fossil-mask">
+                    <rect x="0" y=0 width="100%" height="100%" fill="white"></rect>
+                    <line class="slash__outline" x1="20%" y1="20%" x2="80%" y2="80%"></line>
+                  </mask>
+                    <path class="button__path" mask="url(#fossil-mask)" d="M45.62 71.48a8.404 8.404 0 01-6.66 2.4c-1.78-.16-3.52-.32-5.09-.47-3.51-.32-6.59 2.28-6.85 5.78-.25 3.3 2.13 6.23 5.44 6.68 1.16.16 2.02 1.16 1.98 2.33l-.23 7.22a3.47 3.47 0 003.58 3.57l9.84-.27a3.475 3.475 0 003.38-3.19l.75-9.41a8.265 8.265 0 012.42-5.21l.86-.84 25.37-25.56a8.404 8.404 0 016.66-2.4c1.78.16 3.52.32 5.09.47 3.51.32 6.59-2.28 6.85-5.78.25-3.3-2.13-6.23-5.44-6.68a2.281 2.281 0 01-1.98-2.33l.23-7.22A3.47 3.47 0 0088.24 27l-9.84.27a3.483 3.483 0 00-3.38 3.19l-.75 9.41a8.265 8.265 0 01-2.42 5.21L45.51 71.6"/>
+                  </svg>
+                </div>
+                <h3 lang="en">Try selecting a different area on the map!</h3>
+                <h3 lang="es">¡Intenta seleccionar otra zona!</h3>
+                <h5 lang="en">The fossils in this area are still being identified.</h5>
+                <h5 lang="es">Todavía estamos identificando los fósiles de esta zona.</h5>
+              </div>
+              <!--
+              <div class="seperator card__flex-item"></div>
+              -->
+            </div>
+          </div>
+          <div class="card__content null-card__content">
+            <h1 lang="en">There are currently no excavation sites in <span class="featureName"></span></h1>
+            <h1 lang="es">Actualmente, no hay sitios de excavación en <span class="featureName"></span></h1>
+          </div>
+        </div>
+      </div>
+      <div class="ui-container ui-top-left">
+        <div class="card card__container content-card"  id="noInfoCard">
+          <button class="close-button close-button__null-card hvr-grow-shadow"></button>
+          <h1 class="null__title" lang="en">There are currently no excavation sites in <span class="featureName"></span></h1>
+          <h1 class="null__title" lang="es">Actualmente, no hay sitios de excavación en <span class="featureName"></span></h1>
+          <div class="card__flex-item">
+            <div class="null__icon">
+              <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0" y="0" viewBox="0 0 126 126" xml:space="preserve">
+                <line class="slash" x1="20%" y1="20%" x2="80%" y2="80%"></line>
+                <mask id="null-mask">
+                  <rect x="0" y=0 width="100%" height="100%" fill="white"></rect>
+                  <line class="slash__outline" x1="20%" y1="20%" x2="80%" y2="80%"></line>
+                </mask>
+                  <path class="button__path" mask="url(#null-mask)" d="M45.62 71.48a8.404 8.404 0 01-6.66 2.4c-1.78-.16-3.52-.32-5.09-.47-3.51-.32-6.59 2.28-6.85 5.78-.25 3.3 2.13 6.23 5.44 6.68 1.16.16 2.02 1.16 1.98 2.33l-.23 7.22a3.47 3.47 0 003.58 3.57l9.84-.27a3.475 3.475 0 003.38-3.19l.75-9.41a8.265 8.265 0 012.42-5.21l.86-.84 25.37-25.56a8.404 8.404 0 016.66-2.4c1.78.16 3.52.32 5.09.47 3.51.32 6.59-2.28 6.85-5.78.25-3.3-2.13-6.23-5.44-6.68a2.281 2.281 0 01-1.98-2.33l.23-7.22A3.47 3.47 0 0088.24 27l-9.84.27a3.483 3.483 0 00-3.38 3.19l-.75 9.41a8.265 8.265 0 01-2.42 5.21L45.51 71.6"/>
+              </svg>
+            </div>
+            <h2 lang="en">Try selecting a different area on the map!</h2>
+            <h2 lang="es">¡Intenta seleccionar otra zona!</h2>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ui-container ui-bottom-left">
+      <div class="card legend card--active">
+        <div class="legend__flex-item locality-indicator">
+          <div class="legend__circle legend__circle--locality"></div>
+          <h3  lang="en" class="legend__text">Excavation sites</h3>
+          <h3  lang="es" class="legend__text">Sitios de excavación</h3>
+        </div>
+        <div class="photo-indicator legend__flex-item ">
+          <div class="photo-indicator__container">
+            <svg class="photo-indicator__svg">
+              <circle class="still photo-indicator__circle"/>
+              <circle class="photo-indicator__circle"/>
+              <circle class="photo-indicator__circle"/>
+            </svg>
+          </div>
+          <h3 class="legend__text"> Pictured fossil</h3>
+        </div>
+      </div>
+    </div>
+    <div class="ui-container ui-top-right">
+
+      <div class="switch__container">
+        <label class="switch" >
+          <input type="checkbox" id="languageSwitch">
+          <span class="slider hvr-grow-shadow round"></span>
+        </label>
+        <p class="widget__label" lang="en">Español</p>
+        <p class="widget__label" lang="es">English</p>
+      </div>
+
+    </div>
+    <div class="ui-container ui-bottom-right">
+      <button id="zoomIn"
+      class="zoom widget widget__container hvr-grow-shadow"
+      ripple = "ripple"
+      title="Zoom in">
+    </button>
+      <button id="zoomOut"
+      class="zoom widget widget widget__container hvr-grow-shadow"
+      ripple = "ripple"
+      title="Zoom out">
+      </button>
+    </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/2.8.1/gl-matrix.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://unpkg.com/cupertino-pane/dist/cupertino-pane.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@2.4.21/dist/js/splide.min.js"></script>
+    <script src="https://js.arcgis.com/4.21/"></script>
+    <script type="module" src={{url_for('static', filename='js/exhibit-app.js')}}></script>
+    <script type="module" src={{url_for('static', filename='js/scrollBox.js')}}></script>
+
+  </body>
+</html>
