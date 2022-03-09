@@ -635,6 +635,7 @@ require([
       }
     }
 
+
     async function getArea(mapPoint) {
       const scale = map.view.scale;
       let region = (scale > 600000) ? 'county' :

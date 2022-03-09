@@ -8,8 +8,9 @@ from data.database import MultiPolygon
 from data.database import Area
 from data.database import Attachment
 from datetime import datetime
+from os import getenv
+from pathlib import Path
 import pandas as pd
-import os
 from dotenv import load_dotenv
 from boto3 import session
 import urllib.request
@@ -20,8 +21,8 @@ import json
 # Return fearture layer item from ArcGIS Online
 def get_portal_object(id):
     load_dotenv()
-    GIS_USR = os.getenv('GIS_USR')
-    GIS_PSWD = os.getenv('GIS_PSWD')
+    GIS_USR = getenv('GIS_USR')
+    GIS_PSWD = getenv('GIS_PSWD')
     gis = GIS('https://lacnhm.maps.arcgis.com/', GIS_USR, GIS_PSWD)
     agol_object = gis.content.get(id)
     return agol_object
@@ -35,8 +36,8 @@ class Spaces:
 
     def _connect_to_spaces(self):
         load_dotenv()
-        SPACES_ACCESS_ID = os.getenv('SPACES_ACCESS_ID')
-        SPACES_SECRET_KEY = os.getenv('SPACES_SECRET_KEY')
+        SPACES_ACCESS_ID = getenv('SPACES_ACCESS_ID')
+        SPACES_SECRET_KEY = getenv('SPACES_SECRET_KEY')
         ENDPOINT_URL = 'https://sfo3.digitaloceanspaces.com'
         spaces_session = session.Session()
         client = spaces_session.client('s3',
@@ -176,7 +177,7 @@ def check_if_updated(agol_object, Collection):
 # all unique region names in returned dataframe
 def update_localities(localities, areas):
     is_updated = check_if_updated(localities, Area)
-    #is_updated = False
+    is_updated = False
     if not is_updated:
         localities_layer = localities.layers[0].query()
         areas_layer = localities.layers[0].query()
@@ -185,7 +186,8 @@ def update_localities(localities, areas):
         #areas_layer = get_portal_object('c273ac12f11a413eae2331ad758e3c6b').layers[0].query()
         #counties_layer = get_portal_object('fa404082563d460681efe17c6a0ea163').layers[0].query()
         #areas_features = json.loads(areas_layer.to_geojson)['features'] + json.loads(counties_layer.to_geojson)['features']
-        areas_json = json.load(open('../static/layers/lauAllAreasFinal.geojson'))
+        json_path = Path.cwd().parent / Path('static/layers/lauAllAreasFinal.geojson')
+        areas_json = json.load(open(json_path))
         areas_df = pd.DataFrame.from_dict(areas_json['features'])
         areas_df = pd.concat([areas_df, areas_df["properties"].apply(pd.Series)], axis=1)
         for region in ['county', 'region', 'neighborhood']:
