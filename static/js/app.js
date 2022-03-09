@@ -588,7 +588,7 @@ require([
       const intersectingAreas = new GeoJSONLayer({
         url: `https://fossilmap.sfo3.cdn.digitaloceanspaces.com/intersecting-areas/${key}.geojson`,
         title: 'intersectingAreasLayer',
-        labelingInfo: [map.regionsLabelClass],
+        labelingInfo: [map.areasLabelClass],
         labelPlacement: 'always-horizontal',
         maxScale: (region=='county') ? map.countiesMaxScale : map.regionsMaxScale,
         outFields: ["*"],
@@ -1762,7 +1762,7 @@ require([
       renderer: localitiesRenderer,
       labelingInfo: [countiesLabelClass],
       maxScale: countiesMaxScale,
-      outFields: ["*"]
+      outFields: ["name"]
     });
 
     const regionsLayer = new FeatureLayer({
@@ -1771,7 +1771,7 @@ require([
       labelingInfo: [regionsLabelClass],
       minScale: countiesMaxScale,
       maxScale: regionsMaxScale,
-      outFields: ["*"]
+      outFields: ["name"]
     });
 
     const neighborhoodsLayer = new FeatureLayer({
@@ -1779,7 +1779,7 @@ require([
       renderer: localitiesRenderer,
       labelingInfo: [regionsLabelClass],
       minScale:regionsMaxScale,
-      outFields: ["*"]
+      outFields: ["name"]
     });
 
     const areaGraphics = new GraphicsLayer();
@@ -1854,8 +1854,9 @@ require([
       areasLayer,
       //clientFeatureLayer,
       localitiesLayer,
-      selectedPhotoGraphicsLayer,
       areaGraphics,
+      selectedPhotoGraphicsLayer,
+
       //areaGraphicsGroupLayer,
     ]
 
@@ -1902,7 +1903,7 @@ require([
       //'areasLayer': areasLayer,
       'infoPane': infoPane,
       'areasLayer': areasLayer,
-      'regionsLabelClass': regionsLabelClass,
+      'areasLabelClass': areasLabelClass,
       'selectedFeature': {
         name: '',
         region: '',
