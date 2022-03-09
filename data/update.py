@@ -174,11 +174,13 @@ def check_if_updated(agol_object, Collection):
 
 # Updates localities by filtering spatial df by region type and iterating over
 # all unique region names in returned dataframe
-def update_localities(localities):
+def update_localities(localities, areas):
     is_updated = check_if_updated(localities, Area)
     #is_updated = False
     if not is_updated:
         localities_layer = localities.layers[0].query()
+        areas_layer = localities.layers[0].query()
+        areas_sdf = areas_layer.sdf
         localities_sdf = localities_layer.sdf
         #areas_layer = get_portal_object('c273ac12f11a413eae2331ad758e3c6b').layers[0].query()
         #counties_layer = get_portal_object('fa404082563d460681efe17c6a0ea163').layers[0].query()
@@ -303,7 +305,8 @@ def update():
     global_init()
     localities = get_portal_object('0142ccc5d236408ea680ac93e42934e6')
     photos = get_portal_object('d074b2bfe5014887ab1796f633966ee6')
+    areas = get_portal_object('be2dd0057e8144fbadf6e6564c1afbf6')
     update_attachments(photos)
-    update_localities(localities)
+    update_localities(localities, areas)
 
 update()

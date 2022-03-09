@@ -1,2 +1,6 @@
-
+.idea/workspace.xml
+__pycache__/app.cpython-37.pyc
+data/__pycache__/database.cpython-37.pyc
+data/__pycache__/update.cpython-37.pyc
+static/.DS_Store
 .env

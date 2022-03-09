@@ -13,34 +13,32 @@ require([
   'esri/layers/FeatureLayer',
   "esri/layers/GeoJSONLayer",
   'esri/layers/GraphicsLayer',
-  "esri/layers/GroupLayer",
   'esri/Graphic',
   'esri/Basemap',
   'esri/layers/VectorTileLayer',
-  "esri/layers/TileLayer",
   'esri/widgets/Zoom/ZoomViewModel',
   'esri/layers/support/LabelClass',
   "esri/views/2d/layers/BaseLayerViewGL2D",
   "esri/core/promiseUtils",
   "esri/core/watchUtils",
   "esri/geometry/support/webMercatorUtils",
+  "esri/geometry/Polygon",
 ], function (
   Map,
   MapView,
   FeatureLayer,
   GeoJSONLayer,
   GraphicsLayer,
-  GroupLayer,
   Graphic,
   Basemap,
   VectorTileLayer,
-  TileLayer,
   ZoomViewModel,
   LabelClass,
   BaseLayerViewGL2D,
   promiseUtils,
   watchUtils,
   webMercatorUtils,
+  Polygon
 ) {
 
   var splide = newSplide();
@@ -429,11 +427,15 @@ require([
     // Starting point to display the geometry of a feature, query the database
     // and display all returned info onto the map/info panels
     function main(feature, mapPoint) {
-
-
+      var goToOptions = {
+        animate: true,
+        duration: 800,
+        ease: 'ease-in'
+      }
 
       if (feature) {
         zoomToFeature(feature.geometry, feature.attributes.name);
+        //map.view.goTo(feature, goToOptions);
         map.selectedFeature.name = feature.attributes.name;
         map.selectedFeature.region = (map.currentFeature.region=='county') ? 'region' :
         (map.currentFeature.region == 'region') ? 'neighborhood' : ''
@@ -450,16 +452,26 @@ require([
             map['currentFeature'] = {'name':data.name, 'region': data.region};
             addAreaHighlight(data.geometry);
             if (!feature) {
+              /*
               map.highlightLayer.when((event) => {
-                zoomToFeature(map.highlightLayer, data.name)
-                //map.view.goTo(map.highlightLayer.fullExtent);
+                //zoomToFeature(map.highlightLayer, data.name)
+                map.view.goTo(map.highlightLayer.fullExtent, goToOptions);
               });
+              */
+             //zoomToFeature(map.areaGraphics.graphics[0], data.name)
             }
-            addIntersectingAreas(data.name, data.region);
+            if (data.region === 'county' | data.region == 'region') {
+              addIntersectingAreas(data.name, data.region);
+            }
             //addAreaHighlight(geojson);
-            populateInfoCards(data);
+            if (data.number_of_sites) {
+              populateInfoCards(data);
+            } else {
+              populateNullCards(data.name);
+            }
+
           } else {
-            //populateNullCards(feature.attributes.name)
+            resetButtonClickHandler();
           }
         });
 
@@ -508,7 +520,7 @@ require([
         duration: 800,
         ease: 'ease-in'
       }
-
+  
       const zoomOptions = {
         true: {
           'Los Angeles': {
@@ -518,9 +530,7 @@ require([
           'Santa Barbara': {
             center: [-120.1, 34.8],
           },
-          default: {
-            center: geometry,
-          }
+          default:  extent
         },
         false: {
           'Los Angeles': {
@@ -532,11 +542,13 @@ require([
             scale: returnZoomScale(geometry),
           },
           default: {
-            center: extent.expand(2).offset(geometryOffset, 0),
+            center: geometry.extent.expand(2).offset(geometryOffset, 0),
           }
 
         }
       }
+      
+      
       if (name in zoomOptions[isMobile]) {
         map.view
         .goTo(zoomOptions[isMobile][name], goToOptions)
@@ -554,6 +566,7 @@ require([
             }
           }, goToOptions);
       }
+    
     }
 
 
@@ -576,6 +589,7 @@ require([
         url: `https://fossilmap.sfo3.cdn.digitaloceanspaces.com/intersecting-areas/${key}.geojson`,
         title: 'intersectingAreasLayer',
         labelingInfo: [map.regionsLabelClass],
+        labelPlacement: 'always-horizontal',
         maxScale: (region=='county') ? map.countiesMaxScale : map.regionsMaxScale,
         outFields: ["*"],
         renderer:{
@@ -608,7 +622,7 @@ require([
         'name': feature.attributes.name,
         'region': region
       }
-      let response = await fetch('/query', {
+      let response = await fetch('/spatial-query', {
         method: 'POST',
         headers: {'Content-Type': 'application/json;charset=utf-8'},
         body: JSON.stringify(queryObject)
@@ -632,7 +646,7 @@ require([
         'currentFeature': ('currentFeature' in map) ? map.currentFeature : '',
         'selectedFeature': (map.selectedFeature.name) ? map.selectedFeature : '',
       };
-      let response = await fetch('/query', {
+      let response = await fetch('/spatial-query', {
         method: 'POST',
         headers: {'Content-Type': 'application/json;charset=utf-8'},
         body: JSON.stringify(queryObject)
@@ -649,16 +663,22 @@ require([
       
       const mapPoint = map.view.toMap(screenPoint);
       if ('intersectingAreas' in map) {
-        map.view.hitTest(screenPoint, {include:[map['intersectingAreas']]})
+        map.view.hitTest(screenPoint, {include:map.intersectingAreas})
         .then(feature => {
           if (feature.results[0]) {
             clearGraphics();
             main(feature.results[0].graphic, mapPoint)
+          } else {
+            clearGraphics();
+            main(null, mapPoint);
           }
         })
+      } else {
+        clearGraphics();
+        main(null, mapPoint);
       }
       
-      main(null, mapPoint);
+
       }
       
 
@@ -808,7 +828,37 @@ require([
       ($('.card__content')).animate({scrollTop:10}, 50);
     }
 
-    
+    function addAreaHighlight(geometry) {
+      const polygon = new Polygon();
+      const coordinates = (geometry.type === 'MultiPolygon') ? geometry.coordinates.flat(1) : geometry.coordinates;
+      polygon.rings = coordinates;
+      const selectedAreaGraphic = new Graphic({
+        geometry: polygon,
+        labelPlacement: 'always-horizontal',
+        symbol: {
+          type: "simple-fill",
+          color: [73, 128, 123, 0.15],
+          outline: {
+            // autocasts as new SimpleLineSymbol()
+            color: [73, 128, 123, 1],
+            width: 4, // points
+          },
+        }
+      });
+      map.areaGraphics.graphics.removeAll();
+      map.areaGraphics.graphics.add(selectedAreaGraphic);
+      zoomToFeature(polygon, '');
+     /*
+     const selectedAreaGraphic = new Graphic({
+       geometry: geometry
+     });
+     map.selectedAreaGraphics.graphics.removeAll();
+     map.selectedAreaGraphics.graphics.add(selectedAreaGraphic);
+    */
+    }
+
+
+    /*
     function addAreaHighlight(geometry) {
       //map.map.layers.remove(map.highlightLayer);
       const geojson = {
@@ -867,8 +917,9 @@ require([
      });
      map.selectedAreaGraphics.graphics.removeAll();
      map.selectedAreaGraphics.graphics.add(selectedAreaGraphic);
-    */
+    
     }
+    */
 
 
     /* ==========================================================
@@ -1238,6 +1289,7 @@ require([
 
     // Click event for select feature from feature layers
     map.view.on("click", function (event) {
+      event.preventDefault();
       selectFeaturesFromClick(event);
     });
 
@@ -1317,8 +1369,8 @@ require([
   
     // Clears all map graphics (outlines)
     function clearGraphics() {
-      //map.view.graphics.removeAll();
-      //map.areaGraphics.graphics.removeAll();
+      map.view.graphics.removeAll();
+      map.areaGraphics.graphics.removeAll();
       map.selectedFeature = {name: '', region: ''}
       if ('intersectingAreas' in map) {
         map.map.layers.remove(map.intersectingAreas);
@@ -1328,7 +1380,7 @@ require([
         map.map.layers.remove(map.highlightLayer);
         delete map.highlightLayer;
       }
-      map.selectedPhotoGraphicsLayer.removeAll();
+      map.selectedPhotoGraphicsLayer.graphics.removeAll();
       //map.map.layers.remove(map.intersectingAreas);
       (map.highlight) ? map.highlight.remove() : map.highlight;
     }
@@ -1695,10 +1747,12 @@ require([
     */
 
     // Define feature layers and add to map
-    const localitiesLayer = new GeoJSONLayer({
-      url: '/static/layers/lauLocalities.geojson',
+    const localitiesLayer = new FeatureLayer({
+      url: 'https://services3.arcgis.com/pIjZlCuGxnW1cJpM/arcgis/rest/services/lauLocalitiesView/FeatureServer',
       renderer: localitiesRenderer,
       title: 'localityLayer',
+      objectIdField: "ObjectId",
+      outFields: ['ObjectId', 'site']
     });
 
 
@@ -1727,6 +1781,8 @@ require([
       minScale:regionsMaxScale,
       outFields: ["*"]
     });
+
+    const areaGraphics = new GraphicsLayer();
 
 
 
@@ -1794,12 +1850,12 @@ require([
       //intersectingFeatureGraphicLayer,
       neighborhoodsLayer,
       regionsLayer,
-      areasLayer,
       countiesLayer,
+      areasLayer,
       //clientFeatureLayer,
       localitiesLayer,
       selectedPhotoGraphicsLayer,
-
+      areaGraphics,
       //areaGraphicsGroupLayer,
     ]
 
@@ -1833,6 +1889,7 @@ require([
       'zoomViewModel': zoomViewModel,
       'countiesMaxScale': countiesMaxScale,
       'regionsMaxScale': regionsMaxScale,
+      'areaGraphics': areaGraphics,
       //'areaGraphics': selectedFeatureGraphicLayer,
       //'areaGraphicsGroupLayer': areaGraphicsGroupLayer,
       //'countiesLayer': countiesLayer,

@@ -23,6 +23,7 @@ require([
   "esri/core/promiseUtils",
   "esri/core/watchUtils",
   "esri/geometry/support/webMercatorUtils",
+  "esri/geometry/Polygon",
 ], function (
   Map,
   MapView,
@@ -39,6 +40,7 @@ require([
   promiseUtils,
   watchUtils,
   webMercatorUtils,
+  Polygon,
 ) {
 
   var splide = newSplide();
@@ -424,11 +426,31 @@ require([
      Functions to query & select localities layer
     ========================================================== */
 
+
+    async function getQuery(feature) {
+      const queryObject = {
+        'region': feature.attributes.region_type,
+        'name': feature.attributes.name,
+      }
+      let response = await fetch('/query', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json;charset=utf-8'},
+        body: JSON.stringify(queryObject)
+      });
+      let data = await response.text()
+      if (data) {
+        return JSON.parse(data);
+      } else {
+        return data;
+      }
+    }
+
     // Starting point to display the geometry of a feature, query the database
     // and display all returned info onto the map/info panels
     function main(feature) {
       zoomToFeature(feature);
-      addAreaHighlight(feature.geometry);
+      //addAreaHighlight(feature.geometry);
+      const polygon = new Polygon();
       // Get query object from database
       getQuery(feature).then(data => {
         // If response has data, use it to populate info cards
@@ -533,23 +555,6 @@ require([
     }
     
 
-    async function getQuery(feature) {
-      const queryObject = {
-        'region': feature.attributes.region_type,
-        'name': feature.attributes.name,
-      }
-      let response = await fetch('/query', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json;charset=utf-8'},
-        body: JSON.stringify(queryObject)
-      });
-      let data = await response.text()
-      if (data) {
-        return JSON.parse(data);
-      } else {
-        return data;
-      }
-    }
 
     function selectFeaturesFromClick(screenPoint) {
       clearGraphics();

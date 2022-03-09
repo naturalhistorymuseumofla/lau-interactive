@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, make_response
 from data.database import global_init
 from data.database import Area
 from data.update import update
@@ -6,6 +6,7 @@ from datetime import datetime
 from whitenoise import WhiteNoise
 from random import sample
 from bson.json_util import dumps
+import gzip
 
 app = Flask(__name__)
 app.wsgi_app = WhiteNoise(app.wsgi_app)
@@ -35,10 +36,11 @@ def export_area(area):
         'oids': area.oids,
         'geometry': area.geometry
     }
-    return dumps(response_dict)
+    return dumps(response_dict).encode('utf-8')
+
 
 @app.route("/spatial-query", methods=["GET", "POST"])
-def query():
+def spatial_query():
     if request.method == 'POST':
         feature = request.json
         #feature_name = feature['name']
@@ -51,13 +53,25 @@ def query():
         else:
             feature_query = Area.objects(geometry__geo_intersects=[longitude, latitude], region=region)
         if feature_query:
-            response = export_area(feature_query[0])
+            response = make_response(gzip.compress(export_area(feature_query[0])))
+            response.headers['Content-Encoding'] = 'gzip'
         else:
             response = ''
         return response
 
 
-
+@app.route("/query", methods=["GET", "POST"])
+def query():
+    if request.method == 'POST':
+        feature = request.json
+        feature_name = feature['name']
+        feature_region = feature['region']
+        feature_query = Area.objects(name=feature_name, region=feature_region)
+        if feature_query:
+            response = feature_query[0].export()
+        else:
+            response = ''
+        return response
 
 @app.route("/")
 def home():
