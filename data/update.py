@@ -186,7 +186,7 @@ def update_localities(localities, areas):
         #areas_layer = get_portal_object('c273ac12f11a413eae2331ad758e3c6b').layers[0].query()
         #counties_layer = get_portal_object('fa404082563d460681efe17c6a0ea163').layers[0].query()
         #areas_features = json.loads(areas_layer.to_geojson)['features'] + json.loads(counties_layer.to_geojson)['features']
-        json_path = Path.cwd().parent / Path('static/layers/lauAllAreasFinal.geojson')
+        json_path = Path(__file__).parent.parent / Path('static/layers/lauAllAreasFinal.geojson')
         areas_json = json.load(open(json_path))
         areas_df = pd.DataFrame.from_dict(areas_json['features'])
         areas_df = pd.concat([areas_df, areas_df["properties"].apply(pd.Series)], axis=1)
