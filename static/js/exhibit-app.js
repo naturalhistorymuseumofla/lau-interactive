@@ -16,14 +16,12 @@ require([
   'esri/Graphic',
   'esri/Basemap',
   'esri/layers/VectorTileLayer',
-  "esri/layers/TileLayer",
   'esri/widgets/Zoom/ZoomViewModel',
   'esri/layers/support/LabelClass',
   "esri/views/2d/layers/BaseLayerViewGL2D",
   "esri/core/promiseUtils",
   "esri/core/watchUtils",
   "esri/geometry/support/webMercatorUtils",
-  "esri/geometry/Polygon",
 ], function (
   Map,
   MapView,
@@ -33,14 +31,12 @@ require([
   Graphic,
   Basemap,
   VectorTileLayer,
-  TileLayer,
   ZoomViewModel,
   LabelClass,
   BaseLayerViewGL2D,
   promiseUtils,
   watchUtils,
   webMercatorUtils,
-  Polygon,
 ) {
 
   var splide = newSplide();
@@ -449,8 +445,7 @@ require([
     // and display all returned info onto the map/info panels
     function main(feature) {
       zoomToFeature(feature);
-      //addAreaHighlight(feature.geometry);
-      const polygon = new Polygon();
+      addAreaHighlight(feature.geometry);
       // Get query object from database
       getQuery(feature).then(data => {
         // If response has data, use it to populate info cards
