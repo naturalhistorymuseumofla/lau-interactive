@@ -39,6 +39,7 @@ def export_area(area):
     return dumps(response_dict).encode('utf-8')
 
 
+
 @app.route("/spatial-query", methods=["GET", "POST"])
 def spatial_query():
     if request.method == 'POST':
@@ -54,6 +55,25 @@ def spatial_query():
             feature_query = Area.objects(geometry__geo_intersects=[longitude, latitude], region=region)
         if feature_query:
             response = make_response(gzip.compress(export_area(feature_query[0])))
+            response.headers['Content-Encoding'] = 'gzip'
+        else:
+            response = ''
+        return response
+
+
+@app.route("/intersecting-areas-query", methods=["GET", "POST"])
+def intersecting_query():
+    if request.method == 'POST':
+        feature = request.json
+        #feature_name = feature['name']
+        name = feature['name']
+        region = feature['region']
+        #feature_query = Area.objects(name=feature_name, region=feature_region)
+        intersection_query = Area.objects(parent_region=name, region=region)
+        if intersection_query:
+            response_dict = {'features':[{'name':x.name,'region': x.region, 'geometry': x.geometry} for x in intersection_query]}
+            dumped_dict = dumps(response_dict).encode('utf-8')
+            response = make_response(gzip.compress(dumped_dict))
             response.headers['Content-Encoding'] = 'gzip'
         else:
             response = ''
