@@ -57,7 +57,7 @@ require([
       map.selectedFeature.name = '';
     }
     
-  // Get query object from database
+    // Get query object from database
     getArea(mapPoint).then(data => {
       // If response has data, use it to populate info cards
       if (data) {
@@ -81,17 +81,9 @@ require([
     });
   }
 
-  function returnZoomScale(geometry) {
+  function returnZoomScale() {
     let screenArea = window.innerHeight * window.innerWidth;
     var featureArea;
-    /*
-    if (feature.attributes.name === 'Los Angeles' || feature.attributes.name === 'Ventura') {
-      featureArea = (geometry.extent.height/4.15) * geometry.extent.width;
-    } else {
-      featureArea = geometry.extent.height * geometry.extent.width;
-    }
-    */
-
     if (featureArea > 90000000){
       const scale = (featureArea/screenArea) * 150;
       return scale;
@@ -99,7 +91,6 @@ require([
       const scale = (featureArea/screenArea) * 1000
       return scale;
     }
-    
   }
 
   // goTo function logic

@@ -4,3 +4,4 @@ data/__pycache__/database.cpython-37.pyc
 data/__pycache__/update.cpython-37.pyc
 static/.DS_Store
 .env
+.DS_Store
