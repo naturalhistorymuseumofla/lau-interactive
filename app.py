@@ -49,8 +49,13 @@ def spatial_query():
         latitude = feature['latitude']
         longitude = feature['longitude']
         #feature_query = Area.objects(name=feature_name, region=feature_region)
-        if feature['selectedFeature']:
-            feature_query = Area.objects(name=feature['selectedFeature']['name'], region=feature['selectedFeature']['region'])
+        if feature['search']:
+            order = {'county':2, 'region':1, 'neighborhood': 0}
+            feature_query = Area.objects(geometry__geo_intersects=[longitude, latitude])
+            feature_query = sorted(feature_query, key=lambda result: order[result.region])
+        elif feature['selectedFeature']:
+            feature_query = Area.objects(name=feature['selectedFeature']['name'],
+                                         region=feature['selectedFeature']['region'])
         else:
             feature_query = Area.objects(geometry__geo_intersects=[longitude, latitude], region=region)
         if feature_query:

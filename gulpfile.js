@@ -8,7 +8,7 @@ var rename = require('gulp-rename');
 
 
 gulp.task('watch', async function() {
-  gulp.watch(['static/styles/*.scss','static/styles/*.css' ], gulp.series(['pack-css']));
+  gulp.watch(['static/css/*.scss','static/css/*.css' ], gulp.series(['pack-css']));
   gulp.watch('static/js/*.js', gulp.series(['pack-js']));
   //gulp.watch('static/css')
 })
@@ -20,7 +20,7 @@ function defaultTask(cb) {
 
 
 gulp.task('pack-css', () => {
-  return gulp.src(['static/styles/*.scss', 'static/styles/*.css'])
+  return gulp.src(['static/css/*.scss', 'static/css/*.css'])
     .pipe(sass().on('error', sass.logError))
     .pipe(cleanCss())
     .pipe(concat('styles.css'))

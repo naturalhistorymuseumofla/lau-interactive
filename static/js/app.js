@@ -5,6 +5,8 @@ if (isMobile) {
   document.documentElement.setAttribute('data-mobile', 'true');
 }
 
+var exportView;
+
 require([
   'esri/Map',
   'esri/views/MapView',
@@ -19,6 +21,8 @@ require([
   "esri/core/watchUtils",
   "esri/geometry/support/webMercatorUtils",
   "esri/geometry/Polygon",
+  "esri/widgets/Search/SearchViewModel",
+  "esri/tasks/Locator",
 ], function (
   Map,
   MapView,
@@ -32,12 +36,15 @@ require([
   promiseUtils,
   watchUtils,
   webMercatorUtils,
-  Polygon
+  Polygon,
+  SearchVM,
+  Locator
 ) {
 
   // Initialize splide and map objects
   var splide = newSplide();
   var map = setUpMap();
+  exportView = map.view;
 
 
  /* ==========================================================
@@ -46,7 +53,7 @@ require([
 
   // Starting point to display the geometry of a feature, query the database
   // and display all returned info onto the map/info panels
-  function main(feature, mapPoint) {
+  function main(feature, mapPoint, search=false) {
 
     if (feature) {
       // Used when querying database (since a selected graphic from hitTest should be used)
@@ -58,7 +65,7 @@ require([
     }
     
     // Get query object from database
-    getArea(mapPoint).then(data => {
+    getArea(mapPoint, search).then(data => {
       // If response has data, use it to populate info cards
       if (data) {
         map['currentFeature'] = {'name':data.name, 'region': data.region};
@@ -226,7 +233,7 @@ require([
   }
 
   // Function that retrieves data/geometry that intersected with screenpoint from db
-  async function getArea(mapPoint) {
+  async function getArea(mapPoint, search=false) {
     const scale = map.view.scale;
     let region = (scale > 600000) ? 'county' :
                   (600000 > scale && scale > 188895) ? 'region' :'neighborhood';
@@ -236,6 +243,7 @@ require([
       'region': region,
       'currentFeature': ('currentFeature' in map) ? map.currentFeature : '',
       'selectedFeature': (map.selectedFeature.name) ? map.selectedFeature : '',
+      'search': search,
     };
     let response = await fetch('/spatial-query', {
       method: 'POST',
@@ -1107,6 +1115,7 @@ require([
     // Idle timer event handling
     clearInterval(resetMapSetInterval);
     resetMapSetInterval = setInterval(resetMap, 60000);
+    const classList = event.target.classList;
     // Close button event handling
     if (event.target.classList.contains('close-button')) {
       resetButtonClickHandler();
@@ -1115,6 +1124,8 @@ require([
       map.zoomViewModel.zoomIn();
     } else if (event.target.id === "zoomOut"){
       map.zoomViewModel.zoomOut();
+    } else if (!classList.contains('search__suggest-list') && !classList.contains('search__suggest-list-item') && !classList.contains('search__input')) {
+      document.getElementsByClassName('search__suggest-list')[0].innerHTML = '';
     }
   });
 
@@ -1139,8 +1150,24 @@ require([
     selectFeaturesFromClick(event);
   });
 
+
+  function removeSearchActive() {
+    const searchDiv = document.getElementsByClassName('search')[0];
+    const searchInput = document.getElementsByClassName('search__input')[0];
+    const suggestList = document.getElementsByClassName('search__suggest-list')[0];
+    document.body.setAttribute('search-active', 'false')
+    document.getElementsByClassName('search__container')[0].setAttribute('search-active', 'false');
+    document.getElementsByClassName('search__suggest')[0].setAttribute('search-active', 'false');
+    searchDiv.setAttribute('search-active', 'false');
+    searchInput.setAttribute('search-active', 'false');
+    suggestList.setAttribute('search-active', 'false');
+  }
+
   // Event handler for reset widget
   function resetButtonClickHandler() {
+    document.getElementsByClassName('search__suggest-list')[0].innerHTML = '';
+    document.getElementsByClassName('search__input')[0].value = '';
+    removeSearchActive();
     displayIntersectingAreas('')
     clearGraphics();
     clearWidgets();
@@ -1322,7 +1349,7 @@ require([
           ymin:  32.7,
           xmax: -114.7,
           ymax:  36.0
-        }
+        },
       },
       popup: {
         autoOpenEnabled: false,
@@ -1563,7 +1590,6 @@ require([
 
     map.addMany(layers);
 
-
     // Add drawer UI for mobile
     var infoPane;
     if (isMobile) {
@@ -1588,8 +1614,88 @@ require([
     // Create layerView
     view.whenLayerView(localitiesLayer).then(layerView =>{
       returnObject.localitiesView = layerView;
-    })
+    });
 
+
+    // Create Search widget using viewmodel 
+    const search = new SearchVM({
+      view: view,
+      popupEnabled: false,
+      includeDefaultSources: false,
+      maxSuggestions: 5,
+      goToOverride: e => '',
+      sources: [
+        {
+          locator: new Locator({
+            url: "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer",
+          }),
+          placeholder: "Search",
+          outFields: ['Match_addr', 'Addr_type'],
+          singleLineFieldName: "SingleLine", // Required for search to return results for impartial search terms
+          name: "ArcGIS World Geocoding Service",
+          filter: {
+            geometry: view.constraints.geometry,
+          },
+        },
+      ],
+    });
+    
+    const searchDiv = document.getElementsByClassName('search')[0];
+    const searchInput = document.getElementsByClassName('search__input')[0];
+    const suggestList = document.getElementsByClassName('search__suggest-list')[0];
+  
+    searchInput.addEventListener('input', e => {
+      search.suggest(searchInput.value).then(results => {
+        let suggestions = results.results[0].results;
+        suggestList.innerHTML = '';
+        suggestions.forEach(suggestion => {
+          const li = document.createElement('li');
+          li.classList.add('search__suggest-list-item');
+          li.setAttribute('role', 'option'); 
+          const svg = '<span><svg class="map-icon" transform="translate(-6.63 -0.33)" viewBox="0 0 36.74 49.34"><path class="cls-1" d="M43.37,17.78C43.37,8.14,35.15.33,25,.33S6.63,8.14,6.63,17.78a16.74,16.74,0,0,0,2.93,9.44h0L23.48,48.86a1.83,1.83,0,0,0,3,0L40.45,27.22h0A16.74,16.74,0,0,0,43.37,17.78ZM25,25.39a7.1,7.1,0,1,1,7.09-7.09A7.09,7.09,0,0,1,25,25.39Z" transform="translate(-6.63 -0.33)"</svg></span>'
+          li.innerHTML = `${svg}${suggestion.text}`;
+          li.addEventListener('click', e => {
+            search.search(li.textContent);
+            searchInput.value = li.textContent;
+          });
+          suggestList.appendChild(li);
+        });
+      });
+    });
+
+    search.on('search-complete', e => {
+      suggestList.innerHTML = '';
+      removeSearchActive();
+    });
+  
+    searchDiv.addEventListener('submit', e => {
+      e.preventDefault();
+      search.search(searchInput.value);
+    });
+
+    search.on('search-complete', e => {
+      const feature = e.results[0].results[0].feature;
+      main('', feature.geometry, true);
+    });
+
+    
+    function addSearchActive() {
+      document.body.setAttribute('search-active', 'true')
+      document.getElementsByClassName('search__container')[0].setAttribute('search-active', 'true');
+      document.getElementsByClassName('search__suggest')[0].setAttribute('search-active', 'true');
+      searchDiv.setAttribute('search-active', 'true');
+      searchInput.setAttribute('search-active', 'true');
+      suggestList.setAttribute('search-active', 'true');
+    }
+
+
+    if(isMobile) {
+      searchInput.addEventListener('input', addSearchActive);
+      searchInput.addEventListener('focus', addSearchActive);
+    }
+
+
+  
 
     // Make widgets visible to map view
     for (let widget of document.getElementsByClassName('widget')) {
@@ -1601,6 +1707,7 @@ require([
     for (let e of ui) {
       view.ui.add(e);
     }
+    
 
 
     var returnObject = {
@@ -1628,7 +1735,5 @@ require([
   }
 });
 
-
-
-
+export {exportView};
 

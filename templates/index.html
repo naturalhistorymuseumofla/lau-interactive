@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html data-mobile="false">
   <head>
-    <meta name="viewport" content="width=device-width">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link rel="stylesheet" href={{url_for('static', filename='css/splide.min.css')}}>
-    <link rel="stylesheet" href={{url_for('static', filename='css/styles.min.css')}}>
+    <link rel="stylesheet" href={{url_for('static', filename='prod/styles.min.css')}}>
 
     <meta charset="utf-8" />
     <title>LAU Map Interactive (prototype)</title>
@@ -22,8 +22,16 @@
     </div>
     <div id="viewDiv">
       <div class="ui-container ui-top-left" >
-        <div class="search">
+        <div class="search__container">
+          <form class="search card--active" role="search">
+            <input placeholder="Search" class="search__input" aria-haspopup="listbox" role ="combobox"></input>
+            <button type="button" class="close-button close-button__search"></button>
+          </form>
+          <div class ="search__suggest">
+            <ul class="search__suggest-list" role="listbox"></ul>
+          </div>
         </div>
+
         <div class="card content-card cupertino-pane" id="infoCard">
           <button class="close-button close-button__info-card hvr-grow-shadow"></button>
           <div class="menu__container">
@@ -83,7 +91,7 @@
             </nav>
           </div>
           <div id="locationTitle"class="card__flex-item card__title">
-            <h1 class="featureName">San Bernadino County</h1>
+            <h1 class="featureName card__title-name">San Bernadino County</h1>
             <h2>
               <span lang="en"><span lang="en" class="excavation-number">2,000</span> excavation sites</span>
               <span lang="es"><span lang="es" class="excavation-number">2,000</span> sitios de excavación</span>
@@ -321,7 +329,5 @@
     <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@2.4.21/dist/js/splide.min.js"></script>
     <script src="https://js.arcgis.com/4.22/"></script>
     <script type="module" src={{url_for('static', filename='js/app.js')}}></script>
-
-
   </body>
 </html>
