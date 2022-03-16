@@ -1039,7 +1039,7 @@ require([
       if (immersion >= 1 ) {
         underwaterEnglish.innerHTML = `${immersion} million years ago`;
         underwaterSpanish.innerHTML = `${immersion} millones de años de antigüedad`;
-      } if (!immersion || immersion === 0) {
+      } else if (!immersion || immersion === 0) {
         setFlex(underwaterContainer, false);
         setFlex(timeSeperator, false)
         timeDiv.style.minHeight = 'auto';
