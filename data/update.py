@@ -175,18 +175,19 @@ def check_if_updated(agol_object, Collection):
 
 # Updates localities by filtering spatial df by region type and iterating over
 # all unique region names in returned dataframe
-def update_localities(localities, areas):
-    is_updated = check_if_updated(localities, Area)
+def update_areas(localities, areas_updated):
+    if (areas_updated == ''):
+        is_updated = check_if_updated(localities, Area)
+    else:
+        is_updated = areas_updated
     #is_updated = False
     if not is_updated:
         localities_layer = localities.layers[0].query()
-        areas_layer = localities.layers[0].query()
-        areas_sdf = areas_layer.sdf
         localities_sdf = localities_layer.sdf
         #areas_layer = get_portal_object('c273ac12f11a413eae2331ad758e3c6b').layers[0].query()
         #counties_layer = get_portal_object('fa404082563d460681efe17c6a0ea163').layers[0].query()
         #areas_features = json.loads(areas_layer.to_geojson)['features'] + json.loads(counties_layer.to_geojson)['features']
-        json_path = Path(__file__).parent.parent / Path('static/layers/lauAllAreasFinal.geojson')
+        json_path = Path(__file__).parent.parent / Path('static/layers/lauAllAreasFinalCopy.geojson')
         areas_json = json.load(open(json_path))
         areas_df = pd.DataFrame.from_dict(areas_json['features'])
         areas_df = pd.concat([areas_df, areas_df["properties"].apply(pd.Series)], axis=1)
@@ -272,6 +273,7 @@ def iterate_over_regions(region_type, sdf, geojson, areas_df):
             query.modified = datetime.now()
             query.number_of_sites = len(returned_rows)
             query.taxa = region_taxa
+            query.immersion = feature['properties']['immersion']
             query.number_of_specimens = sum(region_taxa.values())
             # Get list of specimen IDs from photos sdf based on their region name value
             query.photos = [x.id for x in returned_photos]
@@ -303,12 +305,12 @@ def process_taxa(taxa_list):
     return taxa_dict
 
 
-def update():
+def update(areas_updated=''):
     global_init()
     localities = get_portal_object('0142ccc5d236408ea680ac93e42934e6')
     photos = get_portal_object('d074b2bfe5014887ab1796f633966ee6')
     areas = get_portal_object('be2dd0057e8144fbadf6e6564c1afbf6')
     update_attachments(photos)
-    update_localities(localities, areas)
+    update_areas(localities, areas_updated)
 
-update()
+#update(areas_updated=False)

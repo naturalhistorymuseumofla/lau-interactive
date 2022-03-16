@@ -690,7 +690,7 @@ require([
         //setDisplay(document.getElementsByClassName('time__button')[0], false);
       }
 
-
+      displayUnderwaterText(stats.immersion);
 
       // Scroll to top of card container div
       ($('.card__content')).animate({scrollTop:10}, 50);
@@ -1022,6 +1022,30 @@ require([
         startDate = (startDate *1000).toFixed(0);
         englishText.innerHTML = `${endDate}-${startDate} thousands of years old`;
         spanishText.innerHTML = `${endDate} y ${startDate} miles de años de antigüedad.`;
+      }
+    }
+
+    function displayUnderwaterText(immersion) {
+      const underwaterContainer = document.getElementsByClassName('underwater__container')[0];
+      const timeSeperator = document.getElementById('timeSeperator');
+      const timeDiv = document.getElementById('time');
+      const underwaterEnglish = document.querySelector('.underwater__age[lang=en]');
+      const underwaterSpanish = document.querySelector('.underwater__age[lang=es]');
+  
+      setFlex(underwaterContainer, true);
+      setFlex(timeSeperator, true);
+      timeDiv.style.minHeight = '';
+  
+      if (immersion >= 1 ) {
+        underwaterEnglish.innerHTML = `${immersion} million years ago`;
+        underwaterSpanish.innerHTML = `${immersion} millones de años de antigüedad`;
+      } if (!immersion || immersion === 0) {
+        setFlex(underwaterContainer, false);
+        setFlex(timeSeperator, false)
+        timeDiv.style.minHeight = 'auto';
+      } else {
+        underwaterEnglish.innerHTML = `${(immersion * 100000).toLocaleString()} thousand years ago`;
+        underwaterSpanish.innerHTML = `${(immersion * 100000).toLocaleString('es')} miles de años de antigüedad`;
       }
     }
 

@@ -16,11 +16,10 @@ require([
   'esri/layers/VectorTileLayer',
   'esri/widgets/Zoom/ZoomViewModel',
   'esri/layers/support/LabelClass',
-  "esri/views/2d/layers/BaseLayerViewGL2D",
-  "esri/core/promiseUtils",
-  "esri/core/watchUtils",
+  //"esri/views/2d/layers/BaseLayerViewGL2D",
+  //"esri/core/promiseUtils",
+  //"esri/core/watchUtils",
   "esri/geometry/support/webMercatorUtils",
-  "esri/geometry/Polygon",
   "esri/widgets/Search/SearchViewModel",
   "esri/tasks/Locator",
 ], function (
@@ -32,11 +31,10 @@ require([
   VectorTileLayer,
   ZoomViewModel,
   LabelClass,
-  BaseLayerViewGL2D,
-  promiseUtils,
-  watchUtils,
+  //BaseLayerViewGL2D,
+  //promiseUtils,
+  //watchUtils,
   webMercatorUtils,
-  Polygon,
   SearchVM,
   Locator
 ) {
@@ -160,12 +158,15 @@ require([
     const areaGraphics = [];
     // Iterate over array of areas returned from MongoDB and convert them into Polygons
     areas.forEach((area) => {
-      let polygon = new Polygon;
+      //let polygon = new Polygon;
       // Converts geojson features into Polygons
       let coordinates = (area.geometry.type === 'MultiPolygon') ? area.geometry.coordinates.flat(1) : area.geometry.coordinates;
-      polygon.rings = coordinates;
+      //polygon.rings = coordinates;
       let areaGraphic = new Graphic({
-        geometry: polygon,
+        geometry: {
+          type: 'polygon',
+          rings: coordinates
+        },
         attributes: {
           name: area.name,
           region_type: area.region,
@@ -327,6 +328,7 @@ require([
     const photosDiv = document.getElementById('photos');
     const photosNullDiv = document.getElementsByClassName('photos--null')[0];
     const photoLegend = document.getElementsByClassName('photo-indicator')[0];
+
     let photosButton = document.getElementsByClassName('photos__button');
     let timeButton = document.getElementsByClassName('time__button');
 
@@ -416,6 +418,8 @@ require([
       //setDisplay(document.getElementsByClassName('time__button')[0], false);
     }
 
+    displayUnderwaterText(stats.immersion);
+
     // Scroll to top of card container div
     ($('.card__content')).animate({scrollTop:10}, 50);
   }
@@ -424,12 +428,13 @@ require([
   function addAreaHighlight(area) {
     // Adds the blue highlight polygon as a graphic to a graphic layer
     const geometry = area.geometry;
-    const polygon = new Polygon();
     // Converts coordinates from geojson to ArcGIS Polygon rings
     const coordinates = (geometry.type === 'MultiPolygon') ? geometry.coordinates.flat(1) : geometry.coordinates;
-    polygon.rings = coordinates;
     const selectedAreaGraphic = new Graphic({
-      geometry: polygon,
+      geometry: {
+        type: 'polygon',
+        rings: coordinates
+      },
       attributes: {
         name: area.name,
         region_type: area.region,
@@ -448,7 +453,7 @@ require([
     });
     map.areaGraphics.graphics.removeAll();
     map.areaGraphics.graphics.add(selectedAreaGraphic);
-    zoomToFeature(polygon, area.name);
+    zoomToFeature(selectedAreaGraphic.geometry, area.name);
   }
 
 
@@ -721,6 +726,7 @@ require([
     Animated webGL point layer
     ========================================================== */
 
+  /*
   // A 2D webGL layer for animated point for selected photo
   const CustomLayerView2D = BaseLayerViewGL2D.createSubclass({
     // Locations of the two vertex attributes that we use. They
@@ -1039,7 +1045,7 @@ require([
       this.indexBufferSize = indexData.length;
     }
   });
-
+  */
 
  /* ==========================================================
     Timescale functions
@@ -1076,6 +1082,30 @@ require([
       startDate = (startDate *1000).toFixed(0);
       englishText.innerHTML = `${endDate}-${startDate} thousands of years old`;
       spanishText.innerHTML = `${endDate} y ${startDate} miles de años de antigüedad.`;
+    }
+  }
+
+  function displayUnderwaterText(immersion) {
+    const underwaterContainer = document.getElementsByClassName('underwater__container')[0];
+    const timeSeperator = document.getElementById('timeSeperator');
+    const timeDiv = document.getElementById('time');
+    const underwaterEnglish = document.querySelector('.underwater__age[lang=en]');
+    const underwaterSpanish = document.querySelector('.underwater__age[lang=es]');
+
+    setFlex(underwaterContainer, true);
+    setFlex(timeSeperator, true);
+    timeDiv.style.minHeight = '';
+
+    if (immersion >= 1 ) {
+      underwaterEnglish.innerHTML = `${immersion} million years ago`;
+      underwaterSpanish.innerHTML = `${immersion} millones de años de antigüedad`;
+    } if (!immersion || immersion === 0) {
+      setFlex(underwaterContainer, false);
+      setFlex(timeSeperator, false)
+      timeDiv.style.minHeight = 'auto';
+    } else {
+      underwaterEnglish.innerHTML = `${(immersion * 100000).toLocaleString()} thousand years ago`;
+      underwaterSpanish.innerHTML = `${(immersion * 100000).toLocaleString('es')} miles de años de antigüedad`;
     }
   }
 
@@ -1542,6 +1572,9 @@ require([
       outFields: ["name"]
     });
 
+    //const AnimatedPointLayer = new GraphicsLayer();
+
+    /*
     // Subclass the custom layer view from GraphicsLayer.
     const AnimatedPointLayer = GraphicsLayer.createSubclass({
       createLayerView: function(view) {
@@ -1555,6 +1588,8 @@ require([
         }
       }
     });
+    */
+    
     
     // VectorTileLayer for areas polygons
     const areasLayer = new VectorTileLayer({
@@ -1573,7 +1608,7 @@ require([
     });
 
     // Animated Point Layer for selected photo graphic
-    const selectedPhotoGraphicsLayer = new AnimatedPointLayer();
+    const selectedPhotoGraphicsLayer = new GraphicsLayer();
     
     const layers = [
       basemapLayer,

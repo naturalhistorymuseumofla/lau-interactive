@@ -34,6 +34,7 @@ def export_area(area):
         'startDate': area.handle_nan(area.start_date),
         'endDate': area.handle_nan(area.end_date),
         'oids': area.oids,
+        'immersion': area.immersion,
         'geometry': area.geometry
     }
     return dumps(response_dict).encode('utf-8')
@@ -93,7 +94,7 @@ def query():
         feature_region = feature['region']
         feature_query = Area.objects(name=feature_name, region=feature_region)
         if feature_query:
-            response = feature_query[0].export()
+            response = export_area(feature_query[0])
         else:
             response = ''
         return response

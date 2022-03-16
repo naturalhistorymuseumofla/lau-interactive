@@ -63,6 +63,7 @@ class Area(mongoengine.Document):
     start_date = mongoengine.FloatField()
     end_date = mongoengine.FloatField()
     oids = mongoengine.ListField()
+    immersion = mongoengine.FloatField()
     # mongoengine.DynamicField(choices=[mongoengine.PolygonField(), mongoengine.MultiPolygonField()])
     meta = {
         'db_alias': 'fossilmap',
@@ -92,6 +93,7 @@ class Area(mongoengine.Document):
             'number_of_sites': self.number_of_sites,
             'number_of_specimens': self.number_of_specimens,
             'taxa': self.taxa,
+            'immersion': self.handle_nan(self.immersion),
             'photos': photos,
             'startDate': self.handle_nan(self.start_date),
             'endDate': self.handle_nan(self.end_date),
