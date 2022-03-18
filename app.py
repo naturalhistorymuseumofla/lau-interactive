@@ -31,8 +31,6 @@ def export_area(area):
         'number_of_specimens': area.number_of_specimens,
         'taxa': area.taxa,
         'photos': photos,
-        'startDate': area.handle_nan(area.start_date),
-        'endDate': area.handle_nan(area.end_date),
         'oids': area.oids,
         'immersion': area.immersion,
         'geometry': area.geometry
@@ -94,6 +92,7 @@ def query():
         feature_region = feature['region']
         feature_query = Area.objects(name=feature_name, region=feature_region)
         if feature_query:
+            #response = export_area(feature_query[0])
             response = export_area(feature_query[0])
         else:
             response = ''

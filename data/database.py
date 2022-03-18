@@ -5,7 +5,7 @@ from random import sample
 from mongoengine import connect
 import os
 from dotenv import load_dotenv
-import numpy as np
+from numpy import isnan
 
 
 # Connects to remote Atlas database
@@ -22,13 +22,16 @@ global_init()
 
 # Class for queries collection that stores all queries of a polygon region
 # intersection with localities layer
-class Attachment(mongoengine.Document):
+class Photo(mongoengine.Document):
     specimen_id = mongoengine.StringField(required=True, unique=True)
     display_id = mongoengine.StringField(required=True)
     modified = mongoengine.DateTimeField(required=True)
     locality = mongoengine.StringField()
     taxon = mongoengine.StringField()
-    age = mongoengine.StringField()
+    #age = mongoengine.StringField()
+    start_age = mongoengine.IntField()
+    end_age = mongoengine.IntField()
+    common_name = mongoengine.StringField()
     description = mongoengine.StringField()
     point = mongoengine.PointField(required=True)
     county = mongoengine.StringField()
@@ -37,7 +40,7 @@ class Attachment(mongoengine.Document):
     key = mongoengine.StringField()
     meta = {
         'db_alias': 'fossilmap',
-        'collection': 'attachments'
+        'collection': 'photos'
     }
 
 
@@ -59,7 +62,7 @@ class Area(mongoengine.Document):
     number_of_specimens = mongoengine.IntField(required=True)
     parent_region = mongoengine.StringField()
     taxa = mongoengine.DictField()
-    photos = mongoengine.ListField(mongoengine.ReferenceField(Attachment, dbref=True))
+    photos = mongoengine.ListField(mongoengine.ReferenceField(Photo, dbref=True))
     start_date = mongoengine.FloatField()
     end_date = mongoengine.FloatField()
     oids = mongoengine.ListField()
@@ -67,7 +70,7 @@ class Area(mongoengine.Document):
     # mongoengine.DynamicField(choices=[mongoengine.PolygonField(), mongoengine.MultiPolygonField()])
     meta = {
         'db_alias': 'fossilmap',
-        'collection': 'queries',
+        'collection': 'areas',
         'allow_inheritance': True,
     }
 
@@ -75,7 +78,7 @@ class Area(mongoengine.Document):
         #return None if np.isnan(value) else value
         if value is None:
             return None
-        elif np.isnan(value):
+        elif isnan(value):
             return None
         else:
             return value
@@ -98,9 +101,9 @@ class Area(mongoengine.Document):
             'startDate': self.handle_nan(self.start_date),
             'endDate': self.handle_nan(self.end_date),
             'oids': self.oids,
-            #'geometry': self.geometry
+            'geometry': self.geometry
         }
-        return dumps(response_dict)
+        return dumps(response_dict).encode('utf-8')
 
 class Polygon(Area):
     geometry = mongoengine.PolygonField()

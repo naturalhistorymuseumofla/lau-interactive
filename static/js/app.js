@@ -643,9 +643,37 @@ require([
 
   // Foramts captions from photos array for splide carousel
   function formatCaptions(photo) {
+    
+    // Returns properly formatted age captions for specimen photo captions
+    function handleAges(photo) {
+      const ageCaptionEnglish = document.createElement('p');
+      const ageCaptionSpanish = document.createElement('p');
+      ageCaptionEnglish.setAttribute('lang', 'en');
+      ageCaptionSpanish.setAttribute('lang', 'es');
+      const startAge = photo.start_age;
+      const endAge = photo.end_age;
+      const endAgeEnglish = (endAge >= 1) ? endAge.toLocaleString(): (endAge * 1000000).toLocaleString();
+      const endAgeSpanish = (endAge >= 1) ? endAge.toLocaleString('es'): (endAge * 1000000).toLocaleString('es');
+      const startAgeEnglish = (startAge >= 1) ? startAge.toLocaleString(): (startAge * 1000000).toLocaleString();
+      const startAgeSpanish = (startAge >= 1) ? startAge.toLocaleString('es'): (startAge * 1000000).toLocaleString('es');
+      if (startAge >= 1 && endAge >= 1) {
+        ageCaptionEnglish.innerHTML = `${endAgeEnglish}–${startAgeEnglish} million years old`;
+        ageCaptionSpanish.innerHTML = `Entre ${endAgeEnglish} y ${startAgeEnglish} millones de años`;
+      } else if (startAge < 1 && endAge < 1) {
+        ageCaptionEnglish.innerHTML = `${endAgeEnglish}–${startAgeEnglish} thousand years old`;
+        ageCaptionSpanish.innerHTML = `Entre ${endAgeSpanish} y ${startAgeSpanish} miles de años`;
+      } else if (startAge >= 1 && endAge < 1) {
+        ageCaptionEnglish.innerHTML = `${endAgeEnglish} thousand years – ${startAgeEnglish} million years old`;
+        ageCaptionSpanish.innerHTML = `Entre ${endAgeSpanish} miles y ${startAgeSpanish} millones de años`;
+      } else if (!endAge) {
+        ageCaptionEnglish.innerHTML = (startAge > 1) ? `${startAgeEnglish} million years old`: `${startAgeEnglish} thousand years old`;
+        ageCaptionSpanish.innerHTML = (startAge > 1) ? `${startAgeSpanish} millones de años`: `${startAgeEnglish} millones de años`;
+      }
+      return [ageCaptionEnglish, ageCaptionSpanish]
+    }
+
     // Create captions divs 
     const taxonCaption = document.createElement('p');
-    const ageCaption = document.createElement('p');
     const descriptionCaption = document.createElement('p');
     const catNumberCaption = document.createElement('p')
     const captionsDiv = document.createElement('div');
@@ -656,7 +684,9 @@ require([
 
     // Add photo info to divs
     taxonCaption.innerHTML = photo.taxon;
-    ageCaption.innerHTML = photo.age.replace(' - ', '-').toLowerCase(); // Fix this in the database
+    //ageCaption.innerHTML = photo.age.replace(' - ', '-').toLowerCase(); // Fix this in the database
+    //ageCaptionEnglish.innerHTML = `${photo.endDate}`
+    const [ageCaptionEnglish, ageCaptionSpanish] = handleAges(photo);
     descriptionCaption.innerHTML = photo.description;
     catNumberCaption.innerHTML = `${photo.display_id}`;
     captionsDiv.classList.add('splide__captions');
@@ -665,7 +695,8 @@ require([
     captionsDiv.append(
       descriptionCaption,
       taxonCaption,
-      ageCaption,
+      ageCaptionEnglish,
+      ageCaptionSpanish,
       catNumberCaption
     );
     return captionsDiv;

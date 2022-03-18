@@ -6,7 +6,7 @@ from collections import Counter
 from data.database import Polygon
 from data.database import MultiPolygon
 from data.database import Area
-from data.database import Attachment
+from data.database import Photo
 from datetime import datetime
 from os import getenv
 from pathlib import Path
@@ -17,6 +17,7 @@ import urllib.request
 import io
 from PIL import Image
 import json
+from numpy import isnan
 
 # Return fearture layer item from ArcGIS Online
 def get_portal_object(id):
@@ -100,9 +101,9 @@ def resize_image(img, resized_width=500):
     return resized_image
 
 
-def update_attachments(photos):
+def update_photos(photos, perform_update_photos):
     # Check if mongoDB collection is updated
-    is_updated = check_if_updated(photos, Attachment)
+    is_updated = not perform_update_photos if perform_update_photos != None else check_if_updated(photos, Photo)
     # Update collection if not
     if not is_updated:
         # Connect to DO Spaces
@@ -115,8 +116,7 @@ def update_attachments(photos):
         cols = ['PARENTOBJECTID', 'NAME', 'DOWNLOAD_URL']
         # Create a merged spatial dataframe that has records of photos and their attachments
         merged_sdf = photos_sdf.merge(attachments_sdf[cols], left_on='ObjectId', right_on='PARENTOBJECTID')
-
-        attachments_saved = 0
+        photos_saved = 0
         # Input the records as documents into Photos collection
         for i in range(len(merged_sdf)):
             row = merged_sdf.iloc[i]
@@ -130,25 +130,29 @@ def update_attachments(photos):
                 key = filename + '_modal.png'
                 img = load_image(row.DOWNLOAD_URL)
                 space.upload_photo(img, key)
-            attachment = Attachment()
-            if Attachment.objects(specimen_id=row.specimenID):
-                attachment.id = Attachment.objects(specimen_id=row.specimenID)[0].id
-            attachment.specimen_id = row.specimenID
-            attachment.display_id = row.specimenID.replace('_', ' ').replace('-', '.')
-            attachment.modified = datetime.now()
-            attachment.locality = row.locality
-            attachment.taxon = row.taxon
-            attachment.age = row.age
-            attachment.description = row.description
-            attachment.point = [row.longitude, row.latitude]
-            attachment.county = row.county
-            attachment.region = row.region
-            attachment.neighborhood = row.neighborhood
-            attachment.key = filename
-            attachment.save()
-            print(f'Attachment {row.specimenID} saved to attachments!')
-            attachments_saved += 1
-        print(f'{attachments_saved} attachment(s) succesfully saved')
+            photo = Photo()
+            if Photo.objects(specimen_id=row.specimenID):
+                photo.id = Photo.objects(specimen_id=row.specimenID)[0].id
+            photo.specimen_id = row.specimenID
+            photo.display_id = row.specimenID.replace('_', ' ').replace('-', '.')
+            photo.modified = datetime.now()
+            photo.locality = row.locality
+            photo.taxon = row.taxon
+            if not isnan(row.startAge):
+                photo.start_age = row.startAge
+            if not isnan(row.endAge):
+                photo.end_age = row.endAge
+            photo.common_name = row.commonName
+            photo.description = row.description
+            photo.point = [row.longitude, row.latitude]
+            photo.county = row.county
+            photo.region = row.region
+            photo.neighborhood = row.neighborhood
+            photo.key = filename
+            photo.save()
+            print(f'Photo {row.specimenID} saved to photos!')
+            photos_saved += 1
+        print(f'{photos_saved} photo(s) succesfully saved')
 
 
 
@@ -175,11 +179,8 @@ def check_if_updated(agol_object, Collection):
 
 # Updates localities by filtering spatial df by region type and iterating over
 # all unique region names in returned dataframe
-def update_areas(localities, areas_updated):
-    if (areas_updated == ''):
-        is_updated = check_if_updated(localities, Area)
-    else:
-        is_updated = areas_updated
+def update_areas(localities, perform_update_areas):
+    is_updated = not perform_update_areas if perform_update_areas != None else check_if_updated(localities, Area)
     #is_updated = False
     if not is_updated:
         localities_layer = localities.layers[0].query()
@@ -251,7 +252,7 @@ def iterate_over_regions(region_type, sdf, geojson, areas_df):
         returned_area = feature['geometry']
         returned_rows = filter_df(sdf, region_type, region_name)
         region_taxa = process_taxa(returned_rows.taxa.to_list())
-        returned_photos = Attachment.objects(__raw__={region_type: region_name})
+        returned_photos = Photo.objects(__raw__={region_type: region_name})
 
         # Create new query document in Query collection
         if returned_area:
@@ -305,12 +306,12 @@ def process_taxa(taxa_list):
     return taxa_dict
 
 
-def update(areas_updated=''):
+def update(perform_update_areas=None, perform_update_photos=None):
     global_init()
     localities = get_portal_object('0142ccc5d236408ea680ac93e42934e6')
     photos = get_portal_object('d074b2bfe5014887ab1796f633966ee6')
     areas = get_portal_object('be2dd0057e8144fbadf6e6564c1afbf6')
-    update_attachments(photos)
-    update_areas(localities, areas_updated)
+    update_photos(photos, perform_update_photos)
+    update_areas(localities, perform_update_areas)
 
-#update(areas_updated=False)
+update()
