@@ -763,7 +763,7 @@ require([
         'Nautiloids': {
           'fileName': 'ammonoid',
           'category': 'invertebrate',
-          'es': 'Ammoniodeos, nautiloideos, pulpos',
+          'es': 'Ammonoideos, nautiloideos, pulpos',
           'en': 'Ammonoids, nautiloids, octopuses'
         },
         'Corals': {
@@ -909,6 +909,46 @@ require([
     // Foramts captions from photos array for splide carousel
     function formatCaptions(photo) {
 
+      function returnDescription(photo) {
+        const dictionary = {
+          'Ammonoid': 'ammonoideo',
+          'Barnacle': 'percebes',
+          'Bird': 'ave',
+          'Clam': 'almejas',
+          'Coral': 'coral',
+          'Crab': 'cangrejo',
+          'Desmostylian': 'desmostylia',
+          'Diatom': 'diatomea',
+          'Dolphin': 'delfín',
+          'Fish': 'pez',
+          'Microfossil': 'microfósiles',
+          'Nautiloid': 'nautiloideo',
+          'Oyster': 'ostra',
+          'Ray': 'raya',
+          'Scallop': 'vieira',
+          'Scaphopod': 'conchas colmillo',
+          'Seal': 'foca',
+          'Sea lion': 'otario',
+          'Sea urchin': 'erizo de mar',
+          'Shark': 'tiburones',
+          'Shrimp': 'camarón',
+          'Snail': 'caracol',
+          'Turtle': 'tortuga',
+          'Walrus': 'morsa',
+          'Whale': 'ballena',
+          'Worm': 'gusano',
+        };
+        const descriptionCaptionEnglish = document.createElement('p');
+        const descriptionCaptionSpanish = document.createElement('p');
+        descriptionCaptionEnglish.classList.add('caption__description');
+        descriptionCaptionSpanish.classList.add('caption__description');
+        descriptionCaptionEnglish.setAttribute('lang', 'en');
+        descriptionCaptionSpanish.setAttribute('lang', 'es');
+        descriptionCaptionEnglish.innerHTML = photo.description;
+        descriptionCaptionSpanish.innerHTML = 'Fósil de ' + dictionary[photo.common_name];
+        return [descriptionCaptionEnglish, descriptionCaptionSpanish]
+      }
+
       // Returns properly formatted age captions for specimen photo captions
       function handleAges(photo) {
         const ageCaptionEnglish = document.createElement('p');
@@ -950,13 +990,14 @@ require([
       // Add photo info to divs
       taxonCaption.innerHTML = photo.taxon;
       const [ageCaptionEnglish, ageCaptionSpanish] = handleAges(photo);
-      descriptionCaption.innerHTML = photo.description;
+      const [descriptionCaptionEnglish, descriptionCaptionSpanish] = returnDescription(photo);
       catNumberCaption.innerHTML = `${photo.display_id}`;
       captionsDiv.classList.add('splide__captions');
 
       // Append caption divs to parent divs
       captionsDiv.append(
-        descriptionCaption,
+        descriptionCaptionEnglish,
+        descriptionCaptionSpanish,
         taxonCaption,
         ageCaptionEnglish,
         ageCaptionSpanish,
