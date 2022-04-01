@@ -1199,7 +1199,6 @@ require([
     */
   }
 
-
  /* ==========================================================
     Event handler functions
     ========================================================== */
@@ -1207,12 +1206,9 @@ require([
   document.addEventListener('click', hideInstructionsDiv, {once:true});
 
   // Refresh map after period of inactivity
-  var resetMapSetInterval = setInterval(resetMap, 60000);
 
   document.addEventListener('click', function(event) {
     // Idle timer event handling
-    clearInterval(resetMapSetInterval);
-    resetMapSetInterval = setInterval(resetMap, 60000);
     const classList = event.target.classList;
     // Close button event handling
     if (event.target.classList.contains('close-button')) {
@@ -1228,19 +1224,12 @@ require([
   });
 
   document.addEventListener('touchstart', function(event) {
-    // Idle timer event handling
-    clearInterval(resetMapSetInterval);
-    resetMapSetInterval = setInterval(resetMap, 60000);
     //Close button event handling
     if (event.target.classList.contains('close-button')) {
       resetButtonClickHandler();
     }
   }, {passive:true});
   
-  document.addEventListener('mousewheel', function(){ 
-    clearInterval(resetMapSetInterval);
-    resetMapSetInterval = setInterval(resetMap, 60000);
-  }, {passive:true});
 
   // Click event for select feature from feature layers
   map.view.on("click", function (event) {

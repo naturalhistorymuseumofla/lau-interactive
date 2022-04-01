@@ -33,7 +33,7 @@ gulp.task('pack-js', () => {
   return gulp.src('static/js/*.js')
     .pipe(minify({
       ext: {
-        min:'.min.js'
+        //min:'.min.js'
       },
       noSource:true
     }))

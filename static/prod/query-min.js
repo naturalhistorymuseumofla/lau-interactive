@@ -1,0 +1,1 @@
+async function getQuery(t){const e={region:t.attributes.region_type,name:t.attributes.name};let a=await fetch("/query",{method:"POST",headers:{"Content-Type":"application/json;charset=utf-8"},body:JSON.stringify(e)}),n=await a.text();return n?JSON.parse(n):n}
