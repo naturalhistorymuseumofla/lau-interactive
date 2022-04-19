@@ -889,19 +889,76 @@ img {
   height:2.15rem;
   margin-left: 2.15rem;
   margin-right: 0.75rem;
-  display:inline-block;
+  display:inline-flex;
+  justify-content: center; 
+  align-items: center;
+}
+
+.photo-indicator__circle-inner {
+  height: 80%;
+  width:80%;
+  border-radius:50%;
+  background:yellow;
+}
+
+.photo-indicator__circle-outer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left:0;
+  right: 0;
+  margin: auto;
+  height: 40%;
+  width:40%;
+  border-radius:50%;
+  background:orange;
 }
 
 /* Pulse Design */
 .photo-indicator__svg{
-  position: absolute;
   width:100%;
   height:100%;
   top: 0px;
   left: 0px;
   display:block;
   transform-origin: center;
+  
 }
+
+.photo-indicator__circle {
+  background: orange;
+  border-radius: 50%;
+  border: #f1eb55 .5rem solid;
+}
+
+.photo-indicator__container div:nth-child(1){ 
+  height: 33%;
+  width: 33%;
+  opacity:1;
+}
+
+.photo-indicator__container div:nth-child(2){ 
+  height: 66%;
+  width: 66%;
+  opacity:66%
+}
+
+.photo-indicator__container div:nth-child(3){
+  height: 100%;
+  width: 100%;
+  opacity:33%
+}
+
+.photo-indicator--symbol {
+  height:125%;
+  width: 125%;
+}
+
+
+
+/*
+
+
 
 .photo-indicator__circle {
   cx: 1.075rem;
@@ -920,7 +977,8 @@ img {
   animation-timing-function: linear;
 }
 
-/* Pulse Animation */
+
+
 @keyframes pulse {
     0% { 
       opacity: 1;
@@ -932,7 +990,6 @@ img {
   }
 }
 
-/* Pulse Animation */
 @-webkit-keyframes pulse {
   0% { 
     opacity: 1;
@@ -958,6 +1015,7 @@ img {
   animation-delay: 4s; 
   -webkit-animation-delay: 4s;
 }
+*/
 
 
 

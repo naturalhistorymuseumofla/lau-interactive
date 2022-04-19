@@ -6,7 +6,11 @@
     <link rel="stylesheet" href={{url_for('static', filename='prod/styles.min.css')}}>
 
     <meta charset="utf-8" />
-    <title>LAU Map Interactive (prototype)</title>
+    <meta name="og:title" property="og:title" content="SoCal Fossil Map (NHMLAC)">
+    <meta name="og:title" property="og:title" content="SoCal Fossil Map (NHMLAC)">
+    <meta property="og:type" content="website">
+    <title>Southern California Fossil Map (NHMLAC)</title>
+    <meta name="description" content="A map of fossil sites from around Southern California, collected by the Natural History Museum of Los Angeles County. Explore the interactive map and see what fossils were found in your neighborhood!">
     <link rel="shortcut icon" type="image/svg" href={{url_for('static', filename='images/clam.svg')}}/>
   </head>
   <body lang="en">
@@ -286,14 +290,20 @@
           <h3  lang="en" class="legend__text">Excavation sites</h3>
           <h3  lang="es" class="legend__text">Sitios de excavación</h3>
         </div>
-        <div class="photo-indicator legend__flex-item ">
+        <div class="legend__flex-item photo-indicator">
           <div class="photo-indicator__container">
-            <svg class="photo-indicator__svg">
-              <circle class="still photo-indicator__circle"/>
-              <circle class="photo-indicator__circle"/>
-              <circle class="photo-indicator__circle"/>
-            </svg>
+            <div class="photo-indicator__circle"></div>
           </div>
+            <!--
+            <div class="photo-indicator__container">
+              <svg class="photo-indicator__svg">
+                <circle class="photo-indicator__circle"/>
+                <circle class="photo-indicator__circle"/>
+                <circle class="photo-indicator__circle"/>
+              </svg>
+            </div>
+          -->
+
           <h3 class="legend__text"> Pictured fossil</h3>
         </div>
       </div>
