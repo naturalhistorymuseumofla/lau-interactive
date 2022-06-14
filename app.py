@@ -33,7 +33,9 @@ def export_area(area):
         'photos': photos,
         'oids': area.oids,
         'immersion': area.immersion,
-        'geometry': area.geometry
+        'geometry': area.geometry,
+        'endDate': area.end_date,
+        'startDate': area.start_date
     }
     return dumps(response_dict).encode('utf-8')
 
@@ -58,7 +60,9 @@ def spatial_query():
         else:
             feature_query = Area.objects(geometry__geo_intersects=[longitude, latitude], region=region)
         if feature_query:
-            response = make_response(gzip.compress(export_area(feature_query[0])))
+            data = feature_query[0].export()
+            response = make_response(gzip.compress(data))
+            #response = make_response(gzip.compress(export_area(feature_query[0])))
             response.headers['Content-Encoding'] = 'gzip'
         else:
             response = ''
@@ -93,7 +97,7 @@ def query():
         feature_query = Area.objects(name=feature_name, region=feature_region)
         if feature_query:
             #response = export_area(feature_query[0])
-            response = export_area(feature_query[0])
+            response = feature_query[0].export()
         else:
             response = ''
         return response
@@ -109,7 +113,7 @@ def exhibit():
 
 if __name__ == "__main__":
     global_init()
-    files = ['./static/css/styles.css', './static/js/app.js', './static/js/exhibit-app.js']
+    files = ['./static/css/styles.css', './static/js/app.js', './static/js/exhibit-app.js', './static/js/search.js']
     app.run(debug=True,
             #host='192.168.1.89',
             extra_files=files)

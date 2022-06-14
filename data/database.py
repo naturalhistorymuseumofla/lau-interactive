@@ -128,5 +128,5 @@ class MultiPolygon(Area):
             'oids': self.oids,
             'geometry': self.geometry
         }
-        return dumps(response_dict)
+        return dumps(response_dict).encode('utf-8')
 

@@ -1,11 +1,11 @@
+import { FossilSearch } from "./search.js";
+
 
 var isMobile  = (screen.height < 719 || screen.width < 1023) ? true : false;
 
 if (isMobile) {
   document.documentElement.setAttribute('data-mobile', 'true');
 }
-
-var exportView;
 
 require([
   'esri/Map',
@@ -20,8 +20,7 @@ require([
   //"esri/core/promiseUtils",
   //"esri/core/watchUtils",
   "esri/geometry/support/webMercatorUtils",
-  "esri/widgets/Search/SearchViewModel",
-  "esri/tasks/Locator",
+
 ], function (
   Map,
   MapView,
@@ -35,14 +34,14 @@ require([
   //promiseUtils,
   //watchUtils,
   webMercatorUtils,
-  SearchVM,
-  Locator
 ) {
 
   // Initialize splide and map objects
   var splide = newSplide();
   var map = setUpMap();
-  exportView = map.view;
+  var search = new FossilSearch(map.view);
+
+
 
 
  /* ==========================================================
@@ -1710,6 +1709,8 @@ require([
 
 
     // Create Search widget using viewmodel 
+    //const search = new FossilSearch(view);
+    /*
     const search = new SearchVM({
       view: view,
       popupEnabled: false,
@@ -1731,6 +1732,7 @@ require([
         },
       ],
     });
+    
     
     const searchDiv = document.getElementsByClassName('search')[0];
     const searchInput = document.getElementsByClassName('search__input')[0];
@@ -1779,6 +1781,7 @@ require([
       searchInput.setAttribute('search-active', 'true');
       suggestList.setAttribute('search-active', 'true');
     }
+    */
 
 
     if(isMobile) {
@@ -1826,6 +1829,4 @@ require([
     return returnObject
   }
 });
-
-export {exportView};
 
